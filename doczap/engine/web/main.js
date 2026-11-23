@@ -2,6 +2,9 @@ import * as THREE from './lib/three.module.js';
 import * as T from './toon.js';
 import * as P from './paint.js';
 import { SHOTS, TOTAL, shotAt, camAt, dofAt, LIGHTS, lightFor, actorsAt, worldAt, fxAt, LOOK } from './story.js';
+import * as STORY from './story.js';            // optional episode hooks: sets(K), annotAt(f)
+import { makeKit } from './kit/kit.js';
+import { drawAnnotations, fontReady, canvas as AnnCanvas } from './kit/annot.js';
 
 const RS = +(new URLSearchParams(location.search).get('rs') || 1); window.RS = RS;
 const W = Math.round(1080 * RS), H = Math.round(1920 * RS);
@@ -11,6 +14,7 @@ renderer.setPixelRatio(1); renderer.setSize(W, H, false);
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.NoToneMapping;
+renderer.localClippingEnabled = true; // kit cross-sections
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(40, W / H, 0.08, 1500);
@@ -1466,6 +1470,9 @@ lotState = function (W_, f) {
 };
 
 }
+// ---------- engine kit: episode sets built from story.js `sets(K)` (see docs/ENGINE.md) ----------
+const K = makeKit({ scene, grad, camera, renderer }); window.KIT = K;
+const SETS = typeof STORY.sets === 'function' ? (STORY.sets(K) || {}) : {};
 // ---------- cards ----------
 const CW = Math.round(1200 * RS), CH = Math.round(2000 * RS), CM = 2.25; // canvas px, card height in metres (design 600x1000 -> 2.25 m)
 const cardGeo = new THREE.PlaneGeometry(CM * 0.6, CM); cardGeo.translate(0, CM / 2 - CM * 0.025, 0);
@@ -1490,8 +1497,8 @@ class Card {
 const cards = []; const getCard = (i) => cards[i] || (cards[i] = new Card());
 
 // ---------- render targets & post ----------
-const rtColor = new THREE.WebGLRenderTarget(W, H, { samples: 4, type: THREE.HalfFloatType });
-const rtNd = new THREE.WebGLRenderTarget(W, H, { type: THREE.HalfFloatType, minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
+const rtColor = new THREE.WebGLRenderTarget(W, H, { samples: 4, type: THREE.HalfFloatType, stencilBuffer: true });
+const rtNd = new THREE.WebGLRenderTarget(W, H, { type: THREE.HalfFloatType, minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, stencilBuffer: true });
 const rtInk = new THREE.WebGLRenderTarget(W, H, { type: THREE.HalfFloatType });
 const fsCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1), fsGeo = new THREE.PlaneGeometry(2, 2);
 const fs = (mat) => { const s = new THREE.Scene(); s.add(new THREE.Mesh(fsGeo, mat)); return s; };
@@ -1673,6 +1680,8 @@ function worldState(W_, f) {
     sunPool.visible = lab && !XR.on; const nb = !!W_.sbed; bCandL.intensity = nb ? 2.6 * (0.9 + 0.1 * Math.sin(f * 0.8)) : 0; bMoonL.intensity = nb ? 2.2 : 0; bFl.scale.set(1, 1.8 + 0.25 * Math.sin(f * 0.9), 1); }
   goldState(W_, f);
   lotState(W_, f);
+  if (SETS.update) SETS.update(W_, f, camera);
+  K.update(f, camera);
 }
 
 function drawActors(list, cam) {
@@ -1718,9 +1727,13 @@ function setXray(v) {
 if (LOOK === 'mini') {
   const conv = new Map();
   scene.traverse((o) => { if (!o.isMesh) return; const m = o.material; if (!m || !m.isMeshToonMaterial) return;
-    if (!conv.has(m)) conv.set(m, new THREE.MeshStandardMaterial({ map: m.map, color: m.color, roughness: 0.62, metalness: 0.0, side: m.side, transparent: m.transparent, opacity: m.opacity, depthWrite: m.depthWrite, alphaTest: m.alphaTest, emissive: m.emissive, emissiveIntensity: m.emissiveIntensity }));
+    if (!conv.has(m)) { const n = new THREE.MeshStandardMaterial({ map: m.map, color: m.color, roughness: 0.62, metalness: 0.0, side: m.side, transparent: m.transparent, opacity: m.opacity, depthWrite: m.depthWrite, alphaTest: m.alphaTest, emissive: m.emissive, emissiveIntensity: m.emissiveIntensity });
+      for (const k of ['bumpMap', 'bumpScale', 'normalMap', 'clippingPlanes', 'clipShadows', 'stencilWrite', 'stencilRef', 'stencilFunc', 'stencilFail', 'stencilZFail', 'stencilZPass', 'emissiveMap', 'alphaMap']) if (m[k] !== undefined && m[k] !== null) n[k] = m[k];
+      conv.set(m, n); }
     o.material = conv.get(m); });
 }
+const annMat = new THREE.MeshBasicMaterial({ map: null, transparent: true, depthTest: false, depthWrite: false, toneMapped: false }); let annT = null;
+const annScene = fs(annMat);
 window.renderFrame = (f) => {
   const S = shotAt(f), L = lightFor(S, f), C = camAt(f);
   applyLight(L, f);
@@ -1747,8 +1760,13 @@ window.renderFrame = (f) => {
   renderer.setRenderTarget(rtInk); renderer.render(inkScene, fsCam);
   dofU.focus.value = D.focus; dofU.cinf.value = D.cinf * RS; dofU.near.value = D.near ?? 1;
   renderer.setRenderTarget(null); renderer.render(dofScene, fsCam);
+  // ---- hand-drawn annotations (labels / arrows / red circles) on top, crisp and camera-tracked ----
+  const AN = typeof STORY.annotAt === 'function' ? STORY.annotAt(f) : null;
+  if (AN && AN.length && drawAnnotations(AN, window.PROJ, W, H, RS)) { if (!annT) { annT = new THREE.CanvasTexture(AnnCanvas()); annT.colorSpace = THREE.SRGBColorSpace; annMat.map = annT; annMat.needsUpdate = true; } annT.needsUpdate = true;
+    renderer.autoClear = false; renderer.render(annScene, fsCam); renderer.autoClear = true; }
   if (window.overlay) window.overlay(f);
   return true;
 };
 window.TOTAL = TOTAL;
+await fontReady;
 window.ready = true;

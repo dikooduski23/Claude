@@ -35,6 +35,7 @@ See `doczap/docs/STYLE.md` for the full rules. In short:
   - `web/`: three.js engine. `main.js` holds the world sets, `toonbase.js` + `roman.js` the characters (`cat toonbase.js roman.js > toon.js` after editing), `story.js` the shots, camera, cast and FX of the current episode.
   - `render.mjs`: renders frames with headless Chromium (playwright).
   - `caps.py` makes captions, `labels.py` handwritten labels, `compose.py` the final video, `cover.py` the cover, `audio/mix.py` the SFX and music mix.
+  - `web/kit/`: the **world kit** (textured materials, props, flickering torch/candle light, window beams, lighting presets, glass, cross-sections, handwritten labels, emotes). Episodes build sets with `export const sets = (K) => …` in story.js. **Read `doczap/docs/ENGINE.md` before building sets or characters**; `web/demo_story.js` is a working example.
 - `doczap/tools/`: `trim_pauses.py`, `align_ps.py` (word timing), `audio_lib.py` (sound effects and music synth).
 - `doczap/episodes/<slug>/`: what to keep from each finished episode (script, story.js, words.json, post.md).
 - `doczap/work/<slug>/`: scratch working copy for an episode (gitignored; frames are big).

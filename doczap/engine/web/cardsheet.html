@@ -1,0 +1,26 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#3a3440}canvas{display:block}</style></head>
+<body><canvas id="s"></canvas>
+<script type="module">
+// Character sheet: draws a grid of character cards (faces, hats, beards, patterns, talk visemes) with no 3D.
+// Usage: node cardsheet.mjs out.png [grid]   (grid = "faces" | "hats" | "talk")
+import * as T from './toon.js';
+const grid = new URLSearchParams(location.search).get('grid') || 'faces';
+const base = { tunic: '#3a5a8a', stick: true, skin: '#f7f4ee', hair: '#3a2a1c', collar: '#ffffff' };
+const S = {
+  faces: ['neutral', 'angry', 'furious', 'cry', 'sleepy', 'yawn', 'sideeye', 'scared', 'unimpressed', 'smug', 'laugh', 'shock'].map((e, i) => ({ label: e, o: base, opts: { expr: e, look: e === 'sideeye' ? 1 : 0, flushCol: i % 2 ? 'purple' : 'red' } })),
+  hats: ['crown', 'helmet', 'cowboy', 'tophat', 'hood', 'turban', 'soldier'].map((h) => ({ label: h, o: { ...base, hat: h, plume: h === 'helmet' ? '#d0283a' : undefined }, opts: { expr: 'smile' } }))
+    .concat([{ label: 'flush .5 red', o: base, opts: { expr: 'angry', flush: 0.5 } }, { label: 'flush 1 purple', o: base, opts: { expr: 'furious', flushCol: 'purple' } }]),
+  beards: [['full', null], ['stubble', null], ['short', null], ['long', null], ['goatee', null], [null, 'pencil'], [null, 'chevron'], [null, 'handlebar'], [null, 'walrus'], [null, undefined]].map(([b, m]) => ({ label: (b || '') + (m || (b ? '' : 'stache')), o: { ...base, beard: b ? '#6a4228' : undefined, beardStyle: b || undefined, moustache: m !== null ? '#4a3020' : undefined, stache: m || undefined }, opts: { expr: 'smile' } })),
+  patterns: ['stripes', 'vstripes', 'plaid', 'checks', 'dots', 'diamonds', 'patches', 'stars'].map((t, i) => ({ label: t, o: { ...base, tunic: ['#b8202e', '#2a6ad0', '#2a8a5a', '#c8862a', '#6a3aa0', '#d0402a', '#7a5a3a', '#1e2a5a'][i], pattern: { type: t, col: t === 'stars' ? '#ffd23f' : undefined } }, opts: { expr: 'grin' } })),
+  talk: [0, 0.25, 0.5, 0.75, 1].flatMap((t) => ['neutral', 'angry', 'laugh'].map((e) => ({ label: e + ' ' + t, o: base, opts: { expr: e, talk: t } }))),
+};
+const list = S[grid], cols = 4, cw = 300, ch = 360, rows = Math.ceil(list.length / cols);
+const c = document.getElementById('s'); c.width = cols * cw; c.height = rows * ch; const g = c.getContext('2d');
+list.forEach((it, i) => { const x = (i % cols) * cw, y = Math.floor(i / cols) * ch;
+  const cc = document.createElement('canvas'); cc.width = 600; cc.height = 1000; const p = new T.Pen(cc.getContext('2d'));
+  T.romanFront(p, it.o, { seed: 23, L: 'hang', R: 'hang', ...it.opts });
+  g.fillStyle = (i + Math.floor(i / cols)) % 2 ? '#d8cfc0' : '#c8bfb0'; g.fillRect(x, y, cw, ch);
+  g.drawImage(cc, 0, 0, 600, 640, x, y + 10, cw, cw * 640 / 600);
+  g.fillStyle = '#111'; g.font = '700 24px Inter, sans-serif'; g.fillText(it.label, x + 10, y + ch - 14); });
+window.ready = true;
+</script></body></html>

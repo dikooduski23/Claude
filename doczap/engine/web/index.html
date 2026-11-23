@@ -1,5 +1,6 @@
 <!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000}canvas{display:block}</style></head>
 <body><canvas id="c" width="1080" height="1920"></canvas>
+<script>/* ?story=<file>.js renders another story module (e.g. demo_story.js) through an import map */ (function () { const s = new URLSearchParams(location.search).get('story'); if (s && /^[\w.-]+\.js$/.test(s)) document.write('<script type="importmap">{"imports":{"/story.js":"/' + s + '"}}<\/script>'); })();</script>
 <script>window.addEventListener('error',e=>{window.err=String(e.message);console.log('ERR '+e.message)});</script>
 <script type="module" src="overlay.js"></script>
 <script type="module" src="main.js"></script></body></html>

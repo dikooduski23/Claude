@@ -26,8 +26,9 @@ Work in `doczap/work/<slug>/`: `cp -r doczap/engine doczap/work/<slug>`, run `np
    - Build `fake.html` (`const TOTAL=n;` + `const SCRIPT=[[i,i+1,"line"],...]`) and run `EP=fake.html python3 ../../tools/align_ps.py voice.mp3 0`, which gives warp.json.
    - Write `words.json` (`[{w,s,e}]`) and cut `voice_loop.wav` right after the last word.
    - TOTAL frames = duration × 60.
-2. **Sets and cast:**
-   - Add a new world block in `web/main.js` before `// ---------- cards ----------`, wrapped in a block scope (`let xState;\n{ ... }`), and call it from worldState. Toggle it with your own W flags.
+2. **Sets and cast** (read `doczap/docs/ENGINE.md`; prefer the world kit over hand-built sets):
+   - Build the sets in story.js with `export const sets = (K) => {...}`: `K.room`, `K.prop.*` (torches, candles, windows, barrels…), `K.glass`/`K.section` for the cutaway, `LP` lighting presets, `annotAt` for handwritten labels, `emote()` for emotes, `talkAt` for talking mouths. Check new characters with `node cardsheet.mjs`.
+   - (Old way, still works:) add a new world block in `web/main.js` before `// ---------- cards ----------`, wrapped in a block scope (`let xState;\n{ ... }`), and call it from worldState. Toggle it with your own W flags.
    - Outfits and faces go in `web/roman.js`; then run `cat toonbase.js roman.js > toon.js`.
    - Build new sets for each story: textured, warm-lit, with foreground props.
 3. **Story** (`web/story.js`; use the Lottery Man version as the template):
