@@ -135,7 +135,7 @@ They render in **Caveat 700**, white with a dark outline and a soft shadow, afte
 - `QS="&story=demo_story.js"` (or any `*.js` in `web/`) chooses the story module through an import map in `index.html`. Without it, `story.js` renders as before.
 - Every story module must export what `main.js` and `overlay.js` import: `FPS, TOTAL, SHOTS, shotAt, camAt, dofAt, LIGHTS, lightFor, actorsAt, worldAt, fxAt, LOOK, overlayInfo` (plus the optional `sets`, `annotAt`, `CUTS`).
 - The render server now sends correct MIME types (fonts, PNG, JSON).
-- `compose_plates.py <plates> <out.mp4> --whips 280 --audio mix.wav` encodes 60 fps H.264 with a `tmix` blur on each whip window (`[w−14, w+18]`) and loudnorm to −14 LUFS.
+- `compose_plates.py <plates> <out.mp4> --whips 280 --audio mix.wav --caps cap/caps.json --glow 0.85` encodes 60 fps H.264 with captions and the **glossy glow** (`--glow`: highlight bloom plus a soft sheen, blended in RGB under the captions; Diyar likes about 0.85). It also adds a `tmix` blur on each whip window (`[w−14, w+18]`) and loudnorm to −14 LUFS.
 - Speed: the demo room renders at about 5–7 s per frame on 4 CPU cores. Run three ranges in parallel.
 - QC as always: stills, a contact sheet, fixes, the full render, then frames from the MP4.
 
