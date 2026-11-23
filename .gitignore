@@ -1,0 +1,10 @@
+node_modules/
+**/plates/
+**/stills/
+**/out/
+**/cap/
+*.mp4
+*.wav
+*.mp3
+__pycache__/
+doczap/work/
