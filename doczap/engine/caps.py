@@ -23,10 +23,11 @@ for w in W:
     if cur and (len(' '.join(x['w'] for x in cur + [w])) > 12 or any(ch.isdigit() for ch in w['w'])):
         chunks.append(cur); cur = []
     cur.append(w)
-    if len(cur) == 2 or re.search(r'[.,?!…]$', w['w']):
+    if len(cur) == 2 or re.search(r'[.,?!…:]$', w['w']):
         chunks.append(cur); cur = []
 if cur: chunks.append(cur)
-F = ImageFont.truetype('/usr/share/fonts/truetype/google-fonts/Poppins-Bold.ttf', 60)
+import os
+F = ImageFont.truetype(next(p for p in ['/usr/share/fonts/truetype/google-fonts/Poppins-Bold.ttf', 'fonts/Poppins-Bold.ttf'] if os.path.exists(p)), 60)
 filt, inputs = [], []
 for i, c in enumerate(chunks):
     t = ' '.join(x['w'] for x in c).replace('...', '').replace('…', '')
