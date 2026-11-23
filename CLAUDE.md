@@ -12,7 +12,7 @@ This repo holds the whole Doc Zap production system. When Diyar says **"let's cr
 ## Standing rules (from Diyar; follow every time)
 1. **Virality check first:** run a virality check on every script; it must score **above 90/100** before building.
 2. **Fact-check** every claim against **2+ sources**. Exact numbers and dates; no invented quotes presented as history.
-3. **Voice:** ElevenLabs **Patrick** (Eleven v3), with v3 tags like [curious] [deadpan] [whispers]. Numbers written as words. Diyar makes the MP3 and sends it.
+3. **Voice:** ElevenLabs **Patrick** on **Eleven v4** (Diyar switched from v3 on Nov 23 2026). Write the script so it paces well without tags: ellipses, short sentences, line breaks. Add [curious]/[deadpan]/[whispers]-style tags only once Diyar confirms v4 reads them; otherwise send a tag-free script. Numbers written as words. Diyar makes the MP3 and sends it.
 4. **Length 30-45 s.**
 5. **Output:** native **1080×1920 at 60 fps**, H.264, audio at **-14 LUFS**. **Captions version only.**
 6. No episode number, watermark, username, progress bar or border on screen. Only essential in-world labels.

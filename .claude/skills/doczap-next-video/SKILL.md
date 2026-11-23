@@ -10,7 +10,7 @@ Read `CLAUDE.md` and `doczap/docs/STYLE.md` first and follow every rule in them.
 ## Phase 1: after "let's create next video" (no questions needed)
 1. **Pick the story** in the STYLE.md formula. It must be true and little-known (most people should never have heard it) and have a clear mechanism to show in a cutaway. It must not repeat anything in `doczap/episodes/`.
 2. **Fact-check** against 2+ sources. Leave out anything with only one source and say so.
-3. **Write the script** for ElevenLabs **Patrick** (v3 tags, numbers as words):
+3. **Write the script** for ElevenLabs **Patrick on Eleven v4** (pacing from punctuation and short lines; tags only if Diyar has confirmed v4 reads them; numbers as words):
    - 30-45 s (~90-120 words);
    - line 1 names the strange act;
    - a "You see," setup, But/So beats and a rehook halfway;

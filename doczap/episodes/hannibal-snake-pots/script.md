@@ -4,7 +4,9 @@
 **Cutaway:** a sealed clay jar sliced open, with venomous snakes coiled inside and a wax-sealed lid. Handwritten label: "snakes".
 **Length:** about 104 words, roughly 38–42 s with Patrick.
 
-## Script (ElevenLabs Patrick, Eleven v3)
+## Script (ElevenLabs Patrick, Eleven v4)
+
+If v4 doesn't read the [tags], use the tag-free version at the bottom of this file.
 
 [curious] Hannibal once won a sea battle... by throwing clay pots at his enemies.
 
@@ -73,4 +75,24 @@ Now the enemy had to fight a war... and dodge snakes at the same time.
 3. Sextus Julius Frontinus, *Stratagems*, book 4, chapter 7, sections 10–11.
 
 ---
-**Next step:** make the MP3 in ElevenLabs with **Patrick (Eleven v3)** using the script above, keeping the [tags], and send it here.
+## Tag-free version (for Eleven v4)
+Hannibal once won a sea battle... by throwing clay pots at his enemies.
+
+He was fighting for a small kingdom, and the enemy fleet was bigger. Much bigger.
+
+So he gave his sailors a strange order: "Throw the pots."
+
+Jars smashed across the enemy decks... and the enemy sailors laughed.
+
+But then... the decks started to move.
+
+You see, before the battle, Hannibal had his men catch as many venomous snakes as they could find... and seal them inside those jars.
+
+Now the enemy had to fight a war... and dodge snakes at the same time.
+
+They panicked. They fled. Hannibal's side won.
+
+Everyone remembers his elephants. But the strangest weapon Hannibal ever used... was a pot. Because Hannibal once won a sea battle...
+
+---
+**Next step:** make the MP3 in ElevenLabs with **Patrick on Eleven v4** and send it here.
