@@ -2,14 +2,18 @@
 
 **The strange act:** in the 1990s the Leaning Tower of Pisa was close to falling, and engineers saved it by **digging soil out from under it**.
 **Cutaway:** a glass cross-section of the ground under the tower: soft clay under the low (south) side, drill tubes under the high (north) side pulling soil out, the high side settling, and the tower rotating back. Handwritten labels: "soft clay", "soil out" and "40 cm back".
-**Length:** 103 words, about 36–38 s with Patrick on Eleven v4.
+**Length:** 107 words, about 37–39 s with Patrick on Eleven v4.
 **Built in Blender** on Diyar's computer (first Blender episode): real stone, real soil, physics for the lead blocks and the soil, and frost for the freezing scene. Finished in Remotion with remocn (transitions + captions) as usual.
 
 ## Script (ElevenLabs Patrick, Eleven v4; tag-free)
 
+**v2** (Nov 24, after the virality-predictor skill): clearer danger in line 2, plus a "Sounds insane, right?" beat. 107 words, about 37–39 s.
+
 Nobody tells you Pisa's tower was saved... by digging.
 
-In nineteen ninety, it leaned so far... Pisa closed it.
+In nineteen ninety, experts feared it would fall.
+
+Pisa closed it.
 
 Engineers stacked hundreds of tonnes of lead on one side.
 
@@ -20,6 +24,8 @@ So engineer John Burland had a better idea.
 Dig.
 
 Under a tower that was already falling.
+
+Sounds insane, right?
 
 You see, the low side had sunk into soft clay.
 
@@ -87,18 +93,31 @@ Tags: leaning tower of pisa, pisa tower, how pisa tower was saved, john burland,
 | 29–33 s | The tower tips back | The north side settles a few millimetres, the whole tower rotates back in slow motion; ghost outline of the old lean (label "40 cm back") |
 | 33–37 s | Ironic punchline, loop | Wide golden-hour shot of the tower, then a push-in back down to the drill bit in the soil (the opening frame) |
 
-## Virality check
-| Category | Score | Why |
-|---|---|---|
-| Hook | 24 / 25 | A world-famous landmark plus a counterintuitive act; hookscore 87 STRONG |
-| Value | 18 / 20 | A real "do the opposite" engineering trick almost nobody knows |
-| Emotion | 17 / 20 | Real danger (closed, about to fall), two fixes that make it worse, then the payoff |
-| Platform fit | 14 / 15 | About 37 s, loops, huge visuals (tower, frost, cutaway) |
-| Shareability | 9 / 10 | "Wait, they dug UNDER it?" is a send-to-a-friend fact |
-| Trend | 9 / 10 | Famous-landmark engineering explainers are performing well |
-| **Total** | **91 / 100** | Passes (needs more than 90) |
+## Virality check (virality-predictor skill, run in full Nov 24)
+My first in-house score (91) and its "88" second opinion were too generous. The full skill run scored v1 at **79 (TikTok)** and **81 (Instagram)**. The fixes below raised v2 to:
 
-**Second opinions:** virality-predictor (TikTok + Instagram) **88 / 100**; ig-viral 8-line pre-build check **8.5 / 10** (hook 9, evidence 7, one idea 9, specificity 9, payoff and loop 9, shareability 8, retention design 9, fresh angle 8). Weakest: *evidence* (no swipe file yet). None of these predicts views.
+| Dimension | TikTok v1 → v2 | Instagram v1 → v2 | Reasoning |
+|---|---|---|---|
+| Hook Strength | 21 → 22 /25 | 21 → 22 /25 | "Nobody tells you… by digging" is a real curiosity gap on a famous landmark. v1 never said it was about to fall until line 2, and only weakly ("leaned so far… closed it"); v2 says experts feared it would fall |
+| Content Value | 18 /20 | 18 /20 | A genuine "do the opposite" trick almost nobody knows; very saveable |
+| Emotional Resonance | 15 → 17 /20 | 15 → 17 /20 | v1 told the danger instead of making you feel it. v2: "experts feared it would fall" plus "Sounds insane, right?" puts the viewer's own doubt into the story |
+| Platform Fit | 12 /15 | 13 /15 | 38 s and loops. TikTok rewards a native, direct-to-camera feel and trending sounds, which a narrated animation doesn't have; Instagram rewards polished visuals, which the Blender look gives |
+| Shareability & CTA | 8 /10 | 8 → 9 /10 | "They dug UNDER it?" is a send-to-a-friend fact; "Sounds insane, right?" invites "how didn't it fall?" comments. No spoken ask (Doc Zap rule); the share ask is in the caption |
+| Trend Alignment | 6 /10 | 6 /10 | Evergreen, not riding a current trend. Landmark-secret explainers perform steadily but aren't a trend |
+| **Total** | **79 → 83** | **81 → 85** | 80+ = "strong viral potential" |
+
+**What's working:** a world-famous image everybody recognises with a fact nobody knows; a real reversal (the fixes make it worse, then digging saves it); a clean loop ("...they made it sink" → "Nobody tells you Pisa's tower...").
+
+**What still holds it back:** (1) Trend: nothing current to ride; the Blender look and the first frame have to carry it. (2) TikTok nativeness: no face to camera, no trending sound.
+
+**Fixes applied:**
+1. *Make the danger felt:* "In nineteen ninety, it leaned so far... Pisa closed it." became "In nineteen ninety, experts feared it would fall. / Pisa closed it."
+2. *Give the viewer's doubt a voice* (the formula's "everyone doubts" beat, without inventing history): added "Sounds insane, right?" after "Dig. Under a tower that was already falling."
+3. *Show the payoff in frame 1 (TikTok):* the first shot has the drill **and** the leaning tower in one frame (drill bit in the soil in front, tower behind, focus pull), so the strange act reads before a word is said.
+
+**Other scores:** ig-viral 8-line check 8.5 / 10 · hookscore 87 (Instagram) / 42 (YouTube, tiebreaker only). None of these predicts views.
+
+**Note on the >90 rule:** this is the same 6-part rubric as our Doc Zap check. Scored honestly with the full skill, v2 lands at 83–85, not above 90. Earlier episodes' 91–92 came from my looser in-house scoring.
 
 ## Fact check
 | Claim in the script | Status | Sources |
