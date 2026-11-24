@@ -17,7 +17,7 @@ Obscurity is my judgment (★★★ = almost nobody has heard it).
 | 7 | **El Alamein: the British built a fake pipeline, slowly on purpose** (1942) | ★★☆ | A "Sunshield" canopy over a tank makes it look like a truck; the half-built pipeline | "Before El Alamein, the British built a fake pipeline... slowly." (61) |
 | 8 | **Halley sat on the seabed, breathing from barrels** (bell 1691, account 1716–17) | ★★★ | Bell cross-section: weighted air barrels refill the trapped air | "Halley sat on the seabed for ninety minutes." (42) |
 
-**My order:** Dutch Water Line (script ready) → 1 Pisa → 3 Paxton → 2 Rumford → 7 El Alamein → 4 Gaudí → 5 Cook → 6 Mehmed → 8 Halley.
+**My order:** 1 Pisa (scripted Nov 24, first Blender episode: `doczap/episodes/leaning-tower/script.md`) → Dutch Water Line (script v2 ready) → 3 Paxton → 2 Rumford → 7 El Alamein → 4 Gaudí → 5 Cook → 6 Mehmed → 8 Halley.
 
 ## Fact notes (what's solid, what to leave out)
 1. **Pisa:** the committee chose controlled "underexcavation": small amounts of soil removed from beneath the **north** side, because touching the south side was too dangerous; handed back June 2001. Straightened by about **40 cm** (sources say 38–44 cm): say "about forty centimetres". Leave out the student-paper details (exact start date). Sources: ICE, Ingenia (Burland), Burland/Jamiolkowski/Viggiani paper (Soils and Foundations), Britannica.
