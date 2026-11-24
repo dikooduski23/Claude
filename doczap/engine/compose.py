@@ -1,8 +1,10 @@
 # Final video: plates + whip-pan blur + 2D overlay + audio -> H.264 1080x1920 60 fps.
 #   python3 compose.py out/DocZap_<Name>_1080x1920.mp4            whole episode
 #   python3 compose.py out/preview.mp4 0-747                      a frame range (previews)
-# Overlay: cap/overlay.mov from overlay.py (remocn captions + handwritten labels) when it
-# exists, else the legacy PNGs from caps.py / labels.py.
+# Video source, first match wins:
+#   cap/episode.mp4  from episode.py: plates cut with Remocn transitions + the Remocn overlay -> just add audio
+#   cap/overlay.mov  from overlay.py: plates + 3D whip blur + Remocn captions/labels
+#   legacy PNGs      from caps.py / labels.py
 import json, os, re, subprocess, sys
 
 OUT = sys.argv[1]
@@ -11,6 +13,11 @@ F0, F1 = (map(int, sys.argv[2].split('-')) if len(sys.argv) > 2 else (0, TOTAL -
 T0, DUR = F0 / 60, (F1 - F0 + 1) / 60
 WHIPS = [149, 379, 520, 772, 861, 1019, 1191]  # whip-pan centres in 30 fps units, from story.js
 
+if os.path.exists('cap/episode.mp4'):
+    subprocess.run(['ffmpeg', '-y', '-v', 'error', '-ss', f'{T0:.4f}', '-t', f'{DUR:.4f}', '-i', 'cap/episode.mp4', '-ss', f'{T0:.4f}', '-t', f'{DUR:.4f}', '-i', 'audio/final_mix.wav',
+                    '-map', '0:v', '-map', '1:a', '-af', f'afade=t=out:st={DUR - 0.25:.2f}:d=0.25', '-r', '60', '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '17', '-pix_fmt', 'yuv420p',
+                    '-c:a', 'aac', '-b:a', '192k', '-t', f'{DUR:.4f}', OUT], check=True)
+    print('ok', OUT); sys.exit(0)
 args = ['ffmpeg', '-y', '-v', 'error', '-framerate', '60', '-start_number', str(F0), '-i', 'plates/f%04d.jpg']
 en = '+'.join(f'between(t,{(a - 7) / 30 - T0:.3f},{(a + 9) / 30 - T0:.3f})' for a in WHIPS)
 fc = f"[0:v]split[a][b];[b]tmix=frames=7:weights='1 1 1 1 1 1 1'[bl];[a][bl]overlay=enable='{en}'[v0]"

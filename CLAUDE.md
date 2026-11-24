@@ -24,7 +24,7 @@ This repo holds the whole Doc Zap production system. When Diyar says **"let's cr
 See `doczap/docs/STYLE.md` for the full rules. In short:
 - **Story formula:** someone did something that looked stupid on purpose → everyone laughs or doubts → the hidden trick pays off → "You see," + the mechanism → an ironic punchline. The **last line flows back into line 1**, so it loops. **No "comment yes or no"** in the video.
 - **Hook:** no title card. Frame 1 is a close-up of the character already doing the strange thing, or a macro slow-mo of the key object with a focus pull.
-- **Camera:** always moving (push-ins, arcs, following objects, POV, low angles), close framing, a new angle every 1.3-3 s, **whip-pans** with motion blur as transitions.
+- **Camera:** always moving (push-ins, arcs, following objects, POV, low angles), close framing, a new angle every 1.3-3 s. **Transitions are Remocn:** mostly `whip-pan`, plus one `lens-zoom` on the shock beat and one `push-through` into the cutaway.
 - **Characters:** big white heads, very expressive faces, emotes (lightbulb, ?, !), hats, beards.
 - **Worlds:** textured, warm-lit, depth haze.
 - **Mechanism:** an in-world cutaway (glass object, cross-section, balance scale) with **handwritten labels and arrows** (Caveat font).
@@ -34,8 +34,8 @@ See `doczap/docs/STYLE.md` for the full rules. In short:
 - `doczap/engine/`: the production template (latest = the Lottery Man rebuild).
   - `web/`: three.js engine. `main.js` holds the world sets, `toonbase.js` + `roman.js` the characters (`cat toonbase.js roman.js > toon.js` after editing), `story.js` the shots, camera, cast and FX of the current episode.
   - `render.mjs`: renders frames with headless Chromium (playwright).
-  - `caps.py` makes captions, `labels.py` handwritten labels, `overlay.py` renders them as a transparent layer, `compose.py` the final video, `cover.py` the cover, `audio/mix.py` the SFX and music mix.
-  - `remotion/`: the **Remocn** overlay (Remotion project). `src/doczap/Overlay.tsx` builds captions from `caption-active-pop` and labels from `handwrite` + `ink-arrow` (+ `scribble-circle`). Components live in `src/components/remocn/` (we own and may edit them). Add more with `NODE_USE_ENV_PROXY=1 node scripts/remocn-add.mjs <name>`; the catalog is at https://remocn.dev/llms-components.txt. Fonts are bundled in `public/fonts`, so renders need no network. Use Remocn for the 2D layer only (captions, labels, callouts); the 3D worlds and characters stay in three.js.
+  - `caps.py` makes captions, `labels.py` handwritten labels, `overlay.py` renders them as a transparent layer, `episode.py` cuts the plates together with Remocn transitions (+ the overlay), `compose.py` the final video, `cover.py` the cover, `audio/mix.py` the SFX and music mix.
+  - `remotion/`: the **Remocn** overlay (Remotion project). `src/doczap/Overlay.tsx` builds captions from `caption-active-pop` and labels from `handwrite` + `ink-arrow` (+ `scribble-circle`). Components live in `src/components/remocn/` (we own and may edit them). Add more with `NODE_USE_ENV_PROXY=1 node scripts/remocn-add.mjs <name>`; the catalog is at https://remocn.dev/llms-components.txt. Fonts are bundled in `public/fonts`, so renders need no network. `src/doczap/Episode.tsx` splices the plates with Remocn transitions (`whip-pan`, `lens-zoom`, `push-through`, `light-leak`, `warp-dissolve`, `iris-wipe`), listed per episode in `TRANSITIONS` in `story.js`. Use Remocn for the 2D layer and the cuts only; the 3D worlds and characters stay in three.js.
 - `doczap/tools/`: `trim_pauses.py`, `align_ps.py` (word timing), `audio_lib.py` (sound effects and music synth).
 - `doczap/episodes/<slug>/`: what to keep from each finished episode (script, story.js, words.json, post.md).
 - `doczap/work/<slug>/`: scratch working copy for an episode (gitignored; frames are big).

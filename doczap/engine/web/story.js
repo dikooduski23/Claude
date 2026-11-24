@@ -13,7 +13,16 @@ export const CUTS = [];
 // whip-pans happen at these shot starts (in u); direction alternates
 export const WHIPS = [149, 379, 520, 772, 861, 1019, 1191];
 export const WHIP_FRAMES = WHIPS.map((a) => [2 * (a - 7), 2 * (a + 9)]);
-const shot30 = (u) => { const s = SH.find((s) => u >= s[1] && u < s[2] + 1) || SH[SH.length - 1]; return { id: s[0], a: s[1], b: s[2], light: s[3] }; };
+// Remocn transitions, rendered by episode.py in doczap/engine/remotion. Keep strict JSON between the markers.
+//   at   = the cut, in 30 fps units (a shot start)      len  = length in 30 fps frames (even)
+//   type = whip-pan | lens-zoom | push-through | light-leak | warp-dissolve | iris-wipe
+//   opts = props for that transition (e.g. {"direction": "right"}, {"centerX": 0.5, "centerY": 0.35})
+// A cut listed here gets no 3D whip-pan; episode.py renders handle frames on both sides of it.
+export const TRANSITIONS = /*TRANSITIONS*/[]/*END*/;
+const RT = new Set(TRANSITIONS.map((t) => t.at));
+// SHOT=<id> renders (handle frames) force one shot at any time; its camera holds its first/last pose.
+const shotById = (id) => SH.find((s) => s[0] === id);
+const shot30 = (u) => { const s = (globalThis.DZ_SHOT && shotById(globalThis.DZ_SHOT)) || SH.find((s) => u >= s[1] && u < s[2] + 1) || SH[SH.length - 1]; return { id: s[0], a: s[1], b: s[2], light: s[3] }; };
 export const shotAt = (f) => { const s = shot30(f / 2); return { id: s.id, a: s.a * 2, b: s.b * 2 + 1, light: s.light }; };
 const BASE = { az: 135, el: 50, sky: '#cfe2ff', ground: '#b09a78', hemi: 1.1, sun: '#fff3dc', sunI: 0, fog: '#d4e6ff', fogNear: 80, fogFar: 900, skyTop: '#2f7ce0', skyHor: '#bfe0ff', sat: 1.08, vig: 0.18, shadowExt: 6, noClouds: true };
 export const LIGHTS = {
@@ -63,7 +72,7 @@ const cam30 = (u) => {
     case 'loop': { const k = E.smooth(ramp(u, 1196, 1256)); c = { pos: lerp3([X1 + 0.4, 2.45, 1.7], MACRO0(0).pos, k), look: lerp3([X1, 2.62, -1.55], MACRO0(0).look, k), fov: 40 }; break; }
   }
   // whip-pans out of / into shots
-  const wi = WHIPS.indexOf(S.b + 1), wo = WHIPS.indexOf(S.a);
+  const wi = RT.has(S.b + 1) ? -1 : WHIPS.indexOf(S.b + 1), wo = RT.has(S.a) ? -1 : WHIPS.indexOf(S.a);
   if (wi >= 0 && u > S.b - 7) c.look = yawLook(c.pos, c.look, (wi % 2 ? -55 : 55) * E.easeIn(ramp(u, S.b - 7, S.b + 1)));
   if (wo >= 0 && u < S.a + 9) c.look = yawLook(c.pos, c.look, -(wo % 2 ? -55 : 55) * (1 - E.easeOut(ramp(u, S.a, S.a + 9))));
   c.shadowAt = c.look; return c;

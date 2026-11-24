@@ -9,13 +9,15 @@
   },
   "private": true,
   "dependencies": {
-    "@remotion/captions": "^4.0.546",
+    "@paper-design/shaders-react": "^0.0.82",
+    "@remotion/captions": "4.0.546",
     "@remotion/cli": "4.0.546",
-    "@remotion/fonts": "^4.0.546",
-    "@remotion/google-fonts": "^4.0.546",
+    "@remotion/fonts": "4.0.546",
+    "@remotion/google-fonts": "4.0.546",
+    "@remotion/transitions": "4.0.546",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "remotion": "^4.0.546"
+    "remotion": "4.0.546"
   },
   "devDependencies": {
     "@remotion/eslint-config-flat": "4.0.546",

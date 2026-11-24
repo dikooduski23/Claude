@@ -1,4 +1,5 @@
 // usage: node render.mjs <outdir> <frames: "a-b" or "1,2,3"> [step] [quality]
+// env SHOT=<id> forces one shot (handle frames for Remocn transitions, see episode.py)
 import { chromium } from 'playwright'; import http from 'http'; import fs from 'fs'; import path from 'path';
 const [,, outdir, spec, step = '1', qual = '0.96'] = process.argv;
 fs.mkdirSync(outdir, { recursive: true });
@@ -16,7 +17,7 @@ if (await pg.evaluate(() => window.err)) { console.log('page error'); process.ex
 const t0 = Date.now();
 for (const f of frames) {
   if (process.env.RESUME && fs.existsSync(path.join(outdir, `f${String(f).padStart(4, '0')}.jpg`))) continue;
-  const d = await pg.evaluate(([f, q]) => { if (window.location.hash==="#nd") window.DEBUG_ND=1; if (window.location.hash==="#e") window.DEBUG_E=1; if (window.location.hash==="#raw") window.NOOV=1; window.renderFrame(f); return (window.NOOV ? document.getElementById('c') : (document.getElementById('o')||document.getElementById('c'))).toDataURL('image/jpeg', q); }, [f, +qual]);
+  const d = await pg.evaluate(([f, q, shot]) => { window.DZ_SHOT = shot || null; if (window.location.hash==="#nd") window.DEBUG_ND=1; if (window.location.hash==="#e") window.DEBUG_E=1; if (window.location.hash==="#raw") window.NOOV=1; window.renderFrame(f); return (window.NOOV ? document.getElementById('c') : (document.getElementById('o')||document.getElementById('c'))).toDataURL('image/jpeg', q); }, [f, +qual, process.env.SHOT || '']);
   fs.writeFileSync(path.join(outdir, `f${String(f).padStart(4, '0')}.jpg`), Buffer.from(d.split(',')[1], 'base64'));
   if (process.env.NOCAPDIR) { const d2 = await pg.evaluate(([f, q]) => { window.NOCAP = 1; window.overlay(f); window.NOCAP = 0; return document.getElementById('o').toDataURL('image/jpeg', q); }, [f, +qual]);
     fs.mkdirSync(process.env.NOCAPDIR, { recursive: true }); fs.writeFileSync(path.join(process.env.NOCAPDIR, `f${String(f).padStart(4, '0')}.jpg`), Buffer.from(d2.split(',')[1], 'base64')); }

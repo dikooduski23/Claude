@@ -19,7 +19,14 @@ Current style: the **reference style**, from 9 reels Diyar sent on Nov 23 2026. 
 - **Always moving:** push-ins, slow arcs/orbits, the camera **following the object** (a rolling bomb, a poured cup, a falling ticket), **POV** shots (sights, scope), low angles, top-down reveals, over-the-shoulder foreground props.
 - **Close/medium framing:** the face about half the frame height, the full head in frame, faces above the caption line.
 - **A new angle every ~1.3-3 s.**
-- **Whip-pans** (fast ~55° yaw over ~8 units at 30 fps, alternating direction) are the main transition, blurred in post with `tmix=frames=7`. Use hard cuts rarely.
+- **Transitions are Remocn** (set in `TRANSITIONS` in `story.js`, rendered by `episode.py`). Each one has a job:
+  - `whip-pan` (26 f @30, direction alternating left/right) is the main cut between beats.
+  - `lens-zoom` (28 f, no shake) for the shock or punchline beat: the twist, the big number.
+  - `push-through` (40 f) going *into* the mechanism cutaway on "You see,".
+  - `light-leak` (20 f, warm) for "years later", a flashback or a time jump.
+  - `iris-wipe` (36 f, centred on the face) for an old-cartoon close on a reaction, at most once.
+  - `warp-dissolve` (76 f) only for a long time-skip; it fully covers the frame.
+  - Most cuts should be `whip-pan`; use the others once each at most. Use hard cuts rarely. (The old 3D whip, a ~55° yaw blurred with `tmix=frames=7`, is still the fallback for cuts not in `TRANSITIONS`.)
 - Never shake, punch-in zoom or handheld sway.
 - **Depth of field:** close-ups cinf ~11-13, macro ~30+.
 
