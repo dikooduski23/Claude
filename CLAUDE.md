@@ -15,6 +15,7 @@ This repo holds the whole Doc Zap production system. When Diyar says **"let's cr
 3. **Voice:** ElevenLabs **Patrick** on **Eleven v4** (Diyar switched from v3 on Nov 23 2026). Write the script so it paces well without tags: ellipses, short sentences, line breaks. Add [curious]/[deadpan]/[whispers]-style tags only once Diyar confirms v4 reads them; otherwise send a tag-free script. Numbers written as words. Diyar makes the MP3 and sends it.
 4. **Length 30-45 s.**
 5. **Output:** native **1080×1920 at 60 fps**, H.264, audio at **-14 LUFS**. **Captions version only.**
+   **Voice first:** music and ambience sit **about 20 dB under the voice** while Patrick speaks (duck under speech, dip 1–4 kHz in the bed). Diyar said the Ice King music drowned the voice (Nov 24 2026).
 6. No episode number, watermark, username, progress bar or border on screen. Only essential in-world labels.
 7. Props must be physically right: hands grip tools, nothing floats, glass looks like glass.
 8. **QC frames before and after** the final render (contact sheets of stills, then frames from the finished MP4).

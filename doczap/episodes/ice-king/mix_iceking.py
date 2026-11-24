@@ -67,8 +67,17 @@ coin = (np.sin(2 * np.pi * 2093 * T(0.5)) + np.sin(2 * np.pi * 2637 * T(0.5))) *
 fan = sum(pluck(m, 1.4, 0.3) for m in [67, 71, 74, 79]); add(fan, F(1895), 0.8); add(fan, F(1895) + 0.45, 0.6)
 # ---------------- voice on top, bed ducked under speech ----------------
 vv = np.zeros(n); vv[:min(n, len(v))] = v[:n]
-envv = np.convolve(np.abs(vv), np.ones(2205) / 2205, 'same'); duck = 1 - 0.45 * np.clip(envv / (envv.max() * 0.25), 0, 1)
-L *= duck; R *= duck; L += vv; R += vv
+# carve the voice band (1-4 kHz) out of the bed so words cut through
+def dip(x): return x - 0.6 * bp(x, 1000, 4000)
+L = dip(L); R = dip(R)
+envv = np.convolve(np.abs(vv), np.ones(2205) / 2205, 'same'); sp = np.clip(envv / (envv.max() * 0.2), 0, 1)
+duck = 1 - 0.7 * sp; L *= duck; R *= duck
+# set the bed level: BED_DB below the voice while he speaks (rule: 20 dB+)
+BED_DB = 22
+rms = lambda x: np.sqrt(np.mean(x ** 2)) + 1e-9
+mask = sp > 0.5; g = rms(vv[mask]) / rms(((L + R) / 2)[mask]) * 10 ** (-BED_DB / 20)
+L *= g; R *= g; L += vv; R += vv
+print('bed gain', round(float(g), 3))
 m = np.stack([L, R], 1); m /= max(1e-6, np.abs(m).max()) / 0.89
 with wave.open('final_mix.wav', 'w') as w: w.setnchannels(2); w.setsampwidth(2); w.setframerate(SR); w.writeframes((m * 32767).astype('<i2').tobytes())
 print('ok final_mix.wav', DUR)
