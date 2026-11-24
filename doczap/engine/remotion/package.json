@@ -2,13 +2,19 @@
   "name": "doczap-remotion",
   "private": true,
   "type": "module",
-  "scripts": { "render": "remotion render src/index.ts Episode" },
-  "dependencies": {
-    "remotion": "4.0.546",
-    "@remotion/cli": "4.0.546",
-    "@remotion/captions": "4.0.546",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+  "scripts": {
+    "render": "remotion render src/index.ts Episode"
   },
-  "devDependencies": { "typescript": "5.6.3", "@types/react": "19.1.2" }
+  "dependencies": {
+    "@remotion/captions": "4.0.546",
+    "@remotion/cli": "4.0.546",
+    "@remotion/transitions": "^4.0.546",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.546"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.2",
+    "typescript": "5.6.3"
+  }
 }
