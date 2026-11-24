@@ -41,7 +41,7 @@ Work in `doczap/work/<slug>/`: `cp -r doczap/engine doczap/work/<slug>`, run `np
 5. **Full render:** `HASH="#raw" RESUME=1 node render.mjs plates a-b`, as 2-3 parallel ranges in the background. If a process gets killed, restart with RESUME and validate the newest jpgs with PIL. Comma lists work (`693-1256,1374-1471`).
 6. **Captions:** `python3 caps.py` (set END and add number merges). **Labels:** `python3 labels.py` (set positions from a plate). Add the whip windows in `compose.py`.
 7. **Audio:** edit the SFX section of `audio/mix.py` for the new shot times (whooshes on whips, an SFX per action, music dips) and run it. It writes `final_mix.wav` at -14 LUFS.
-8. **Compose:** `python3 compose.py out/DocZap_<Name>_1080x1920.mp4`. Then check 2514-ish frames at 60 fps, the LUFS, and a frame strip.
+8. **Compose with Remotion + remocn** (Diyar's rule since Nov 24 2026): `bash ../../engine/finish_remotion.sh out/DocZap_<Name>_1080x1920.mp4 <whips> 0.85` (base.mp4 with glow, whip blur and audio, then remocn captions; see ENGINE.md §8). Old ffmpeg way, now a fallback only: `python3 compose.py out/DocZap_<Name>_1080x1920.mp4`. Then check 2514-ish frames at 60 fps, the LUFS, and a frame strip.
 9. **Cover:** `python3 cover.py plates/fNNNN.jpg out/DocZap_<Name>_cover.jpg <y0>`, using a frame where the face is clean, with the text off the face.
 10. **Post .md:** title, caption with a share ask, pinned comment with a save ask, YouTube description, tags and sources.
 11. **Deliver** the MP4, cover and post.md to Diyar. Copy the script, story.js, words.json and post.md into `doczap/episodes/<slug>/` and commit. Delete `doczap/work/<slug>/plates`.

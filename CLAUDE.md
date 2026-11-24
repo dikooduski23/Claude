@@ -36,6 +36,7 @@ See `doczap/docs/STYLE.md` for the full rules. In short:
   - `render.mjs`: renders frames with headless Chromium (playwright).
   - `caps.py` makes captions, `labels.py` handwritten labels, `compose.py` the final video, `cover.py` the cover, `audio/mix.py` the SFX and music mix.
   - `web/kit/`: the **world kit** (textured materials, props, flickering torch/candle light, window beams, lighting presets, glass, cross-sections, handwritten labels, emotes). Episodes build sets with `export const sets = (K) => …` in story.js. **Read `doczap/docs/ENGINE.md` before building sets or characters**; `web/demo_story.js` is a working example.
+  - `remotion/` + `finish_remotion.sh` + `remocn_add.py`: the **final edit is done in Remotion with remocn components** (animated captions on top of the rendered plates). Diyar asked for remocn on every episode; see ENGINE.md §8.
 - `doczap/tools/`: `trim_pauses.py`, `align_ps.py` (word timing), `audio_lib.py` (sound effects and music synth).
 - `doczap/episodes/<slug>/`: what to keep from each finished episode (script, story.js, words.json, post.md).
 - `doczap/work/<slug>/`: scratch working copy for an episode (gitignored; frames are big).

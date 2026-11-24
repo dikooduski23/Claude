@@ -144,3 +144,12 @@ They render in **Caveat 700**, white with a dark outline and a soft shadow, afte
 - Point-light shadows are expensive, so keep to 1–2 per shot.
 - `K.section` caps need watertight meshes. Open meshes are clipped without a clean cap.
 - Glass in the depth pass is rim-only, so depth-of-field focus on glass uses its rim depth.
+
+## 8. Final edit in Remotion with remocn (Nov 24 2026; Diyar asked for remocn)
+Captions are no longer burned in with ffmpeg. The plates become `base.mp4` (whip blur, glossy glow and audio, with no captions), and a **Remotion** project (`engine/remotion/`) lays **remocn** components on top.
+- **remocn** (https://github.com/Remocn/remocn, MIT) is a shadcn-style registry of more than 900 Remotion components. `remocn.dev` is blocked on some machines, so install components from raw GitHub with `python3 remocn_add.py <name> ...`. It resolves registry dependencies and writes the files to `remotion/src/components/remocn` and `remotion/src/lib/remocn`, just like `npx shadcn add @remocn/<name>`.
+- Installed so far: `caption-word-pop` (used), `caption-outline`, `caption-bounce-in`, `caption-stamp` and their libs (`caption-core`, `glide`, `frame-rate`). Other fits for later: `marker-highlight` and `inline-highlight` (keyword emphasis), `whip-pan` and `zoom-blur` (transitions between separately rendered plates), `typewriter`.
+- `remotion/src/Episode.tsx`: `OffthreadVideo` of `public/base.mp4` plus `CaptionWordPop` (one word at a time, springing in as it's spoken; Poppins Bold, white with a 6 px dark stroke, centred at y≈1342). The captions come from the episode's `words.json`.
+- **One command** from the episode work folder: `bash ../../engine/finish_remotion.sh out/DocZap_<Name>_1080x1920.mp4 <whip frames> 0.85`.
+- Setup: `cd engine/remotion && npm install`. It uses the machine's headless Chrome (`/opt/pw-browsers/...`) when present.
+- Respect remocn's craft rules where they don't conflict with STYLE.md: no gradient text, one accent colour, no `Math.random()`, and sequences are never shorter than a component's length.
