@@ -2,19 +2,19 @@
 
 **Story:** Frederic Tudor, Boston, 1806. He filled a ship with ice and sent it to the tropics. The newspapers laughed, nobody bought the ice, and he went broke and landed in debtors' prison. Then he packed the ice in sawdust that lumber mills were throwing away. It kept the ice frozen, and he became "the Ice King."
 
-## Script (ElevenLabs Patrick, Eleven v3), about 95 words, 35-40 s
+## Script (ElevenLabs Patrick, Eleven v4), about 95 words, 35-40 s
 
 ```
-[curious] In eighteen-oh-six, this man filled a ship with ice... and sent it to the Caribbean.
-[deadpan] The Boston Gazette wrote: "We hope this will not prove a slippery speculation."
-But nobody there wanted ice. It melted in the sun.
-He lost thousands... and was thrown in debtors' prison.
-[whispers] So why didn't he quit?
-You see, [curious] lumber mills were throwing away a mountain of trash: sawdust.
-He packed his ice in it. Sawdust traps air, and air keeps the heat out.
-[excited] Suddenly, his ice survived the trip.
-By eighteen thirty-three, he was shipping ice all the way to India.
-[deadpan] The man everyone laughed at became the Ice King. All because...
+[curious, leaning in] In eighteen-oh-six, this man filled a ship with ice... and sent it to the Caribbean.
+[deadpan, reading a newspaper] The Boston Gazette wrote: "We hope this will not prove a slippery speculation."
+[matter-of-fact] But nobody there wanted ice. [sighs] It melted in the sun.
+[grim] He lost thousands... and was thrown in debtors' prison.
+[whispering, sly] So why didn't he quit?
+[curious] You see, lumber mills were throwing away a mountain of trash: [amused] sawdust.
+[explaining, confident] He packed his ice in it. Sawdust traps air, and air keeps the heat out.
+[excited, building] Suddenly, his ice survived the trip.
+[proud] By eighteen thirty-three, he was shipping ice all the way to India.
+[deadpan, ironic] The man everyone laughed at became the Ice King. [short pause] All because...
 ```
 The last line ("All because...") flows straight back into line 1, so the video loops. There's no comment ask.
 
