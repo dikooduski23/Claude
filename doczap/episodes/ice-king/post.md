@@ -3,13 +3,15 @@
 **Post at:** 11 AM or 6 PM Baghdad time (UTC+3).
 
 ## Title (YouTube Shorts)
-How Sawdust Made Him the Ice King 🧊
+He Shipped Ice to the Caribbean in 1806 🧊
+
+**Cover text:** "THEY LAUGHED…" (the cover is updated to match)
 
 Alternatives:
-- They Laughed When He Shipped Ice to the Tropics
-- He Shipped Ice to the Caribbean in 1806 🧊 (repeats the cover text, so second choice)
+- In 1806, He Sold Ice to the Tropics
+- How Sawdust Made Him the Ice King (scored 62: no number)
 
-Title check (youtube-agent /yt-package rules, checked by hand because its scoring tool didn't run): 33 characters (under the 40-character mobile cut ✅), has a name ("Ice King") ✅, no all-caps words ✅, doesn't repeat the cover, which carries the 1806 date ✅.
+Title check (youtube-agent `title.py`): **100/100**. 39 characters, inside the mobile cut ✅ · carries a concrete figure (1806) ✅ · cover doesn't repeat the title ✅ · cover is 2 words (3 at most) ✅
 
 ## Caption (Instagram / TikTok / Facebook)
 1806: he filled a ship with ice and sailed it to the Caribbean 🧊🌴

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git clone --depth 1 https://github.com/Jakeschincariol/youtube-agent-skill doczap/work/yas)",
+      "Bash(python3 -I doczap/work/yas/skills/yt-package/title.py *)",
+      "Bash(python3 -I doczap/work/yas/skills/yt-script/hookscore.py *)"
+    ]
+  }
+}
