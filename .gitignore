@@ -8,3 +8,4 @@ node_modules/
 *.mp3
 __pycache__/
 doczap/work/
+graphify-out/
