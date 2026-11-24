@@ -28,7 +28,7 @@ Share this with the friend who never gives up 👇
 Caption check (ig-caption `caption.py`): **READY**, 9/9 PASS. First line 77 characters, lands whole · 4 names or numbers in the visible window · 5 specific hashtags · one ask ("share this") · 3/3 search terms, "Frederic Tudor" visible before "... more" · no links · emoji density OK
 
 ## Pinned comment
-What "crazy" idea today do you think will be normal in 100 years? 🧊👑
+Be honest: in 1806, would you have bought Tudor's ice? 🧊 Yes or no?
 
 ## YouTube description
 In 1806, Frederic Tudor of Boston sent a ship full of ice to Martinique. The Boston Gazette joked, "We hope this will not prove a slippery speculation." Nobody wanted it, it melted, and he lost thousands and landed in debtors' prison. His fix was sawdust, the waste lumber mills threw away. It traps air, and air keeps the heat out. By 1833 he was shipping ice all the way to Calcutta, India, and the world called him the Ice King.
