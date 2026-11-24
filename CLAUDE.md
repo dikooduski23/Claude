@@ -18,7 +18,7 @@ This repo holds the whole Doc Zap production system. When Diyar says **"let's cr
 6. No episode number, watermark, username, progress bar or border on screen. Only essential in-world labels.
 7. Props must be physically right: hands grip tools, nothing floats, glass looks like glass.
 8. **QC frames before and after** the final render (contact sheets of stills, then frames from the finished MP4).
-9. When Diyar sends reference reels, study them, write the lessons into `doczap/docs/STYLE.md` and apply them.
+9. When Diyar sends reference reels, study them (the `video-understand` skill extracts key frames), write the lessons into `doczap/docs/STYLE.md` and apply them.
 
 ## The style (copied from 9 reference reels, Nov 23 2026: Rick's Clips + Segment Zero)
 See `doczap/docs/STYLE.md` for the full rules. In short:
@@ -36,6 +36,7 @@ See `doczap/docs/STYLE.md` for the full rules. In short:
   - `render.mjs`: renders frames with headless Chromium (playwright).
   - `caps.py` makes captions, `labels.py` handwritten labels, `overlay.py` renders them as a transparent layer, `episode.py` cuts the plates together with Remocn transitions (+ the overlay), `compose.py` the final video, `cover.py` the cover, `audio/mix.py` the SFX and music mix.
   - `remotion/`: the **Remocn** overlay (Remotion project). `src/doczap/Overlay.tsx` builds captions from `caption-active-pop` and labels from `handwrite` + `ink-arrow` (+ `scribble-circle`). Components live in `src/components/remocn/` (we own and may edit them). Add more with `NODE_USE_ENV_PROXY=1 node scripts/remocn-add.mjs <name>`; the catalog is at https://remocn.dev/llms-components.txt. Fonts are bundled in `public/fonts`, so renders need no network. `src/doczap/Episode.tsx` splices the plates with Remocn transitions (`whip-pan`, `lens-zoom`, `push-through`, `light-leak`, `warp-dissolve`, `iris-wipe`), listed per episode in `TRANSITIONS` in `story.js`. Use Remocn for the 2D layer and the cuts only; the 3D worlds and characters stay in three.js.
+- `.claude/skills/`: `doczap-next-video` plus helper skills taken from OpenMontage (AGPL-3.0: `video-understand`, `ffmpeg`, `remotion-best-practices`, `threejs-*`). `doczap/docs/reference/` holds Nate Herk's editing playbook and motion philosophy (MIT). openfilm was reviewed and not merged: it is a separate video engine (films as web pages).
 - `doczap/tools/`: `trim_pauses.py`, `align_ps.py` (word timing), `audio_lib.py` (sound effects and music synth).
 - `doczap/episodes/<slug>/`: what to keep from each finished episode (script, story.js, words.json, post.md).
 - `doczap/work/<slug>/`: scratch working copy for an episode (gitignored; frames are big).

@@ -49,3 +49,10 @@ Work in `doczap/work/<slug>/`: `cp -r doczap/engine doczap/work/<slug>`, run `np
 9. **Cover:** `python3 cover.py plates/fNNNN.jpg out/DocZap_<Name>_cover.jpg <y0>`, using a frame where the face is clean, with the text off the face.
 10. **Post .md:** title, caption with a share ask, pinned comment with a save ask, YouTube description, tags and sources.
 11. **Deliver** the MP4, cover and post.md to Diyar. Copy the script, story.js, words.json and post.md into `doczap/episodes/<slug>/` and commit. Delete `doczap/work/<slug>/plates`.
+
+## Helper skills (use them at these steps)
+- **Reference reels (rule 9):** `video-understand` pulls key frames (and a transcript if Whisper is installed) from a reel Diyar sends; study the frames, then write the lessons into STYLE.md.
+- **Sets, light and look (Phase 2 step 2):** `threejs-lighting`, `threejs-materials`, `threejs-textures`, `threejs-postprocessing` (bloom, depth of field) and `threejs-animation` for building the worlds in `web/main.js`.
+- **Remocn layer (steps 3 and 6):** `remotion-best-practices` for anything in `doczap/engine/remotion` (Episode.tsx, Overlay.tsx).
+- **Audio/video plumbing (steps 1, 7, 8):** `ffmpeg`.
+- **Editing judgement:** `doczap/docs/reference/herk-editing-playbook.md` (caption, B-roll and sound rules from Nate Herk's kit) and `herk-motion-philosophy.md` (motion design principles). Where they disagree with STYLE.md, STYLE.md wins.
