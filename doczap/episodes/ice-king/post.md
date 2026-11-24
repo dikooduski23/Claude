@@ -3,23 +3,29 @@
 **Post at:** 11 AM or 6 PM Baghdad time (UTC+3).
 
 ## Title (YouTube Shorts)
-He Shipped Ice to the Caribbean in 1806 🧊
+How Sawdust Made Him the Ice King 🧊
 
 Alternatives:
-- They Laughed at the Man Who Sold Ice to the Tropics
-- How Trash Made This Man the Ice King
+- They Laughed When He Shipped Ice to the Tropics
+- He Shipped Ice to the Caribbean in 1806 🧊 (repeats the cover text, so second choice)
+
+Title check (youtube-agent /yt-package rules, checked by hand because its scoring tool didn't run): 33 characters (under the 40-character mobile cut ✅), has a name ("Ice King") ✅, no all-caps words ✅, doesn't repeat the cover, which carries the 1806 date ✅.
 
 ## Caption (Instagram / TikTok / Facebook)
 1806: he filled a ship with ice and sailed it to the Caribbean 🧊🌴
+
 It melted. He went broke. He went to prison.
-Then he found the answer in a pile of trash… 🪵
+
+Then Frederic Tudor found the answer in a pile of trash 🪵 and became the Ice King. A true story from the history of ice.
 
 Send this to the friend who never gives up 👇
 
-#history #icecream #truestory #weirdhistory #entrepreneur #historyfacts #doczap #iceking
+#history #truestory #weirdhistory #historyfacts #iceking
+
+Caption check (ig-caption): visible line 66 of ~125 characters, not opening with a greeting, hashtag or emoji ✅ · one ask ✅ · 5 hashtags, none generic ✅ (cut #icecream as off-topic, plus #entrepreneur and #doczap) · search phrases "Frederic Tudor", "Ice King" and "history of ice" in plain words ✅ · no link ✅ · emoji density OK ✅
 
 ## Pinned comment
-Save this for the day someone laughs at your idea 🧊👑 What "crazy" idea do you think will be normal in 100 years?
+What "crazy" idea today do you think will be normal in 100 years? 🧊👑
 
 ## YouTube description
 In 1806, Frederic Tudor of Boston sent a ship full of ice to Martinique. The Boston Gazette joked, "We hope this will not prove a slippery speculation." Nobody wanted it, it melted, and he lost thousands and landed in debtors' prison. His fix was sawdust, the waste lumber mills threw away. It traps air, and air keeps the heat out. By 1833 he was shipping ice all the way to Calcutta, India, and the world called him the Ice King.

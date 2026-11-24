@@ -17,6 +17,9 @@ Read `CLAUDE.md` and `doczap/docs/STYLE.md` first and follow every rule in them.
    - the last line flows back into line 1;
    - no comment CTA.
 4. **Virality check:** score Hook /25, Value /20, Emotion /20, Platform fit /15, Shareability /10, Trend /10. It must total **> 90**; rework the script until it does.
+   - **Hook (ig-reel skill):** before the full script, write **3 hooks from 3 different ig-reel formulas** (for Doc Zap, #21 Mid-Sentence Start, #25 Someone Else's Result, #22 Contrarian Flip and #15 Flop Record fit best). Score each 0-100 on ig-reel's 5 checks: under 3 s, concrete marker, stakes, payload first, aimed at a viewer. Keep the winner; it must score **70+**. Then time the beat sheet at ~165 wpm: no beat over 4 s.
+   - **Second opinion (virality-predictor + ig-viral):** score the script with the `virality-predictor` skill for TikTok and Instagram. Run ig-viral's 8-line **pre-build virality check** (hook, evidence, one idea, specificity, payoff and loop, shareability, retention design, fresh angle). Fix the weakest two lines. Show all three scores side by side in the .md, and be honest: none of these predicts views.
+   - **Doc Zap rules win** over these skills where they clash: no "comment/follow" ask inside the video (the ask goes in the caption), the last line loops back into line 1, and nothing is invented as history.
 5. **Send Diyar** a .md with the script, the score table, the fact check and the sources. Ask only for the MP3.
 
 ## Phase 2: after he sends the voiceover
@@ -43,5 +46,9 @@ Work in `doczap/work/<slug>/`: `cp -r doczap/engine doczap/work/<slug>`, run `np
 7. **Audio:** edit the SFX section of `audio/mix.py` for the new shot times (whooshes on whips, an SFX per action, music dips) and run it. It writes `final_mix.wav` at -14 LUFS. **Keep the voice on top:** end the mix with the voice-first block from `episodes/ice-king/mix_iceking.py` (1–4 kHz dip in the bed, 70% duck under speech, `BED_DB = 22` auto-sets the bed about 20 dB under the voice; SFX go on their own bus, low-passed at 5 kHz, ducked under speech, `SFX_PEAK = 0.16`).
 8. **Compose with Remotion + remocn** (Diyar's rule since Nov 24 2026): `bash ../../engine/finish_remotion.sh out/DocZap_<Name>_1080x1920.mp4 0.85` (base.mp4 with glow and audio, then remocn transitions from story.js `TRANSITIONS` and remocn captions; render the plates with hard cuts; see ENGINE.md §8). Old ffmpeg way, now a fallback only: `python3 compose.py out/DocZap_<Name>_1080x1920.mp4`. Then check 2514-ish frames at 60 fps, the LUFS, and a frame strip.
 9. **Cover:** `python3 cover.py plates/fNNNN.jpg out/DocZap_<Name>_cover.jpg <y0>`, using a frame where the face is clean, with the text off the face.
-10. **Post .md:** title, caption with a share ask, pinned comment with a save ask, YouTube description, tags and sources.
+10. **Post .md:** title, caption, pinned comment, YouTube description, tags and sources.
+   - **Caption (ig-caption skill):** the video carries the hook (ig-caption's job A), so line 1 (under ~125 characters) gives context, not a second hook. Exactly **one ask** (a send/share ask), **at most 5 specific hashtags** (never #fyp/#viral/#explorepage), and 2-3 search phrases written as plain words (the person's name, the story's name). No link. Put ig-caption's lint receipt (PASS/WARN/FAIL) under the caption.
+   - **Title (youtube-agent /yt-package rules):** write several titles and pick one that is **40 characters or fewer** (mobile cut), has a number, name or date, uses at most 2 all-caps words, and **doesn't repeat the cover text**. If youtube-agent's `title.py` can't run (third-party code may be blocked here), apply the rules by hand and say so.
+   - **Description (youtube-agent /yt-seo):** the first two lines are what people would search for; at most 15 tags.
+   - **Pinned comment:** one real question people will want to answer.
 11. **Deliver** the MP4, cover and post.md to Diyar. Copy the script, story.js, words.json and post.md into `doczap/episodes/<slug>/` and commit. Delete `doczap/work/<slug>/plates`.
