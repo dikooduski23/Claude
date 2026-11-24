@@ -40,7 +40,8 @@ for a, b in [(F(555), F(760)), (F(1560), F(1700))]: seg(a, b, waves, 0.1)
 seg(F(1700), F(1895), crowd, 0.08); seg(F(1560), F(1700), crowd, 0.07)
 saw = lambda m: (np.sin(2 * np.pi * 1450 * np.arange(m) / SR + 3 * np.sin(2 * np.pi * 6 * np.arange(m) / SR)) * 0.3 + hp(rng.standard_normal(m), 3000) * 0.4) * (0.5 + 0.5 * np.sin(2 * np.pi * np.arange(m) / SR / 2.4) ** 2)
 seg(F(1050), F(1310), saw, 0.05)
-# ---------------- SFX ----------------
+# ---------------- SFX (own bus, so its level is set separately) ----------------
+BL, BR = L.copy(), R.copy(); L[:] = 0; R[:] = 0
 whoosh = lambda d=0.45: bp(rng.standard_normal(int(d * SR)), 300, 3500) * np.sin(np.linspace(0, np.pi, int(d * SR))) ** 2
 boom = lambda: (np.sin(2 * np.pi * (70 - 30 * T(0.7)) * T(0.7)) * np.exp(-T(0.7) * 5) + lp(rng.standard_normal(int(0.7 * SR)), 300) * np.exp(-T(0.7) * 8) * 0.6)
 for i, (c, kind) in enumerate([(160, 'w'), (305, 'w'), (555, 'w'), (760, 'z'), (1050, 'w'), (1310, 'f'), (1560, 'w'), (1700, 'w'), (1895, 'z'), (2040, 'w')]):
@@ -65,6 +66,7 @@ cheer = lambda d: bp(rng.standard_normal(int(d * SR)), 400, 3000) * np.sin(np.li
 add(cheer(1.8), 26.3, 0.22); add(cheer(2.2), 28.5, 0.2)
 coin = (np.sin(2 * np.pi * 2093 * T(0.5)) + np.sin(2 * np.pi * 2637 * T(0.5))) * np.exp(-T(0.5) * 6) * 0.3; add(coin, F(1930), 0.5)
 fan = sum(pluck(m, 1.4, 0.3) for m in [67, 71, 74, 79]); add(fan, F(1895), 0.8); add(fan, F(1895) + 0.45, 0.6)
+FXL, FXR = L.copy(), R.copy(); L, R = BL, BR
 # ---------------- voice on top, bed ducked under speech ----------------
 vv = np.zeros(n); vv[:min(n, len(v))] = v[:n]
 # carve the voice band (1-4 kHz) out of the bed so words cut through
@@ -76,7 +78,13 @@ duck = 1 - 0.7 * sp; L *= duck; R *= duck
 BED_DB = 22
 rms = lambda x: np.sqrt(np.mean(x ** 2)) + 1e-9
 mask = sp > 0.5; g = rms(vv[mask]) / rms(((L + R) / 2)[mask]) * 10 ** (-BED_DB / 20)
-L *= g; R *= g; L += vv; R += vv
+L *= g; R *= g
+# SFX bus: soften hiss (low-pass 5 kHz), duck 50% under speech, peaks capped at SFX_PEAK x voice peak
+FXL = lp(FXL, 5000) * (1 - 0.5 * sp); FXR = lp(FXR, 5000) * (1 - 0.5 * sp)
+SFX_PEAK = 0.16
+gs = SFX_PEAK * np.abs(vv).max() / max(1e-9, np.abs(np.stack([FXL, FXR])).max())
+L += FXL * gs + vv; R += FXR * gs + vv
+print('sfx gain', round(float(gs), 3))
 print('bed gain', round(float(g), 3))
 m = np.stack([L, R], 1); m /= max(1e-6, np.abs(m).max()) / 0.89
 with wave.open('final_mix.wav', 'w') as w: w.setnchannels(2); w.setsampwidth(2); w.setframerate(SR); w.writeframes((m * 32767).astype('<i2').tobytes())
