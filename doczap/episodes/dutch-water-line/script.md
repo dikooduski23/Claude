@@ -5,27 +5,56 @@
 **Length:** about 108 words, roughly 38–42 s with Patrick on Eleven v4.
 **Edit:** 3D plates from our engine, finished in **Remotion with remocn components** (animated captions and text beats). The handwritten labels, whip-pans and glossy glow stay the same.
 
-## Script (ElevenLabs Patrick, Eleven v4; tag-free)
+## Script v2 (ElevenLabs Patrick, Eleven v4; tag-free), rewritten Nov 24 with the agent skills
 
-In sixteen seventy-two, the Dutch flooded their own country... on purpose.
+**Use this version for the MP3** (v1 is no longer used). 112 words, about 38–41 s.
 
-The biggest army in Europe was marching in. The Dutch army was tiny.
+Imagine drowning your country... to stop France's army.
 
-So they opened the dikes... and let the water pour over their own farms.
+In sixteen seventy-two, Europe's biggest army marched on Holland.
 
-It looked useless. The water was only knee-deep. Any soldier could just walk through it.
+The Dutch army was tiny.
+
+So they opened the dikes... and flooded their own farms.
+
+It looked useless. The water was only knee-deep.
+
+Any French soldier could just wade right through it.
 
 But they couldn't.
 
-You see, it was too deep to march through... and too shallow for boats.
+You see, it was too deep to march through...
 
-And under the surface, the water hid ditches and canals. One wrong step... and a soldier vanished.
+and too shallow for French boats.
 
-Cannons sank. Horses panicked. The greatest army in Europe... stopped by a puddle.
+And under the water hid ditches and canals.
 
-For centuries, the Dutch fought to keep the sea out. Then they saved their country by letting it in... in sixteen seventy-two.
+One wrong step... and a soldier vanished.
 
-*(Cut the voice right after "in sixteen seventy-two"; the video loops straight back into line 1.)*
+Cannons sank. Horses panicked.
+
+Europe's biggest army... stopped by a puddle.
+
+For centuries, the Dutch fought to keep the sea out.
+
+Then they saved their country... by letting it in.
+
+*(Cut the voice right after "by letting it in."; the video loops straight back to "Imagine drowning your country...")*
+
+### Hook options (ig-reel `hookscore.py`)
+| Score | Hook |
+|---|---|
+| **77.8 STRONG** ✅ | Imagine drowning your country... to stop France's army. |
+| 62.6 OK | To stop France's army, the Dutch drowned their own country. |
+| 49.6 WEAK | In sixteen seventy-two, the Dutch drowned their own farms to stop an army. |
+| 40.8 WEAK | The Dutch stopped the biggest army in Europe... with a puddle. |
+| 37.8 WEAK | In sixteen seventy-two, the Dutch flooded their own country... on purpose. (v1) |
+
+### What the tools changed from v1
+- **Hook:** v1's opening scored 37.8 (no stakes, nothing aimed at the viewer). The new one speaks to "you", names France and runs 8 words.
+- **Beats:** v1 had five lines over 4 seconds; v2 has none (`beats.py`: all flags clear, 40.7 s against a 38 s target).
+- **Specificity:** "French" added where three beats in a row had nothing concrete.
+- **Human check** (`ig-human detect.py`): 62.4 (it marks the short, punchy spoken lines as "REVIEW", which is expected for a voice script).
 
 ### Beat map
 | Time (approx.) | Beat | Picture |
@@ -43,13 +72,15 @@ For centuries, the Dutch fought to keep the sea out. Then they saved their count
 ## Virality check
 | Category | Score | Why |
 |---|---|---|
-| Hook | 23 / 25 | Absurd and self-destructive act in the first line ("flooded their own country... on purpose") |
+| Hook | 24 / 25 | Speaks to the viewer and names the absurd act in 8 words; hookscore 77.8 STRONG |
 | Value | 19 / 20 | A real, clever mechanism (too deep to march, too shallow to sail, hidden ditches) most people have never heard |
 | Emotion | 18 / 20 | Underdog stakes, "that's stupid" doubt, the twist, then an ironic payoff |
 | Platform fit | 14 / 15 | Big visuals (bursting dikes, a stuck army, a vanishing soldier), a clean cutaway, about 40 s, loops |
 | Shareability | 9 / 10 | "Send to a friend": the ultimate defensive life hack |
 | Trend | 8 / 10 | "Genius war tactics" and history-hack reels are performing well right now |
-| **Total** | **91 / 100** | Passes (needs more than 90) |
+| **Total** | **92 / 100** | Passes (needs more than 90) |
+
+**Second opinions:** virality-predictor (TikTok + Instagram, same 6 categories) **88 / 100**; ig-viral 8-line pre-build check **8.4 / 10** (weakest: *evidence*, since there's no swipe file yet, and *fresh angle*, since war-tactics reels are common; fixed by leading with the self-flooding twist instead of the war). None of these predicts views.
 
 ## Fact check
 | Claim in the script | Status | Sources |

@@ -20,6 +20,7 @@ This repo holds the whole Doc Zap production system. When Diyar says **"let's cr
 7. Props must be physically right: hands grip tools, nothing floats, glass looks like glass.
 8. **QC frames before and after** the final render (contact sheets of stills, then frames from the finished MP4).
 9. When Diyar sends reference reels, study them, write the lessons into `doczap/docs/STYLE.md` and apply them.
+10. **Agent skills on every episode** (Diyar, Nov 24 2026): the installed Instagram/YouTube skills (`.claude/skills/ig-*`, `yt-*`) run inside the Doc Zap workflow: hooks scored and the script timed with `ig-reel`, the script checked with `ig-human`'s detector, a second virality opinion, captions linted with `ig-caption`, titles and covers scored with `yt-package`, descriptions with `yt-seo`, and comments and results handled after posting. Details are in the `doczap-next-video` skill. Doc Zap rules win where they clash.
 
 ## The style (copied from 9 reference reels, Nov 23 2026: Rick's Clips + Segment Zero)
 See `doczap/docs/STYLE.md` for the full rules. In short:
