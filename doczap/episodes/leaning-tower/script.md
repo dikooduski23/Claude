@@ -49,6 +49,30 @@ To stop Pisa's tower falling... they made it sink.
 - **Beat timer** (`beats.py`): 13 beats, 37.5 s against a 38 s target, no beat over 4 s, and the last line repeats "Pisa's tower" from the hook, so it loops. The hook reads 3.3 s at the tool's 165 words a minute; Patrick on v4 ran about 180 words a minute on the Ice King, so it lands at about 3 s. The tool flags beats 6–8 as having "nothing concrete", but it doesn't count spelled-out numbers ("nineteen ninety"), which Patrick needs.
 - **Human check** (`detect.py`): 50.3 REVIEW (short, punchy spoken lines score like that; expected for a voice script).
 
+## YouTube skills (yt-script, yt-package, yt-seo)
+**yt-script `hookscore.py`** (stricter; built for advice-style hooks, and it weights the weakest property heavily):
+| YT score | IG score | Hook |
+|---|---|---|
+| 46 | 85.6 | Nobody tells you Pisa's tower almost fell... until they dug under it. (12 words, too long) |
+| **42** | **87.0** | **Nobody tells you Pisa's tower was saved... by digging.** ✅ kept |
+| 33 | 30.0 | Pisa's tower was about to fall... so they dug under it. |
+
+For scale, on the same tool: Dutch Water Line hook 43, phosphorus reel 39, Ice King 34. Story hooks all land in the 30s–40s here, so it's used as a tiebreaker, not a gate.
+
+**Title + cover (yt-package `title.py`):**
+| Score | Title | Cover |
+|---|---|---|
+| **100** ✅ | **They Dug Under the Leaning Tower in 1999** (40 characters) | **IT WAS FALLING** |
+| 100 | In 1990, Pisa's Tower Nearly Fell | THEY DUG UNDER |
+| 98 | How Digging Saved the Leaning Tower in 1999 (cut on mobile) | IT WAS FALLING |
+| 94 | Pisa's Tower Was Saved by Digging (no number) | WHY DIG? |
+
+**Description draft (yt-seo):** the first two lines carry the searches "how was the Leaning Tower of Pisa saved" and "Leaning Tower of Pisa straightened".
+> How was the Leaning Tower of Pisa saved? In 1990 it leaned so far it was closed, and two fixes made it worse.
+> Engineer John Burland's answer: drill under the high side and pull out soil, a little at a time. The Leaning Tower of Pisa straightened by about 40 cm.
+
+Tags: leaning tower of pisa, pisa tower, how pisa tower was saved, john burland, soil extraction, underexcavation, engineering history, italy, true story, doc zap
+
 ## Beat map (Blender shots)
 | Time (approx.) | Beat | Picture |
 |---|---|---|
