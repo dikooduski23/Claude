@@ -34,5 +34,16 @@
         ]
       }
     ]
+  },
+  "extraKnownMarketplaces": {
+    "remocn": {
+      "source": {
+        "source": "github",
+        "repo": "Remocn/remocn"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "remocn@remocn": true
   }
 }
