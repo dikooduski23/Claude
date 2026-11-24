@@ -34,7 +34,8 @@ See `doczap/docs/STYLE.md` for the full rules. In short:
 - `doczap/engine/`: the production template (latest = the Lottery Man rebuild).
   - `web/`: three.js engine. `main.js` holds the world sets, `toonbase.js` + `roman.js` the characters (`cat toonbase.js roman.js > toon.js` after editing), `story.js` the shots, camera, cast and FX of the current episode.
   - `render.mjs`: renders frames with headless Chromium (playwright).
-  - `caps.py` makes captions, `labels.py` handwritten labels, `compose.py` the final video, `cover.py` the cover, `audio/mix.py` the SFX and music mix.
+  - `caps.py` makes captions, `labels.py` handwritten labels, `overlay.py` renders them as a transparent layer, `compose.py` the final video, `cover.py` the cover, `audio/mix.py` the SFX and music mix.
+  - `remotion/`: the **Remocn** overlay (Remotion project). `src/doczap/Overlay.tsx` builds captions from `caption-active-pop` and labels from `handwrite` + `ink-arrow` (+ `scribble-circle`). Components live in `src/components/remocn/` (we own and may edit them). Add more with `NODE_USE_ENV_PROXY=1 node scripts/remocn-add.mjs <name>`; the catalog is at https://remocn.dev/llms-components.txt. Fonts are bundled in `public/fonts`, so renders need no network. Use Remocn for the 2D layer only (captions, labels, callouts); the 3D worlds and characters stay in three.js.
 - `doczap/tools/`: `trim_pauses.py`, `align_ps.py` (word timing), `audio_lib.py` (sound effects and music synth).
 - `doczap/episodes/<slug>/`: what to keep from each finished episode (script, story.js, words.json, post.md).
 - `doczap/work/<slug>/`: scratch working copy for an episode (gitignored; frames are big).
@@ -43,6 +44,7 @@ See `doczap/docs/STYLE.md` for the full rules. In short:
 ```bash
 cd doczap/engine && npm install && npx playwright install chromium   # if the browser download is blocked, tell Diyar
 pip install -r ../requirements.txt                                  # numpy scipy pillow pocketsphinx (add --break-system-packages if pip asks)
+cd remotion && npm install && cd ..                                   # Remocn overlay (overlay.py also does this on first run)
 # ffmpeg must be installed (apt-get install -y ffmpeg if missing)
 ```
 **Speed:** this engine renders on the CPU at roughly 10 frames per minute with 2 cores, so a 45 s episode (2,700 frames) takes ~4 h. Run 2-3 render processes in parallel, each in the background. On Diyar's own computer with a graphics card it's much faster. A later plan is to move the worlds into Blender there.

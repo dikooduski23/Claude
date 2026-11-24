@@ -38,9 +38,13 @@ Work in `doczap/work/<slug>/`: `cp -r doczap/engine doczap/work/<slug>`, run `np
    - The last shot returns to the opening composition.
 4. **Stills first:** `HASH="#raw" timeout 300 node render.mjs stills "f1,f2,..."`, then `bash sheet.sh /tmp/sheet.jpg`. Look at the sheet and fix cropped heads, blocked faces, edge-on props and cameras inside objects before the full render.
 5. **Full render:** `HASH="#raw" RESUME=1 node render.mjs plates a-b`, as 2-3 parallel ranges in the background. If a process gets killed, restart with RESUME and validate the newest jpgs with PIL. Comma lists work (`693-1256,1374-1471`).
-6. **Captions:** `python3 caps.py` (set END and add number merges). **Labels:** `python3 labels.py` (set positions from a plate). Add the whip windows in `compose.py`.
+6. **Captions and labels (Remocn overlay):**
+   - `python3 caps.py` (set END and add number merges). It writes `cap/captions.json`: Doc Zap's 1-2 word pages for Remocn's `caption-active-pop` (Poppins Bold, white with a dark stroke, the spoken word pops).
+   - `python3 labels.py`: edit `LABELS` (text, start/end seconds, box position read off a plate, arrow head, optional red `circle`, drift `vx`). It writes `cap/labels.json`, which Remocn's `handwrite` (Caveat) writes out letter by letter, then `ink-arrow` draws the arrow.
+   - `python3 overlay.py --still <frame>` for a quick look, then `python3 overlay.py`. It renders the transparent layer `cap/overlay.mov` from `doczap/engine/remotion/` and runs `npm install` there the first time.
+   - Add the whip windows in `compose.py`.
 7. **Audio:** edit the SFX section of `audio/mix.py` for the new shot times (whooshes on whips, an SFX per action, music dips) and run it. It writes `final_mix.wav` at -14 LUFS.
-8. **Compose:** `python3 compose.py out/DocZap_<Name>_1080x1920.mp4`. Then check 2514-ish frames at 60 fps, the LUFS, and a frame strip.
+8. **Compose:** `python3 compose.py out/DocZap_<Name>_1080x1920.mp4` (it uses `cap/overlay.mov` when it exists; add a frame range like `0-747` for a preview). Then check 2514-ish frames at 60 fps, the LUFS, and a frame strip.
 9. **Cover:** `python3 cover.py plates/fNNNN.jpg out/DocZap_<Name>_cover.jpg <y0>`, using a frame where the face is clean, with the text off the face.
 10. **Post .md:** title, caption with a share ask, pinned comment with a save ask, YouTube description, tags and sources.
 11. **Deliver** the MP4, cover and post.md to Diyar. Copy the script, story.js, words.json and post.md into `doczap/episodes/<slug>/` and commit. Delete `doczap/work/<slug>/plates`.

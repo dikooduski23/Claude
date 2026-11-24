@@ -1,9 +1,9 @@
 {
   ".claude/settings.json": {
-    "mtime": 1795507926.4148695,
-    "seen": 1795508131.1856806,
-    "ast_hash": "0a0ef578e59e2bb38c69f1dcb49a0e1a",
-    "semantic_hash": "0a0ef578e59e2bb38c69f1dcb49a0e1a"
+    "mtime": 1795508665.5615423,
+    "seen": 1795509989.174511,
+    "ast_hash": "a3535b88a9579ceebbd0bda9363d2695",
+    "semantic_hash": ""
   },
   "doczap/engine/audio/mix.py": {
     "mtime": 1795507779.8562906,
@@ -12,16 +12,16 @@
     "semantic_hash": "82526d7d015b938b697ae55545515d4a"
   },
   "doczap/engine/caps.py": {
-    "mtime": 1795507779.8562906,
-    "seen": 1795508131.1856909,
-    "ast_hash": "5c4d04215e537ac04a722506ae8e568c",
-    "semantic_hash": "5c4d04215e537ac04a722506ae8e568c"
+    "mtime": 1795509269.0558887,
+    "seen": 1795509989.1745226,
+    "ast_hash": "fce400947504d4fc78f9213a9c4d0203",
+    "semantic_hash": ""
   },
   "doczap/engine/compose.py": {
-    "mtime": 1795507779.8562906,
-    "seen": 1795508131.1856923,
-    "ast_hash": "5f35684020c033594c2278fe4af09b57",
-    "semantic_hash": "5f35684020c033594c2278fe4af09b57"
+    "mtime": 1795509553.9495952,
+    "seen": 1795509989.174525,
+    "ast_hash": "5b2df0f2575491f9399a389abac9f657",
+    "semantic_hash": ""
   },
   "doczap/engine/cover.py": {
     "mtime": 1795507779.8562906,
@@ -30,10 +30,10 @@
     "semantic_hash": "cf130934d5e2dd5b976842fe1a9695c6"
   },
   "doczap/engine/labels.py": {
-    "mtime": 1795507779.8562906,
-    "seen": 1795508131.185695,
-    "ast_hash": "4d84f0e3d3e536ee3fec797a1f48da77",
-    "semantic_hash": "4d84f0e3d3e536ee3fec797a1f48da77"
+    "mtime": 1795509230.8615758,
+    "seen": 1795509989.174529,
+    "ast_hash": "45aca1eeaa1a5a18588e7662d9bbaaa5",
+    "semantic_hash": ""
   },
   "doczap/engine/package.json": {
     "mtime": 1795507779.8562906,
@@ -210,16 +210,16 @@
     "semantic_hash": "9b31786b637be3c13978bec4c2330752"
   },
   ".claude/skills/doczap-next-video/SKILL.md": {
-    "mtime": 1795507779.855813,
-    "seen": 1795508131.1857255,
-    "ast_hash": "1f97d478f214bb786fc3deeb8cf615d6",
-    "semantic_hash": "1f97d478f214bb786fc3deeb8cf615d6"
+    "mtime": 1795509676.7981815,
+    "seen": 1795509989.1746361,
+    "ast_hash": "d3c22177992b5fb97fff6d806362dbad",
+    "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1795507926.4145277,
-    "seen": 1795508131.1857264,
-    "ast_hash": "9ffc4f97cf68d9cee28054fbad026fc7",
-    "semantic_hash": "9ffc4f97cf68d9cee28054fbad026fc7"
+    "mtime": 1795509676.7985175,
+    "seen": 1795509989.1746376,
+    "ast_hash": "95ada1cc5be674cd835090aee795abe5",
+    "semantic_hash": ""
   },
   "README.md": {
     "mtime": 1795507779.855813,
@@ -228,10 +228,10 @@
     "semantic_hash": "a0b6f95b4f86f89aa93740740dd972a6"
   },
   "doczap/docs/STYLE.md": {
-    "mtime": 1795507779.856183,
-    "seen": 1795508131.1857283,
-    "ast_hash": "1f30aad3fa08231d85e7e38a44d31e3d",
-    "semantic_hash": "1f30aad3fa08231d85e7e38a44d31e3d"
+    "mtime": 1795509676.7993464,
+    "seen": 1795509989.1746404,
+    "ast_hash": "604e6f0e47a639e3972d0fc5fe0969d1",
+    "semantic_hash": ""
   },
   "doczap/engine/web/comp.html": {
     "mtime": 1795507779.8562906,
@@ -262,5 +262,143 @@
     "seen": 1795508131.1857338,
     "ast_hash": "df32faa3ccf9a43c4d0a11bbf96e40de",
     "semantic_hash": "df32faa3ccf9a43c4d0a11bbf96e40de"
+  },
+  "doczap/engine/overlay.py": {
+    "mtime": 1795509254.3100293,
+    "seen": 1795509989.1745312,
+    "ast_hash": "f96e8be4ec12cdc7bc444d79f70c5691",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/components.json": {
+    "mtime": 1795509039.5351524,
+    "seen": 1795509989.1745358,
+    "ast_hash": "3c2976c94610966caa7d414c9d6fa349",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/eslint.config.mjs": {
+    "mtime": 1795427818.0,
+    "seen": 1795509989.174537,
+    "ast_hash": "e20d59bb6b64567da14d80c3da2c6b15",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/package.json": {
+    "mtime": 1795509358.5095835,
+    "seen": 1795509989.1745377,
+    "ast_hash": "a1b12f8d32c817da5d6947b38290d208",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/remotion.config.ts": {
+    "mtime": 1795509039.5655646,
+    "seen": 1795509989.174539,
+    "ast_hash": "4b642b8670849c04739ece06dedb7a16",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/scripts/remocn-add.mjs": {
+    "mtime": 1795509072.6135666,
+    "seen": 1795509989.17454,
+    "ast_hash": "e572940c5d720471e44275d1968132b8",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/src/Root.tsx": {
+    "mtime": 1795509195.4415739,
+    "seen": 1795509989.174541,
+    "ast_hash": "86f8502e967090d923f27882797979be",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/src/components/remocn/brush.tsx": {
+    "mtime": 1795509089.3575675,
+    "seen": 1795509989.1745636,
+    "ast_hash": "41f045c53622fe161950304c28402b49",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/src/components/remocn/caption-active-pop.tsx": {
+    "mtime": 1795509088.3135674,
+    "seen": 1795509989.1745682,
+    "ast_hash": "7d29a3e7bea02c569fc47e4c11101295",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/src/components/remocn/caption-outline.tsx": {
+    "mtime": 1795509088.8335676,
+    "seen": 1795509989.174571,
+    "ast_hash": "1613fa16a13d235a68c5a59261ab265c",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/src/components/remocn/handwrite.tsx": {
+    "mtime": 1795509372.774046,
+    "seen": 1795509989.1745734,
+    "ast_hash": "e4692c7e43dbf062443d24e0b0fae44e",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/src/components/remocn/ink-arrow.tsx": {
+    "mtime": 1795509089.2255676,
+    "seen": 1795509989.1745753,
+    "ast_hash": "160fa4e4f10347f73d86820feaa2ef0e",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/src/components/remocn/scribble-circle.tsx": {
+    "mtime": 1795509089.4935675,
+    "seen": 1795509989.174577,
+    "ast_hash": "f85903c66d75f8cdedef4149916906ec",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/src/doczap/Overlay.tsx": {
+    "mtime": 1795509510.5685437,
+    "seen": 1795509989.174579,
+    "ast_hash": "174e08937ff1055f11e9e47de09ebbe9",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/src/doczap/fonts.ts": {
+    "mtime": 1795509372.746955,
+    "seen": 1795509989.1745806,
+    "ast_hash": "104d535e5280be8d82c22281f2d0931f",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/src/index.ts": {
+    "mtime": 1795427818.0,
+    "seen": 1795509989.174582,
+    "ast_hash": "d92d9dee1ab16aa44a75ae7fbfb843ca",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/src/lib/remocn/caption-core.ts": {
+    "mtime": 1795509088.4455674,
+    "seen": 1795509989.174584,
+    "ast_hash": "bdf6f070585f9d0f027e089ee8a2e3c4",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/src/lib/remocn/frame-rate.ts": {
+    "mtime": 1795509088.5735674,
+    "seen": 1795509989.1745856,
+    "ast_hash": "a649dfb926b9a938d74831b492a29155",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/src/lib/remocn/glide.ts": {
+    "mtime": 1795509088.7055676,
+    "seen": 1795509989.1745872,
+    "ast_hash": "5e5a9783c45cb6a5c077d4050b7b7ca1",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/src/lib/remocn/stop-motion.ts": {
+    "mtime": 1795509089.0975676,
+    "seen": 1795509989.17459,
+    "ast_hash": "ea3758176958d690244ef6121b25331a",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/tsconfig.json": {
+    "mtime": 1795509039.5603294,
+    "seen": 1795509989.1745923,
+    "ast_hash": "efa2a6c61a194e43f3aa8a45bd2b1372",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/README.md": {
+    "mtime": 1795509007.2439537,
+    "seen": 1795509989.1746414,
+    "ast_hash": "fcdfe1e0c3220831519fdbf617e6d7ae",
+    "semantic_hash": ""
+  },
+  "doczap/engine/remotion/package-lock.json": {
+    "mtime": 1795509358.6015835,
+    "seen": 1795509989.174649,
+    "ast_hash": "da66b9d086ada9427a564fc0ece55c4e",
+    "semantic_hash": ""
   }
 }

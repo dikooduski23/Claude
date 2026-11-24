@@ -1,4 +1,6 @@
-# sentence-case 1-2 word captions in the reference style -> PNG per chunk + ffmpeg overlay filter
+# sentence-case 1-2 word captions in the reference style.
+# Writes cap/captions.json (remocn/@remotion/captions Caption[] for overlay.py, one token per word,
+# pageBreakAfter on the last word of each chunk) plus the legacy PNG-per-chunk files.
 import json, re
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 END = 41.85
@@ -26,7 +28,19 @@ for w in W:
     if len(cur) == 2 or re.search(r'[.,?!…]$', w['w']):
         chunks.append(cur); cur = []
 if cur: chunks.append(cur)
-F = ImageFont.truetype('/usr/share/fonts/truetype/google-fonts/Poppins-Bold.ttf', 60)
+import os, sys
+os.makedirs('cap', exist_ok=True)
+clean = lambda w: w.replace('...', '').replace('…', '')
+CAPS = []
+for c in chunks:
+    for j, x in enumerate(c):
+        ms = lambda v: int(round(v * 1000))
+        CAPS.append({'text': (' ' if j else '') + clean(x['w']), 'startMs': ms(x['s']), 'endMs': ms(x['e']), 'timestampMs': ms((x['s'] + x['e']) / 2), 'confidence': 1, **({'pageBreakAfter': True} if j == len(c) - 1 else {})})
+json.dump(CAPS, open('cap/captions.json', 'w'), indent=0)
+print(f'cap/captions.json: {len(CAPS)} words, {len(chunks)} pages')
+FONT = '/usr/share/fonts/truetype/google-fonts/Poppins-Bold.ttf'
+if not os.path.exists(FONT): print('Poppins not installed: skipping legacy caption PNGs'); sys.exit(0)
+F = ImageFont.truetype(FONT, 60)
 filt, inputs = [], []
 for i, c in enumerate(chunks):
     t = ' '.join(x['w'] for x in c).replace('...', '').replace('…', '')
@@ -37,3 +51,4 @@ for i, c in enumerate(chunks):
     ImageDraw.Draw(im).text((540, 1342), t, font=F, anchor='mm', fill=(255, 255, 255, 255), stroke_width=3, stroke_fill=(20, 20, 24, 255))
     im.save(f'cap/c{i:02d}.png'); inputs.append(f'cap/c{i:02d}.png'); filt.append((s, e)); print(f'{s:5.2f}-{e:5.2f} {t}')
 json.dump({'inputs': inputs, 'win': filt}, open('cap/caps.json', 'w'))
+

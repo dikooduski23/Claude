@@ -42,6 +42,7 @@ Current style: the **reference style**, from 9 reels Diyar sent on Nov 23 2026. 
 ## Captions and on-screen text
 - 1-2 words (≤12 characters), **Poppins Bold ~60 px**, white with a thin dark stroke and a soft shadow, **sentence case with punctuation** (not ALL CAPS), centred at y≈1342.
 - Years and money as digits ("1992," "$27 million.").
+- Built with Remocn (`doczap/engine/remotion`): captions use `caption-active-pop` with Doc Zap's own 1-2 word pages, and the spoken word pops a little (popScale 1.1, all white). Labels use `handwrite` (Caveat 700, written out letter by letter) followed by a drawn `ink-arrow` (white over a dark under-stroke), or a red `scribble-circle`. Don't add other Remocn kits on screen (cards, counters, social pills): rule 6 still applies.
 - No watermark, username, episode number, progress bar, border, counters, stamps or pills. Only essential in-world signs (a newspaper, a jackpot board).
 
 ## Sound
