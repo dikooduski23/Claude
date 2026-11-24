@@ -58,3 +58,10 @@ Current style: the **reference style**, from 9 reels Diyar sent on Nov 23 2026. 
 - Consistent format beats volume: treat the channel like a TV show.
 - Shares get views, saves get followers.
 - First frame matters more than words: show the real thing happening live, never a blank title card.
+
+## Lessons from our own results (Nov 24 2026; full table in `doczap/docs/results.md`)
+- Reels plateau at ~1,500 plays (0.9-1.2x median); none has broken out (>3x). Treat every new episode as a shot at the first breakout.
+- The two flops (Lottery Man 0.14x, Stratton glasses 0.18x) were both well-known stories. Prefer stories most viewers have never heard (ig-viral's "fresh angle" check).
+- Comments are near zero: the pinned comment asks an easy either/or question.
+- Hooks must score 70+ on ig-reel `hookscore.py` (all past captions scored under 60).
+
