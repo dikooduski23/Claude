@@ -14,17 +14,18 @@ Alternatives:
 Title check (youtube-agent `title.py`): **100/100**. 39 characters, inside the mobile cut ✅ · carries a concrete figure (1806) ✅ · cover doesn't repeat the title ✅ · cover is 2 words (3 at most) ✅
 
 ## Caption (Instagram / TikTok / Facebook)
-1806: he filled a ship with ice and sailed it to the Caribbean 🧊🌴
+
+1806: Frederic Tudor filled a ship with ice and sailed it to the Caribbean 🧊🌴
 
 It melted. He went broke. He went to prison.
 
-Then Frederic Tudor found the answer in a pile of trash 🪵 and became the Ice King. A true story from the history of ice.
+Then he found the answer in a pile of trash 🪵 and became the Ice King. A true story from the history of ice.
 
-Send this to the friend who never gives up 👇
+Share this with the friend who never gives up 👇
 
 #history #truestory #weirdhistory #historyfacts #iceking
 
-Caption check (ig-caption): visible line 66 of ~125 characters, not opening with a greeting, hashtag or emoji ✅ · one ask ✅ · 5 hashtags, none generic ✅ (cut #icecream as off-topic, plus #entrepreneur and #doczap) · search phrases "Frederic Tudor", "Ice King" and "history of ice" in plain words ✅ · no link ✅ · emoji density OK ✅
+Caption check (ig-caption `caption.py`): **READY**, 9/9 PASS. First line 77 characters, lands whole · 4 names or numbers in the visible window · 5 specific hashtags · one ask ("share this") · 3/3 search terms, "Frederic Tudor" visible before "... more" · no links · emoji density OK
 
 ## Pinned comment
 What "crazy" idea today do you think will be normal in 100 years? 🧊👑
