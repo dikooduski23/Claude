@@ -1,0 +1,266 @@
+{
+  ".claude/settings.json": {
+    "mtime": 1795507926.4148695,
+    "seen": 1795508131.1856806,
+    "ast_hash": "0a0ef578e59e2bb38c69f1dcb49a0e1a",
+    "semantic_hash": "0a0ef578e59e2bb38c69f1dcb49a0e1a"
+  },
+  "doczap/engine/audio/mix.py": {
+    "mtime": 1795507779.8562906,
+    "seen": 1795508131.185688,
+    "ast_hash": "82526d7d015b938b697ae55545515d4a",
+    "semantic_hash": "82526d7d015b938b697ae55545515d4a"
+  },
+  "doczap/engine/caps.py": {
+    "mtime": 1795507779.8562906,
+    "seen": 1795508131.1856909,
+    "ast_hash": "5c4d04215e537ac04a722506ae8e568c",
+    "semantic_hash": "5c4d04215e537ac04a722506ae8e568c"
+  },
+  "doczap/engine/compose.py": {
+    "mtime": 1795507779.8562906,
+    "seen": 1795508131.1856923,
+    "ast_hash": "5f35684020c033594c2278fe4af09b57",
+    "semantic_hash": "5f35684020c033594c2278fe4af09b57"
+  },
+  "doczap/engine/cover.py": {
+    "mtime": 1795507779.8562906,
+    "seen": 1795508131.185694,
+    "ast_hash": "cf130934d5e2dd5b976842fe1a9695c6",
+    "semantic_hash": "cf130934d5e2dd5b976842fe1a9695c6"
+  },
+  "doczap/engine/labels.py": {
+    "mtime": 1795507779.8562906,
+    "seen": 1795508131.185695,
+    "ast_hash": "4d84f0e3d3e536ee3fec797a1f48da77",
+    "semantic_hash": "4d84f0e3d3e536ee3fec797a1f48da77"
+  },
+  "doczap/engine/package.json": {
+    "mtime": 1795507779.8562906,
+    "seen": 1795508131.185696,
+    "ast_hash": "da79baf3e76fd29f08a02fab4e4395af",
+    "semantic_hash": "da79baf3e76fd29f08a02fab4e4395af"
+  },
+  "doczap/engine/render.mjs": {
+    "mtime": 1795507779.8562906,
+    "seen": 1795508131.185697,
+    "ast_hash": "eb4207ddc9bc247cf225b53916503251",
+    "semantic_hash": "eb4207ddc9bc247cf225b53916503251"
+  },
+  "doczap/engine/sheet.sh": {
+    "mtime": 1795507779.8562906,
+    "seen": 1795508131.185698,
+    "ast_hash": "728c3ed34ba6fbcbf964121190e83c25",
+    "semantic_hash": "728c3ed34ba6fbcbf964121190e83c25"
+  },
+  "doczap/engine/web/main.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.1856992,
+    "ast_hash": "f120c6384eb043c7b08691cc1401c9b2",
+    "semantic_hash": "f120c6384eb043c7b08691cc1401c9b2"
+  },
+  "doczap/engine/web/motion.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.1857002,
+    "ast_hash": "c300c70f2c2c09b722110178b4319a01",
+    "semantic_hash": "c300c70f2c2c09b722110178b4319a01"
+  },
+  "doczap/engine/web/overlay.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.1857014,
+    "ast_hash": "c4825a4637b73483de272c682eef2acf",
+    "semantic_hash": "c4825a4637b73483de272c682eef2acf"
+  },
+  "doczap/engine/web/overlay_data.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.185702,
+    "ast_hash": "262a2b0ffbf481195105cbe3022ecde1",
+    "semantic_hash": "262a2b0ffbf481195105cbe3022ecde1"
+  },
+  "doczap/engine/web/paint.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.1857033,
+    "ast_hash": "295fe416d129e7543d87678b5867bcae",
+    "semantic_hash": "295fe416d129e7543d87678b5867bcae"
+  },
+  "doczap/engine/web/roman.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.1857042,
+    "ast_hash": "53102c906234837c3e3e6b46f38b8d7a",
+    "semantic_hash": "53102c906234837c3e3e6b46f38b8d7a"
+  },
+  "doczap/engine/web/story.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.1857052,
+    "ast_hash": "b9e4020bce8b8f0347ec8c66b3a6d0fa",
+    "semantic_hash": "b9e4020bce8b8f0347ec8c66b3a6d0fa"
+  },
+  "doczap/engine/web/toon.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.185706,
+    "ast_hash": "32795439e4e0859e816b9a8a33fe5879",
+    "semantic_hash": "32795439e4e0859e816b9a8a33fe5879"
+  },
+  "doczap/engine/web/toonbase.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.185707,
+    "ast_hash": "d429807e0893060ed6b1670deb4008b0",
+    "semantic_hash": "d429807e0893060ed6b1670deb4008b0"
+  },
+  "doczap/engine/web/world_bats_extra.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.185708,
+    "ast_hash": "fce1baacf633df38fafb39d50dd96d27",
+    "semantic_hash": "fce1baacf633df38fafb39d50dd96d27"
+  },
+  "doczap/engine/web/world_bier.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.185709,
+    "ast_hash": "6dcb1b1e58df05971739dadf327e9d51",
+    "semantic_hash": "6dcb1b1e58df05971739dadf327e9d51"
+  },
+  "doczap/engine/web/world_blagden.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.1857097,
+    "ast_hash": "cc0fe9abd1e3be8cc95ab6b370a8b5fa",
+    "semantic_hash": "cc0fe9abd1e3be8cc95ab6b370a8b5fa"
+  },
+  "doczap/engine/web/world_comet.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.185711,
+    "ast_hash": "3efba61aac8e61b68bc980d269449f13",
+    "semantic_hash": "3efba61aac8e61b68bc980d269449f13"
+  },
+  "doczap/engine/web/world_heart.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.1857119,
+    "ast_hash": "3dd461931ba524b52c9b533b78d38f40",
+    "semantic_hash": "3dd461931ba524b52c9b533b78d38f40"
+  },
+  "doczap/engine/web/world_kane.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.1857128,
+    "ast_hash": "02e13e1d27b602293af40513934f17b2",
+    "semantic_hash": "02e13e1d27b602293af40513934f17b2"
+  },
+  "doczap/engine/web/world_laennec.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.185714,
+    "ast_hash": "514f38e9b337570eb1c4fccb3723e556",
+    "semantic_hash": "514f38e9b337570eb1c4fccb3723e556"
+  },
+  "doczap/engine/web/world_lot.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.1857147,
+    "ast_hash": "5e404292be1cb718146133ff9127c892",
+    "semantic_hash": "5e404292be1cb718146133ff9127c892"
+  },
+  "doczap/engine/web/world_rupert.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.185716,
+    "ast_hash": "2d395bc3280243cdf4d1b44ce11320ae",
+    "semantic_hash": "2d395bc3280243cdf4d1b44ce11320ae"
+  },
+  "doczap/engine/web/world_spall.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.1857173,
+    "ast_hash": "c925b016f9004dcdee263707d40f04ac",
+    "semantic_hash": "c925b016f9004dcdee263707d40f04ac"
+  },
+  "doczap/engine/web/world_stapp.js": {
+    "mtime": 1795507779.8656535,
+    "seen": 1795508131.1857183,
+    "ast_hash": "393e268b25306cb075c43c02264a8e9c",
+    "semantic_hash": "393e268b25306cb075c43c02264a8e9c"
+  },
+  "doczap/episodes/lottery-man/story.js": {
+    "mtime": 1795507779.8699844,
+    "seen": 1795508131.1857193,
+    "ast_hash": "b9e4020bce8b8f0347ec8c66b3a6d0fa",
+    "semantic_hash": "b9e4020bce8b8f0347ec8c66b3a6d0fa"
+  },
+  "doczap/episodes/lottery-man/words.json": {
+    "mtime": 1795507779.8699844,
+    "seen": 1795508131.1857202,
+    "ast_hash": "7e14149768788c8353cab88c956c399f",
+    "semantic_hash": "7e14149768788c8353cab88c956c399f"
+  },
+  "doczap/tools/align_ps.py": {
+    "mtime": 1795507779.8699844,
+    "seen": 1795508131.1857214,
+    "ast_hash": "1f761d16835910ac7e2c0411f33d3f38",
+    "semantic_hash": "1f761d16835910ac7e2c0411f33d3f38"
+  },
+  "doczap/tools/audio_lib.py": {
+    "mtime": 1795507779.8704548,
+    "seen": 1795508131.1857224,
+    "ast_hash": "b6414c63a5a474679adc9afa3d8540ad",
+    "semantic_hash": "b6414c63a5a474679adc9afa3d8540ad"
+  },
+  "doczap/tools/trim_pauses.py": {
+    "mtime": 1795507779.8704548,
+    "seen": 1795508131.185723,
+    "ast_hash": "db77ea4eb8e7422b67a247201ec2239f",
+    "semantic_hash": "db77ea4eb8e7422b67a247201ec2239f"
+  },
+  ".claude/CLAUDE.md": {
+    "mtime": 1795507926.4168677,
+    "seen": 1795508131.1857243,
+    "ast_hash": "9b31786b637be3c13978bec4c2330752",
+    "semantic_hash": "9b31786b637be3c13978bec4c2330752"
+  },
+  ".claude/skills/doczap-next-video/SKILL.md": {
+    "mtime": 1795507779.855813,
+    "seen": 1795508131.1857255,
+    "ast_hash": "1f97d478f214bb786fc3deeb8cf615d6",
+    "semantic_hash": "1f97d478f214bb786fc3deeb8cf615d6"
+  },
+  "CLAUDE.md": {
+    "mtime": 1795507926.4145277,
+    "seen": 1795508131.1857264,
+    "ast_hash": "9ffc4f97cf68d9cee28054fbad026fc7",
+    "semantic_hash": "9ffc4f97cf68d9cee28054fbad026fc7"
+  },
+  "README.md": {
+    "mtime": 1795507779.855813,
+    "seen": 1795508131.1857271,
+    "ast_hash": "a0b6f95b4f86f89aa93740740dd972a6",
+    "semantic_hash": "a0b6f95b4f86f89aa93740740dd972a6"
+  },
+  "doczap/docs/STYLE.md": {
+    "mtime": 1795507779.856183,
+    "seen": 1795508131.1857283,
+    "ast_hash": "1f30aad3fa08231d85e7e38a44d31e3d",
+    "semantic_hash": "1f30aad3fa08231d85e7e38a44d31e3d"
+  },
+  "doczap/engine/web/comp.html": {
+    "mtime": 1795507779.8562906,
+    "seen": 1795508131.1857293,
+    "ast_hash": "cef60be3050c6c6c8cef2b7aa3c817ca",
+    "semantic_hash": "cef60be3050c6c6c8cef2b7aa3c817ca"
+  },
+  "doczap/engine/web/index.html": {
+    "mtime": 1795507779.8570464,
+    "seen": 1795508131.18573,
+    "ast_hash": "be678d5f4f28ea794bf1f130e767b1ed",
+    "semantic_hash": "be678d5f4f28ea794bf1f130e767b1ed"
+  },
+  "doczap/episodes/lottery-man/post.md": {
+    "mtime": 1795507779.8696535,
+    "seen": 1795508131.1857314,
+    "ast_hash": "6aafac1293c87ae34f8dfda54f7136ff",
+    "semantic_hash": "6aafac1293c87ae34f8dfda54f7136ff"
+  },
+  "doczap/episodes/lottery-man/script.md": {
+    "mtime": 1795507779.8699844,
+    "seen": 1795508131.1857324,
+    "ast_hash": "c68816d5491b69b0ea849afcc3b8ceb8",
+    "semantic_hash": "c68816d5491b69b0ea849afcc3b8ceb8"
+  },
+  "doczap/requirements.txt": {
+    "mtime": 1795507779.8699844,
+    "seen": 1795508131.1857338,
+    "ast_hash": "df32faa3ccf9a43c4d0a11bbf96e40de",
+    "semantic_hash": "df32faa3ccf9a43c4d0a11bbf96e40de"
+  }
+}
