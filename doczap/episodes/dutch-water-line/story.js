@@ -6,25 +6,27 @@ import { LP, tint } from './kit/lights.js';
 import { emote } from './kit/emotes.js';
 export const FPS = 60, TOTAL = 2436, DECK = 0, LOOK = 'toon';
 const SH = [
-  ['hook', 0, 232, 'sunny'], ['army', 233, 473, 'sunny'], ['tiny', 474, 579, 'sunny'], ['open', 580, 790, 'sunny'],
-  ['useless', 791, 1119, 'sunny'], ['couldnt', 1120, 1176, 'sunny'], ['cutaway', 1177, 1609, 'cut'],
-  ['chaos', 1610, 1901, 'sunny'], ['puddle', 1902, 2077, 'golden'], ['loop', 2078, 2435, 'golden']];
+  ['hook', 0, 232, 'night'], ['army', 233, 473, 'night'], ['tiny', 474, 579, 'room'], ['open', 580, 790, 'night'],
+  ['useless', 791, 1119, 'dawn'], ['couldnt', 1120, 1176, 'dawn'], ['cutaway', 1177, 1609, 'cut'],
+  ['chaos', 1610, 1901, 'dawn'], ['puddle', 1902, 2077, 'golden'], ['loop', 2078, 2435, 'night']];
 export const SHOTS = SH.map(([id, a, b, light]) => ({ id, a, b, light }));
 export const WHIPS = [233, 580, 1610, 2078];                       // camera whip-pans made in the plates (no frame blending)
 export const TRANSITIONS = SH.slice(1).map(([, a]) => ({ at: a, type: 'cut' }));
 export const WHIP_FRAMES = [], CUTS = [];
 const shot = (f) => { const s = SH.find((s) => f >= s[1] && f <= s[2]) || SH[SH.length - 1]; return { id: s[0], a: s[1], b: s[2], light: s[3] }; };
 export const shotAt = shot;
-export const LIGHTS = {
-  sunny: tint(LP.day, { az: 120, el: 38, sun: '#fff1d8', sunI: 1.45, skyTop: '#1a6ae0', skyHor: '#a8dcff', fog: '#c0e2ff', fogNear: 30, fogFar: 220, gain: '#fffaf2', sunDisc: '#fff6d8', sunSize: 0.022, shadowExt: 16 }),
+export const LIGHTS = {   // demo-style: lamplight at night, a candle-lit interior, misty dawn, golden sunset (rich, glowing)
+  night: tint(LP.night, { az: 40, el: 30, sun: '#a8c0ff', sunI: 0.6, hemi: 0.62, sky: '#4a5aa8', skyTop: '#070d36', skyHor: '#2e3e8e', fog: '#141c48', fogNear: 9, fogFar: 70, sunDisc: '#eef2ff', sunSize: 0.018, rim: 0.5, rimCol: '#9ab8ff', shadowExt: 12 }),
+  room: tint(LP.candle, { fogNear: 4, fogFar: 16 }),
+  dawn: tint(LP.sunset, { az: 105, el: 9, sun: '#ffbe80', sunI: 1.35, skyTop: '#3a64d0', skyHor: '#ffc8a0', fog: '#f2cdb4', fogNear: 7, fogFar: 70, rim: 0.55, rimCol: '#ffc890', sunSize: 0.04, shadowExt: 14 }),
   cut: tint(LP.indoor, { hemi: 1.1, sunI: 0.95, az: 20, el: 35, sky: '#ffd8a8', fog: '#2a1a14', fogNear: 14, fogFar: 60, skyTop: '#1a0e0a', skyHor: '#3a2016', gain: '#fff0d8', vig: 0.36, shadowExt: 10 }),
   golden: tint(LP.sunset, { az: 230, el: 9, sunI: 1.5, gain: '#fff0dc', rim: 0.6, sunSize: 0.05, fogNear: 22, fogFar: 180, shadowExt: 16 }),
 };
 export const lightFor = (S) => ({ ...LIGHTS[S.light] });
 // ---------------- layout ----------------
-const XP = 90000, XC = 92000;
+const XP = 90000, XC = 92000, XG = 94000;
 const at = (o, p) => [o[0] + p[0], o[1] + p[1], o[2] + p[2]];
-const PD = [XP, 0, 0], CW = [XC, 0, 0];
+const PD = [XP, 0, 0], CW = [XC, 0, 0], GH = [XG, 0, 0];
 const HY = 1.33;
 const DIKE_Z = -3, SEA_Y = 0.85;             // the river behind the dike is higher than the farmland (Holland is below water level)
 const GATE = [0, 0, DIKE_Z];                 // sluice gate in the dike
@@ -107,6 +109,32 @@ export const sets = (K) => {
   const hat = K.grp(PG, DITCH_X, FLOOD, 9.0); K.add(new THREE.CylinderGeometry(0.16, 0.14, 0.24, 14), K.toon({ color: '#1e2a5a' }), 0, 0.1, 0, hat); K.add(new THREE.CylinderGeometry(0.2, 0.2, 0.025, 16), K.toon({ color: '#1e1e24' }), 0, -0.01, 0, hat); K.add(new THREE.SphereGeometry(0.045, 8, 6), K.toon({ color: '#ffffff' }), 0, 0.25, 0.06, hat);
   const ripple = K.add(new THREE.RingGeometry(0.2, 0.26, 28), new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.8, depthWrite: false }), DITCH_X, FLOOD + 0.01, 9.0, PG, false); ripple.rotation.x = -Math.PI / 2; K.noInk(ripple);
   const motesPD = K.motes(PG, { n: 50, box: [-4, 0.4, 3, 6, 3.4, 11], col: '#fff0c8', speed: 0.0015 });
+  // ---- demo-style dressing: torches + lanterns on the dike, the French camp (tents, campfire, torch poles), fences, reeds, a cart ----
+  for (const sx of [-1, 1]) prop.torch(SL, { x: sx * 1.15, y: 1.95, z: 0.95, wall: false, i: 3.2, dist: 8, shadow: sx < 0, size: 0.22 });
+  prop.lantern(PG, { x: GATE[0] + 1.6, y: 1.27, z: GATE[2] + 0.8, light: 1.4 }); prop.lantern(PG, { x: GATE[0] - 1.9, y: 1.27, z: GATE[2] + 0.6, light: 1.2 });
+  for (let k = 0; k < 6; k++) prop.tent(PG, { x: -14 + k * 2.6, z: ROAD_Z - 2.8 - (k % 2) * 0.8, w: 1.9, d: 2.0, h: 1.8, col: '#f2ead8', col2: k % 2 ? '#2a3a8a' : '#d8d0c0', open: 0.8, ry: 0.1 * (k - 3) });
+  prop.banner(PG, { x: -6.5, y: 2.6, z: ROAD_Z - 3.9, col: '#2a3a8a' });
+  { const CF = K.grp(PG, -5.2, 0, ROAD_Z - 1.3); for (let k = 0; k < 5; k++) { const l = K.add(new THREE.CylinderGeometry(0.06, 0.06, 0.8, 8), K.M.woodD, 0, 0.08, 0, CF); l.rotation.set(Math.PI / 2, k * 1.26, 0); }
+    K.flame(CF, 0, 0.05, 0, 0.55, { haloK: 0.7 }); K.warmLight(CF, 0, 0.6, 0, { i: 4.0, dist: 9, col: '#ff9a40', flicker: 0.22, shadow: true }); K.motes(CF, { n: 40, box: [-0.6, 0.4, -0.6, 0.6, 3.0, 0.6], col: '#ffb060', speed: 0.004 }); }
+  for (let k = 0; k < 7; k++) prop.torch(PG, { x: -9 + k * 2.2, y: 1.5, z: ROAD_Z + (k % 2 ? 1.25 : -1.25), wall: false, i: 2.4, dist: 6, size: 0.18 });
+  const fenceM = K.mat('woodGrain', { seed: 51, lig: 40 });
+  for (let k = 0; k < 18; k++) { const x = -9 + k * 0.9; K.add(new THREE.BoxGeometry(0.08, 0.7, 0.08), fenceM, x, 0.35, 2.2, PG); if (k < 17) for (const y of [0.25, 0.55]) K.add(new THREE.BoxGeometry(0.92, 0.06, 0.05), fenceM, x + 0.45, y, 2.2, PG); }
+  for (let i = 0; i < 40; i++) { const x = -14 + rnd(i, 1) * 28; if (Math.abs(x) < 3.5) continue; const r = K.add(new THREE.ConeGeometry(0.12, 0.45 + rnd(i) * 0.3, 5), K.toon({ color: i % 3 ? '#6ab83a' : '#a8c050' }), x, 0.25, DIKE_Z + 2.0 + rnd(i, 2) * 0.5, PG, false); }   // grass tufts along the dike foot (clear of the gate)
+  prop.barrel(PG, { x: GATE[0] + 2.4, z: GATE[2] + 2.0 }); prop.barrel(PG, { x: GATE[0] + 2.9, z: GATE[2] + 2.3, ry: 0.4 }); prop.crate(PG, { x: GATE[0] - 2.4, z: GATE[2] + 2.1, ry: 0.3 });
+  { const CT = K.grp(PG, 5.6, 0, 5.6, 0.5); K.add(K.tbox(1.6, 0.12, 0.9, 1), K.mat('planks', { seed: 61, lig: 42 }), 0, 0.55, 0, CT); for (const z of [-0.5, 0.5]) K.add(new THREE.TorusGeometry(0.35, 0.05, 6, 16), K.M.woodD, -0.2, 0.36, z, CT); K.add(new THREE.BoxGeometry(1.2, 0.05, 0.05), K.M.woodD, 1.2, 0.5, 0, CT); prop.crate(CT, { x: 0.3, y: 0.61, s: 0.5 }); }
+  // ======================= GUARDHOUSE (candle-lit interior, demo style) =======================
+  const GR = K.room({ x: XG, w: 5.4, d: 4.6, h: 3.2, floor: 'planks', wall: 'stone', wallOpts: { seed: 71, moss: 0.2 }, floorOpts: { seed: 72, lig: 36 }, ceil: 'beams' });
+  const GT = prop.table(GR, { x: 0, z: -0.9, w: 1.8, d: 0.9 });
+  prop.candle(GR, { x: -0.55, y: 0.78, z: -0.8, light: 1.1, h: 0.2 }); prop.candle(GR, { x: 0.6, y: 0.78, z: -1.0, h: 0.14, holder: 'stick' });
+  const mapC = P(1024, 640, (g, W, H) => { g.fillStyle = '#e8d6a8'; g.fillRect(0, 0, W, H); g.fillStyle = '#9ac8e8'; g.beginPath(); g.moveTo(0, 0); g.lineTo(W * 0.42, 0); g.bezierCurveTo(W * 0.35, H * 0.3, W * 0.2, H * 0.5, 0, H * 0.62); g.fill();
+    g.strokeStyle = '#2a6ad0'; g.lineWidth = 16; g.setLineDash([26, 14]); g.beginPath(); g.moveTo(W * 0.48, H * 0.1); g.bezierCurveTo(W * 0.56, H * 0.4, W * 0.5, H * 0.6, W * 0.62, H * 0.9); g.stroke(); g.setLineDash([]);
+    g.fillStyle = '#1e1a16'; g.font = '900 64px Georgia, serif'; g.fillText('HOLLAND', 40, H - 40); g.font = 'italic 700 40px Georgia, serif'; g.fillText('the Water Line', W * 0.6, H * 0.18);
+    g.fillStyle = '#d0283a'; for (const [x, y] of [[0.75, 0.55], [0.82, 0.62], [0.78, 0.7]]) { g.beginPath(); g.arc(W * x, H * y, 14, 0, 7); g.fill(); } g.strokeStyle = '#3a2a1a'; g.lineWidth = 14; g.strokeRect(7, 7, W - 14, H - 14); });
+  const mapP = K.add(new THREE.PlaneGeometry(1.3, 0.8), K.toon({ map: ctex(mapC) }), 0, 1.9, -2.27, GR, false);
+  const mapT = K.add(new THREE.PlaneGeometry(0.7, 0.44), K.toon({ map: ctex(mapC) }), 0.1, 0.787, -0.85, GR, false); mapT.rotation.set(-Math.PI / 2, 0, 0.12);
+  prop.torch(GR, { x: -2.1, z: -2.25, y: 1.85, i: 2.6, dist: 6 }); prop.window(GR, { x: 1.6, y: 2.0, z: -2.2, w: 0.6, h: 0.8, depth: 0.12, kind: 'moon', beamTo: [1.0, 0, 0.4], i: 4 });
+  prop.banner(GR, { x: -1.4, y: 2.8, z: -2.24, col: '#ff8a2a' }); prop.barrel(GR, { x: 2.1, z: -1.6 }); prop.barrel(GR, { x: 2.3, z: -1.0, ry: 0.4 }); prop.crate(GR, { x: -2.2, z: -1.3, ry: 0.3 });
+  prop.shelf(GR, { x: -2.55, z: 0.3, ry: Math.PI / 2, w: 1.4, seed: 7 }); K.motes(GR, { n: 30, box: [-2, 0.5, -2, 2, 2.8, 1], col: '#ffc070', speed: 0.0018 });
   // ======================= GLASS CUTAWAY of the flooded polder =======================
   const CG = K.grp(K.scene, XC, 0, 0); const TW = 7, TD = 2.2;
   const soilC = P(1024, 512, (g, W, H) => { g.fillStyle = '#7a5a3a'; g.fillRect(0, 0, W, H); g.fillStyle = '#5cb83a'; g.fillRect(0, 0, W, 26);
@@ -117,7 +145,7 @@ export const sets = (K) => {
   for (const [x0, x1] of [[-TW / 2, DX0], [DX0 + DW, TW / 2]]) { const w = x1 - x0; K.add(new THREE.BoxGeometry(w, 2.4, TD), [soilSide, soilSide, K.toon({ color: '#5cb83a' }), soilSide, soilM, soilSide], (x0 + x1) / 2, -1.2, -TD / 2, CG); }
   K.add(new THREE.BoxGeometry(DW, 2.4 - DD, TD), [soilSide, soilSide, K.toon({ color: '#4a3a2a' }), soilSide, soilM, soilSide], DX0 + DW / 2, -1.2 - DD / 2, -TD / 2, CG);
   // water layer in a glass tank: knee-deep over the field, deep over the ditch
-  const tankW = K.glass(new THREE.BoxGeometry(TW, FLOOD * 3.2 + 0.6, TD), { tint: '#cfefff', opacity: 0.03, rim: 0.3 }); tankW.position.set(XC, (FLOOD * 3.2 + 0.6) / 2 - 0.02, -TD / 2); K.scene.add(tankW);
+  const tankW = K.glass(new THREE.BoxGeometry(TW, FLOOD * 3.2 + 0.6, TD), { tint: '#cfefff', opacity: 0.03, rim: 0.3 }); tankW.position.set(XC, (FLOOD * 3.2 + 0.6) / 2 - 0.02, -TD / 2);   // (not added: its top edge read as a grey slab)
   const cutWaterM = K.toon({ color: '#3aa8e8', transparent: true, opacity: 0.55, emissive: '#1a5a9a', emissiveIntensity: 0.15 });
   const WL = FLOOD * 3.2;                         // the cutaway is drawn bigger: knee-deep water = 0.9 m in this model
   K.add(new THREE.BoxGeometry(TW, WL, TD), cutWaterM, 0, WL / 2, -TD / 2, CG, false);
@@ -158,14 +186,14 @@ const NL = { tunic: '#ff8a2a', stick: true, skin: SK, hair: '#c8862a', hat: 'sol
 export const actorsAt = (f, T) => {
   const S = shot(f), out = [], u = Math.floor(f / 2);
   const I = (seed) => { const i = idle(u, seed); return { bob: q(i.bob, 3), tilt: q(i.tilt, 1), headTilt: q(i.headTilt, 1) }; };
-  const tintL = { cut: '#ffe6c8', golden: '#ffe2c4' }[S.light] || '#ffffff';
+  const tintL = { cut: '#ffe6c8', golden: '#ffe2c4', night: '#ffd8b0', room: '#ffe2c0', dawn: '#ffe8d4' }[S.light] || '#ffffff';
   const card = (id, O, o, origin, pos, seed, extra = {}) => { const w = at(origin, pos); out.push({ key: id + JSON.stringify(o) + JSON.stringify(extra), draw: (p) => T.romanFront(p, O, { seed, blink: blinkAt(u, seed), ...I(seed), L: 'hang', R: 'hang', look: 0, ...o }), x: w[0], y: w[1] + (extra.y || 0), z: w[2], s: 0.9, ground: w[1] + (extra.y || 0), tint: tintL, ...extra }); };
   const march = (k) => q(0.06 * Math.abs(Math.sin(f * 0.18 + k)), 3);
   switch (S.id) {
     case 'hook': case 'loop': card('kp', KEEPER, { expr: f < 120 || S.id === 'loop' ? 'stubborn' : 'grin', L: 'grab', R: 'grab', gx: 0.6, gy: 0.3, look: 0.3 }, PD, [GATE[0] + 0.55, 1.26, GATE[2] + 0.75], 21); break;
     case 'army': { const dx = (f - 233) * 0.012; for (let r = 0; r < 5; r++) for (let c = 0; c < 4; c++) card(`fr${r}${c}`, FR, { expr: r === 0 && c === 1 ? 'smug' : 'stern', look: 1, L: 'hang', R: 'up' }, PD, [-6.5 + r * 1.1 + dx, 0, ROAD_Z - 0.6 + c * 0.42], 30 + r * 4 + c, { y: march(r + c) });
       card('gen', GENERAL, { expr: 'smug', look: 1, L: 'hip', R: 'point' }, PD, [-1.0 + dx, 0, ROAD_Z + 1.4], 61); break; }
-    case 'tiny': card('n1', NL, { expr: 'nervous', sweat: 0.8, sweatT: f / 60, L: 'up', R: 'hang', look: -0.3 }, PD, [-0.6, 0, 1.4], 71); card('n2', NL, { expr: 'scared', L: 'cheek', R: 'cheek' }, PD, [0.45, 0, 1.2], 73); card('n3', { ...NL, hatBand: '#ffffff' }, { expr: 'nervous', L: 'hip', R: 'up', look: 0.4 }, PD, [1.4, 0, 1.5], 75); break;
+    case 'tiny': card('n1', NL, { expr: 'nervous', sweat: 0.8, sweatT: f / 60, L: 'up', R: 'hang', look: 0.3 }, GH, [-0.75, 0, -0.1], 71); card('n2', NL, { expr: 'scared', L: 'cheek', R: 'cheek' }, GH, [0.05, 0, 0.15], 73); card('n3', { ...NL, hatBand: '#ffffff' }, { expr: 'nervous', L: 'hip', R: 'point', look: -0.4 }, GH, [0.85, 0, -0.05], 75); break;
     case 'open': card('kp', KEEPER, { expr: 'stubborn', L: 'grab', R: 'grab', gx: 0.6, gy: 0.3, look: 0.3 }, PD, [GATE[0] + 0.55, 1.26, GATE[2] + 0.75], 21); card('fm', FARMER, { expr: f < 700 ? 'neutral' : 'shock', L: f < 700 ? 'hip' : 'up', R: f < 700 ? 'hang' : 'up', look: -0.4 }, PD, [-2.6, 0, 4.9], 81); break;
     case 'useless': { const wd = clamp((f - 960) / 160); card('gen', GENERAL, { expr: f < 960 ? 'sideeye' : 'smug', L: 'hip', R: f < 960 ? 'hip' : 'point', look: 0.6, talk: f > 990 && f < 1100 ? talkAt(f, 5, 1.1) : 0 }, PD, [-1.2, 0, ROAD_Z + 0.2], 61);
       for (let k = 0; k < 3; k++) card(`w${k}`, FR, { expr: 'grin', L: 'up', R: 'hang', look: 1 }, PD, [0.2 + k * 0.9 + wd * 1.2, 0, ROAD_Z + 1.2 + k * 0.5], 34 + k, { y: march(k) * 0.5 }); break; }
@@ -180,7 +208,7 @@ export const actorsAt = (f, T) => {
 };
 export const fxAt = (f) => { const S = shot(f), out = [];
   if (S.id === 'open' && f >= 712) out.push(emote('?', f - 712, at(PD, [-2.35, HY + 0.42, 4.9]), { s: 0.18 }));
-  if (S.id === 'tiny' && f >= 500) out.push(emote('sweat', f - 500, at(PD, [-0.35, HY + 0.38, 1.4]), { s: 0.14 }));
+  if (S.id === 'tiny' && f >= 500) out.push(emote('sweat', f - 500, at(GH, [-0.5, HY + 0.38, -0.1]), { s: 0.14 }));
   if (S.id === 'couldnt' && f >= 1130) out.push(emote('!', f - 1130, at(PD, [DITCH_X - 0.15, HY + 0.42, 9.0]), { s: 0.18 }));
   if (S.id === 'chaos' && f >= 1840) out.push(emote('!', f - 1840, at(PD, [5.9, 1.8, 8.4]), { s: 0.2 }));
   if (S.id === 'puddle' && f >= 1990) out.push(emote('zzz', f - 1990, at(PD, [0.4, HY + 0.4, ROAD_Z + 1.3]), { s: 0.16 }));
@@ -192,10 +220,10 @@ const HOOK0 = { pos: at(PD, [GATE[0] + 1.25, 2.35, GATE[2] + 3.1]), look: at(PD,
 const camL = (f) => { const S = shot(f), v = (f - S.a) / Math.max(1, S.b - S.a), sv = E.smooth(v);
   switch (S.id) {
     case 'hook': { const k = E.smooth(ramp(f, 90, 230)); return { pos: lerp3(HOOK0.pos, at(PD, [GATE[0] + 1.6, 2.4, GATE[2] + 4.4]), k), look: lerp3(HOOK0.look, at(PD, [GATE[0], 1.0, GATE[2] + 0.8]), k), fov: lerp(46, 54, k) }; }
-    case 'army': return { pos: at(PD, lerp3([-2.0, 0.55, ROAD_Z + 3.4], [-0.8, 0.5, ROAD_Z + 3.0], sv)), look: at(PD, lerp3([-4.0, 1.2, ROAD_Z], [-2.2, 1.3, ROAD_Z], sv)), fov: 56 };
-    case 'tiny': return { pos: at(PD, lerp3([0.4, 1.4, 5.6], [0.4, 1.45, 5.0], sv)), look: at(PD, [0.4, 1.2, 1.3]), fov: 58 };
+    case 'army': return { pos: at(PD, lerp3([-1.2, 0.9, ROAD_Z + 2.6], [-0.4, 0.95, ROAD_Z + 2.3], sv)), look: at(PD, lerp3([-3.6, 1.35, ROAD_Z + 0.2], [-2.0, 1.4, ROAD_Z + 0.4], sv)), fov: 50 };
+    case 'tiny': return { pos: at(GH, lerp3([0.1, 1.45, 3.1], [0.05, 1.42, 2.6], sv)), look: at(GH, [0.05, 1.25, -0.4]), fov: 52 };
     case 'open': { const k = E.smooth(ramp(f, 600, 760)); return { pos: lerp3(at(PD, [GATE[0] + 2.4, 2.6, GATE[2] + 3.8]), at(PD, [-0.5, 3.6, 9.0]), k), look: lerp3(at(PD, [GATE[0], 1.2, GATE[2] + 0.6]), at(PD, [-1.5, 0.3, 4.0]), k), fov: lerp(54, 60, k) }; }
-    case 'useless': { const k = E.smooth(ramp(f, 960, 1060)); return { pos: lerp3(at(PD, [-0.2, 1.45, ROAD_Z + 2.3]), at(PD, [2.6, 1.5, ROAD_Z + 4.6]), k), look: lerp3(at(PD, [-1.2, 1.35, ROAD_Z + 0.2]), at(PD, [1.4, 0.7, ROAD_Z + 1.6]), k), fov: lerp(46, 56, k) }; }
+    case 'useless': { const k = E.smooth(ramp(f, 960, 1060)); return { pos: lerp3(at(PD, [-0.6, 1.45, ROAD_Z + 1.9]), at(PD, [2.6, 1.5, ROAD_Z + 4.6]), k), look: lerp3(at(PD, [-1.2, 1.35, ROAD_Z + 0.2]), at(PD, [1.4, 0.7, ROAD_Z + 1.6]), k), fov: lerp(46, 56, k) }; }
     case 'couldnt': return { pos: at(PD, [DITCH_X - 0.1, 0.52, 10.9]), look: at(PD, [DITCH_X - 0.4, 0.85, 9.0]), fov: 56 };
     case 'cutaway': { const k = E.smooth(ramp(f, 1360, 1480)), k2 = E.smooth(ramp(f, 1500, 1600)); return { pos: at(CW, lerp3(lerp3([-0.3, 0.8, 5.6], [-1.8, 0.6, 4.6], k), [1.4, 0.0, 4.6], k2)), look: at(CW, lerp3(lerp3([-0.4, 0.5, -0.3], [-1.9, 0.4, -0.5], k), [1.5, -0.6, -0.5], k2)), fov: 52 }; }
     case 'chaos': { const k = E.smooth(ramp(f, 1815, 1860)); return { pos: at(PD, lerp3(lerp3([DITCH_X + 0.6, 1.3, 12.4], [DITCH_X + 1.0, 1.5, 12.8], sv), [6.4, 1.5, 12.4], k)), look: at(PD, lerp3(lerp3([DITCH_X - 0.2, 0.7, 9.2], [DITCH_X + 0.4, 0.8, 9.6], sv), [5.6, 1.1, 8.4], k)), fov: 56 }; }
@@ -213,7 +241,7 @@ export const dofAt = (f) => { const S = shot(f), C = cam(f), atp = (p, k) => ({ 
   switch (S.id) {
     case 'hook': case 'loop': return atp(at(PD, [GATE[0] + 0.4, 1.9, GATE[2] + 0.5]), 9);
     case 'army': return atp(at(PD, [-3.2, 1.2, ROAD_Z]), 8);
-    case 'tiny': return atp(at(PD, [0.4, HY, 1.3]), 9);
+    case 'tiny': return atp(at(GH, [0.05, HY, 0.0]), 10);
     case 'open': return atp(at(PD, [-0.5, 0.8, 2.0]), 5);
     case 'useless': return atp(at(PD, [-0.6, HY, ROAD_Z + 0.6]), 8);
     case 'couldnt': return atp(at(PD, [DITCH_X - 0.4, 1.0, 9.0]), 10);
