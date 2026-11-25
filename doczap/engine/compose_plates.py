@@ -16,12 +16,13 @@ if a.audio: args += ['-i', a.audio]
 whips = [int(x) for x in a.whips.split(',') if x.strip()]
 en = '+'.join(f'between(n,{w - 14 - a.first},{w + 18 - a.first})' for w in whips)
 fc = f"[0:v]split[a][b];[b]tmix=frames=7:weights='1 1 1 1 1 1 1'[bl];[a][bl]overlay=enable='{en}'[v0]" if whips else '[0:v]null[v0]'
+fc = fc.replace('[0:v]', '[0:v]scale=1080:1920:flags=lanczos[sc];[sc]', 1)   # supersampled plates (RS=2) -> crisp 1080x1920
 for i, (s0, e0) in enumerate(C['win']): fc += f";[v{i}][{i + 1}:v]overlay=enable='between(t,{s0:.3f},{e0 - 0.001:.3f})'[v{i + 1}]"
 if a.glow > 0:  # glossy glow: highlights bloom (tight + wide) + a soft overall sheen, screen-blended
     k = a.glow
     fc = fc.replace('[v0]', '[pre]', 1) + (f";[pre]format=gbrp,split=3[gA][gB][gC];[gB]curves=all='0/0 0.55/0.03 0.8/0.45 1/1',split[hb1][hb2];[hb1]gblur=sigma=10[t1];[hb2]gblur=sigma=40[t2]"
-      f";[gC]gblur=sigma=22,eq=saturation=1.25[sh];[t1][t2]blend=all_mode=screen[hl];[gA][hl]blend=all_mode=screen:all_opacity={min(1, 0.55 * k):.3f}[g1];[g1][sh]blend=all_mode=screen:all_opacity={min(1, 0.16 * k):.3f},eq=saturation={1 + 0.06 * k:.3f}:contrast={1 + 0.03 * k:.3f}[v0]")
+      f";[gC]gblur=sigma=22,eq=saturation=1.25[sh];[t1][t2]blend=all_mode=screen[hl];[gA][hl]blend=all_mode=screen:all_opacity={min(1, 0.55 * k):.3f}[g1];[g1][sh]blend=all_mode=screen:all_opacity={min(1, 0.16 * k):.3f},eq=saturation={1 + 0.06 * k:.3f}:contrast={1 + 0.03 * k:.3f},unsharp=5:5:0.55:5:5:0.0[v0]")
 fc += f";[v{len(C['win'])}]null[v]"
 if a.audio: fc += f";[{len(C['inputs']) + 1}:a]loudnorm=I=-14:TP=-1.5:LRA=11,afade=t=out:st={max(0, dur - 0.25):.2f}:d=0.25,aresample=48000[au]"
-args += ['-filter_complex', fc, '-map', '[v]'] + (['-map', '[au]', '-c:a', 'aac', '-b:a', '192k'] if a.audio else []) + ['-t', f'{dur:.3f}', '-r', '60', '-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', a.out]
+args += ['-filter_complex', fc, '-map', '[v]'] + (['-map', '[au]', '-c:a', 'aac', '-b:a', '192k'] if a.audio else []) + ['-t', f'{dur:.3f}', '-r', '60', '-c:v', 'libx264', '-preset', 'slow', '-crf', '14', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', a.out]
 subprocess.run(args, check=True); print('ok', a.out, f'{dur:.2f}s')

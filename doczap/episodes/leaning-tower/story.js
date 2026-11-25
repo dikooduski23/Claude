@@ -230,7 +230,7 @@ const cam = (f) => { const S = shot(f), v = (f - S.a) / Math.max(1, S.b - S.a), 
   c.shadowAt = c.look; return c; };
 export const camAt = cam;
 const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
-export const dofAt = (f) => { const S = shot(f), C = cam(f), atp = (p, k) => ({ focus: dist(C.pos, p), cinf: k });
+const dofRaw = (f) => { const S = shot(f), C = cam(f), atp = (p, k) => ({ focus: dist(C.pos, p), cinf: k });
   switch (S.id) {
     case 'hook': { const k = E.smooth(ramp(f, 60, 140)); return { focus: lerp(dist(C.pos, at(PZ, [DRILL[0], 0.2, DRILL[2]])), dist(C.pos, TOWER_MID), k), cinf: lerp(24, 6, k) }; }
     case 'loop': { const k = E.smooth(ramp(f, 2120, 2196)); return { focus: lerp(dist(C.pos, TOWER_MID), dist(C.pos, at(PZ, [DRILL[0], 0.2, DRILL[2]])), k), cinf: lerp(6, 24, k) }; }
@@ -244,6 +244,8 @@ export const dofAt = (f) => { const S = shot(f), C = cam(f), atp = (p, k) => ({ 
     case 'tipback': return atp(at(CU, [0, 2.5, -1.0]), 4);
   }
   return { focus: 5, cinf: 0 }; };
+// background blur halved (Diyar: the video looked soft); depth still reads
+export const dofAt = (f) => { const d = dofRaw(f); return { ...d, cinf: d.cinf * 0.5 }; };
 export const worldAt = (f) => ({});
 // ---------------- handwritten labels ----------------
 export const annotAt = (f) => { const S = shot(f);

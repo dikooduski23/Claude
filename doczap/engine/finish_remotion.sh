@@ -10,5 +10,5 @@ python3 "$ENG/compose_plates.py" plates "$R/public/base.mp4" --audio final_mix.w
 node -e "import('$HERE/web/story.js').then((m) => require('fs').writeFileSync('cuts.json', JSON.stringify(m.TRANSITIONS || [])))"
 DUR=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$R/public/base.mp4")
 python3 -c "import json,sys; json.dump({'video':'base.mp4','words':json.load(open('words.json')),'cuts':json.load(open('cuts.json')),'durationSec':float(sys.argv[1])},open(sys.argv[2],'w'))" "$DUR" "$R/public/episode.json"
-cd "$R" && npx remotion render src/index.ts Episode "$HERE/$OUT" --props=public/episode.json --codec=h264 --crf=17 --concurrency=4 --log=error
+cd "$R" && npx remotion render src/index.ts Episode "$HERE/$OUT" --props=public/episode.json --codec=h264 --crf=14 --concurrency=4 --log=error
 echo "ok $OUT"
