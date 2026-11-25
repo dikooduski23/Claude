@@ -5,12 +5,12 @@ Source: the toolkit's default rules, applied to the Doc Zap house style (STYLE.m
 ## Acts (colour follows the story; a field changes only at a turn)
 | Act | Frames | Beats | Field (lighting preset) | Lightness |
 |---|---|---|---|---|
-| 1. Danger | 0–875 | hook, 1990 closed, lead weights, freezing backfires | **overcast**: cool grey-blue sky, desaturated marble, soft shadows | mid |
+| 1. Danger | 0–875 | hook, 1990 closed, lead weights, freezing backfires | **sunny**: vivid blue sky, creamy marble, saturated green lawn, red/white tape (revised: Diyar wanted rich colour, not grey) | light |
 | 2. The idea | 876–1290 | Burland's idea, "Dig.", "Sounds insane, right?" | **site lamps at dusk**: warm work-lights against a deep blue sky | mid-dark |
 | 3. Mechanism | 1291–1729 | glass cutaway: soft clay, drill tubes pull soil | **dark cutaway**: warm lamp on the section, near-black surround | dark |
 | 4. Payoff + loop | 1730–2196 | tower tips back 40 cm, ironic line, back to frame 1 | **golden hour**: warm sun, bright marble, long shadows | light |
 
-Neighbouring acts differ in lightness (mid → mid-dark → dark → light), so each turn reads at the cut. The loop's last frames return to the hook composition; the field jump from golden (4) to overcast (1) on the loop is the one deliberate exception, covered by the whip.
+Neighbouring acts differ in hue and lightness (bright day → violet-orange dusk → warm amber cutaway → golden hour), so each turn reads at the cut. The loop's last frames return to the hook composition; the field jump from golden (4) to overcast (1) on the loop is the one deliberate exception, covered by the whip.
 
 ## One accent
 **Safety orange `#ff6a1e`**, only on what the narration names: the drill bit and drill tubes, the "about to fall" label arrow, the soil plugs coming out, the 40 cm arrow. Everything else is marble white, stone, earth and ink.
@@ -30,4 +30,4 @@ The cutaway's soil layers are the subject's own structure: sand on top, **soft c
 
 ## Rules turned off
 - **Effect transitions** (whip-pan, zoom-blur, focus-pull from remocn) stay on: they're a Doc Zap house rule (Diyar asked for remocn on every cut). The skill's default would be hard cuts.
-- **Glow:** the house glossy glow (0.85) stays on, from Diyar's request. The skill's default is no glows.
+- **Glow:** the house glossy glow (0.85) stays on, plus bloom 0.85–1.1, glowing accents, lamp bulbs, sun shafts and dust motes (Diyar, Nov 25 2026). The skill's default is no glows; Doc Zap rules win.

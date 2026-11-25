@@ -65,3 +65,10 @@ Current style: the **reference style**, from 9 reels Diyar sent on Nov 23 2026. 
 - Comments are near zero: the pinned comment asks an easy either/or question.
 - Hooks must score 70+ on ig-reel `hookscore.py` (all past captions scored under 60).
 
+## Colour, bloom and glow (Diyar, Nov 25 2026)
+- Every act is **rich and saturated**: vivid sky blue by day, violet-orange dusk, warm amber interiors, golden hour. Never a grey, overcast or desaturated act; the design skill's "colour by act" means changing hue and lightness, not draining colour.
+- Light presets: `sat` 1.25–1.4, `bloom` 0.8–1.1 with `bthr` ≈ 0.8, a warm `gain`, a strong `rim`.
+- Glow sources in frame: emissive accents (tools, tubes, the key object), lamps with visible bright bulbs, sun shafts (`K.beam`) and dust motes in golden light; the house glossy glow (0.85) on top in the final edit.
+- QC stills are judged **with the glow filter applied** (same chain as `compose_plates.py --glow 0.85`), since that's what viewers see.
+- Marble and white stone stay creamy white (`#fffaf0`-ish); warm light colours them, the texture doesn't.
+

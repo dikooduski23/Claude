@@ -28,7 +28,7 @@ See `doczap/docs/STYLE.md` for the full rules. In short:
 - **Hook:** no title card. Frame 1 is a close-up of the character already doing the strange thing, or a macro slow-mo of the key object with a focus pull.
 - **Camera:** always moving (push-ins, arcs, following objects, POV, low angles), close framing, a new angle every 1.3-3 s, **whip-pans** with motion blur as transitions.
 - **Characters:** big white heads, very expressive faces, emotes (lightbulb, ?, !), hats, beards.
-- **Worlds:** textured, warm-lit, depth haze.
+- **Worlds:** textured, warm-lit, depth haze. **Rich, saturated colour, bloom and glows in every act** (Diyar, Nov 25 2026: "where are the rich colourful colours, the blooms, the glows"): no grey/overcast or desaturated acts, sat ≥1.25, bloom ≥0.8, emissive glowing accents, lamps with visible glowing bulbs, sun shafts and dust motes in golden light. Mark act changes with *hue and lightness*, never by draining colour. Preview stills **with the glow filter applied** before the full render.
 - **Mechanism:** an in-world cutaway (glass object, cross-section, balance scale) with **handwritten labels and arrows** (Caveat font).
 - **Captions:** 1-2 words, Poppins Bold, white with a dark stroke, sentence case, y≈1342.
 
