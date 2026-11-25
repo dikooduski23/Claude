@@ -7,6 +7,28 @@ description: Use when Diyar says "let's create next video" (or similar) for his 
 
 Read `CLAUDE.md` and `doczap/docs/STYLE.md` first and follow every rule in them.
 
+## Skill map: invoke every skill on this list at its step, every episode (Diyar, Nov 25 2026)
+Load each skill with the Skill tool at the step named; don't work from memory. Doc Zap rules win where a skill clashes. Record which skills ran in the episode's `script.md` (Phase 1) and `post.md` (Phase 2/3).
+
+| Step | Skills |
+|---|---|
+| Pick the story | `ig-viral`, `yt-viral` (what's over-indexing), `vt-youtube-stats` (our own winners, once Diyar connects YouTube Analytics) |
+| Hook + script | `ig-reel` (3 hooks, `hookscore.py`, `beats.py`), `yt-script` (YouTube hook score, tiebreaker), `ig-human` (`detect.py`) |
+| Virality | `virality-predictor` (full run, TikTok + Instagram), ig-viral's 8-line pre-build check |
+| Look of the episode | `vt-video-design` (palette by act, 9:16 layout, safe zones) before building sets |
+| Sets, lights, camera (three.js engine) | `threejs-fundamentals`, `threejs-lighting`, `threejs-materials`, `threejs-textures`, `threejs-geometry`, `threejs-animation`, `threejs-shaders`, `threejs-postprocessing`, `threejs-performance` |
+| Sets, cast, camera (Blender, on Diyar's computer) | `vt-blender` (shot spec, rigged cartoon cast, cameras checked by geometry, beats on narration words, sound on the motion); toolkit = submodule `doczap/vendor/claude-code-video-toolkit` |
+| Word timing | `align_ps.py` by default; `elevenlabs-speech-to-text` (Scribe word timestamps) when Diyar's ElevenLabs key is set |
+| Sound | the voice-first mix; `elevenlabs-sound-effects` and `elevenlabs-music` (key needed) for real SFX/music beds, still mixed by the voice-first rule; `elevenlabs-voice-isolator` if the MP3 has noise |
+| Final edit | `remotion-best-practices` (router), `remotion-markup`, `remotion-captions`, `remotion-interactivity`, `remotion-render`; `remotion-elements` for ready-made components; `remotion-upgrade` when a new Remotion version lands; `remotion-studio` to preview |
+| Media work | `vt-ffmpeg` (trims, loudness, encodes); `vt-moviepy` only for quick Python overlays |
+| QC | `vt-video-design` contact-sheet critique on the stills and on frames from the final MP4 |
+| Cover | `yt-package` (`title.py`, 100/100 pair); `vt-ideogram4` for text-heavy cover art if an Ideogram key is set |
+| Posting kit | `ig-caption` (+ `ig-human` on the caption), `yt-seo`, `yt-chapters` not needed for Shorts |
+| After posting | `ig-reply`, `yt-comment`, `ig-audit`, `yt-retention`, `vt-youtube-stats`, `ig-plan`/`yt-plan`, `ig-profile`/`yt-audit` monthly, `ig-repurpose`/`ig-carousel`/`ig-story` to reuse an episode |
+
+**Not used for Doc Zap** (installed, but they don't fit the format): `remotion-saas`, `remotion-maps` (unless a story needs a map), `remotion-create`, `remotion-license`, `remotion-docs` (use when stuck), `threejs-react-three-fiber`, `threejs-interaction`, `threejs-loaders`/`threejs-asset-pipeline` (only for imported models), `elevenlabs-agents`, `-realtime`, `-speech-engine`, `-dubbing` (unless Diyar wants other languages), `-voice-changer`, `-onboarding`/`-setup-api-key` (only to set up his key), `elevenlabs-text-to-speech` (Diyar makes the Patrick MP3 himself), `vt-ltx2`, `vt-qwen-edit`, `vt-runpod`, `vt-acestep` (cloud GPU), `vt-synthetic-ui-demo`, `vt-playwright-recording`, `vt-parody-short`, `vt-video-toolkit` (its own pipeline), `ig-dm`, `ig-comment`, `yt-edit`, `yt-shorts`.
+
 ## Phase 1: after "let's create next video" (no questions needed)
 The installed Instagram/YouTube agent skills (`.claude/skills/ig-*`, `yt-*`, MIT, code reviewed Nov 24 2026) are part of every episode. **Doc Zap rules win** where they clash: no "comment/follow" ask inside the video (the ask goes in the caption), the last line loops back into line 1, captions at y≈1342, and nothing is invented as history. None of the scores predicts views; say so.
 
@@ -28,7 +50,6 @@ The installed Instagram/YouTube agent skills (`.claude/skills/ig-*`, `yt-*`, MIT
 6. **Send Diyar** a .md with the script, the beat sheet, the score table, the fact check and the sources. Ask only for the MP3.
 
 ## Phase 2: after he sends the voiceover
-**Skills to use in this phase:** `threejs-*` (lighting, materials, post-processing, performance) for the current engine; `remotion-best-practices`, `remotion-captions` and `remotion-render` for the final edit; `vt-blender` (shot specs, a rigged cartoon cast, cameras checked by geometry, sound placed on the motion; toolkit in the submodule `doczap/vendor/claude-code-video-toolkit`) once episodes move to Blender on Diyar's computer; `vt-ffmpeg` for ffmpeg work. The `elevenlabs-*` skills (text-to-speech, sound-effects, music) need Diyar's ElevenLabs key; he still makes the Patrick MP3 himself unless he says otherwise.
 Work in `doczap/work/<slug>/`: `cp -r doczap/engine doczap/work/<slug>`, run `npm install` there (or symlink node_modules), and put the MP3 in as `voice_raw.mp3`.
 1. **Voice:**
    - `python3 ../../tools/trim_pauses.py voice_raw.mp3 voice.mp3`.
