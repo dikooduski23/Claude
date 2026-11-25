@@ -2557,7 +2557,7 @@ FACE.unimpressed = { eye: ["lid", "lid"], brow: [1, 1], mouth: "flat" };
 // ---------------- engine kit: hats, beards, outfit patterns, face flush ----------------
 const ringFill = (p, outer, inner, fill, ow) => { const g = p.g, tr = (r) => r.forEach(([x0, y0], i) => { const [x, y] = p.P(x0, y0); i ? g.lineTo(x, y) : g.moveTo(x, y); }) || g.closePath();
   g.beginPath(); tr(outer); tr([...inner].reverse()); g.fillStyle = fill; g.fill("evenodd"); if (ow) { g.lineWidth = ow; g.strokeStyle = INK; g.lineJoin = "round"; g.stroke(); } };
-const HATCOL = { crown: "#f2c230", helmet: "#a9b0b8", cowboy: "#9a6434", tophat: "#2a2630", hood: "#5a4a8a", turban: "#f0ece0", soldier: "#3a5a8a" };
+const HATCOL = { crown: "#f2c230", helmet: "#a9b0b8", cowboy: "#9a6434", tophat: "#2a2630", hood: "#5a4a8a", turban: "#f0ece0", soldier: "#3a5a8a", hardhat: "#f2c230" };
 /** parts of a hat drawn BEHIND the head (hood cowl, crown velvet) */
 const hatBack = (p, kind, O, H, cx, hc, u, light, thick, ow) => {
   const col = O.hatCol || HATCOL[kind];
@@ -2586,6 +2586,12 @@ const hatFront = (p, kind, O, H, cx, hc, u, light, thick, ow) => {
       const rim = [...curve(sag(by - 3 * u, w * 1.12, 3)), ...curve(sag(by + 4 * u, w * 1.12, 3.5)).reverse()]; p.poly(rim, mul(col, [0.85, 0.85, 0.9]), ow * 0.85);
       for (let i = -3; i <= 3; i++) { const t = i / 3.5; p.dot(cx + t * w, by - 7 * u + 3 * u * (1 - t * t), 1.9 * u, "#5a6068"); }
       if (O.plume) { const pl = [[cx - 3 * u, top + 2 * u], [cx + 3 * u, top + 2 * u], [cx + 26 * u, top - 22 * u], [cx + 4 * u, top - 34 * u], [cx - 10 * u, top - 18 * u]]; p.poly(pl, O.plume, ow * 0.7); }
+      break; }
+    case "hardhat": { const top = hc - H.b - 4 * u, w = 44 * u; // construction hard hat: dome, centre ridge, full brim with a peak
+      const dome = [...curve(sag(by + 1 * u, w, 3)).reverse(), ...ellPts(cx, by, w, by - top, 180, 360, 0, 30)];
+      shade(dome, col, w); p.clip(dome, () => { p.band([[cx, top - 2 * u], [cx, by + 2 * u]], mul(col, [0.82, 0.8, 0.7]), 7 * u, 0); p.stroke(ellPts(cx - 15 * u, by - 20 * u, 11 * u, 9 * u, 200, 290, 0, 12), 4 * u, "rgba(255,255,255,.6)"); });
+      const brim = [...curve((t) => [cx + w * 1.22 * t, by - 4 * u + 3 * u * (1 - t * t)]), ...curve((t) => [cx + w * 1.22 * t, by + 3 * u + 6 * u * (1 - t * t)]).reverse()];
+      shade(brim, mul(col, [0.92, 0.9, 0.82]), w);
       break; }
     case "cowboy": { const bw = 74 * u, cw = 31 * u, ch = 38 * u;
       const brim = [...curve((t) => [cx + bw * t, by - 2 * u + 3 * u * (1 - t * t) - 9 * u * Math.pow(Math.abs(t), 3)]), ...curve((t) => [cx + bw * 0.96 * t, by + 5 * u + 4 * u * (1 - t * t) - 9 * u * Math.pow(Math.abs(t), 3)]).reverse()];
@@ -2825,7 +2831,7 @@ const cobweb = (p, cx, cy, r, u) => {
 /** front-facing Roman-era character. opts: expr, blink, look, facing, seed, L/R arm poses, tilt, headTilt, bob, nohelmet, light */
 export const romanFront = (p, key, opts = {}) => {
   const O0 = typeof key === "string" ? OUTFITS[key] : key, O = opts.over ? { ...O0, ...opts.over } : O0;
-  const hatK = opts.hat ?? O.hat; // engine kit hats: crown helmet cowboy tophat hood turban soldier
+  const hatK = opts.hat ?? O.hat; // engine kit hats: crown helmet cowboy tophat hood turban soldier hardhat
   const { expr = "neutral", blink = 0, look = 0, facing = 0, seed = 3, L = "hang", R = O.spear ? "spear" : "hang", tilt = 0, headTilt = 0,
     bob = 0, nohelmet = false, light = rad(-120), web = false, step = 0 } = opts;
   const lid = lidOf(blink), skin = O.skin ?? SKIN;

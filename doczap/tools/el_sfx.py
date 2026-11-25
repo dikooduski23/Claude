@@ -8,7 +8,7 @@ sfx.json:
 
 In a mix script:
     import sys; sys.path.insert(0, "../../tools"); from el_sfx import load
-    creak = load("ice_creak")   # mono float32 numpy array at 44.1 kHz
+    creak = load("ice_creak")   # mono float32 numpy array at 44.1 kHz (stereo files are folded to mono)
 Put every generated sound on the SFX bus of the voice-first mix (low-pass, ducked under
 speech, SFX_PEAK cap): Diyar's rule is that the voice is always on top.
 
@@ -45,18 +45,19 @@ def generate(spec_path):
             output_format="pcm_44100",
         )
         pcm = b"".join(audio)
-        with wave.open(str(out), "wb") as w:
-            w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes(pcm)
+        with wave.open(str(out), "wb") as w:   # the API's pcm_44100 for SFX is 16-bit STEREO
+            w.setnchannels(2); w.setsampwidth(2); w.setframerate(SR); w.writeframes(pcm)
         made += 1
-        print(f"  made {out} ({len(pcm) / 2 / SR:.1f} s)")
+        print(f"  made {out} ({len(pcm) / 4 / SR:.1f} s)")
     print(f"{made} generated, {cached} already cached in {SFX_DIR}/")
 
 
 def load(name, sfx_dir=SFX_DIR):
     import numpy as np
     with wave.open(str(Path(sfx_dir) / f"{name}.wav")) as w:
+        ch = w.getnchannels()
         a = np.frombuffer(w.readframes(w.getnframes()), "<i2").astype(np.float32) / 32768
-    return a
+    return a.reshape(-1, ch).mean(1) if ch > 1 else a
 
 
 if __name__ == "__main__":

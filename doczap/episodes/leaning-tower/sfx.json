@@ -1,0 +1,18 @@
+[
+ {"name": "drill_soil", "text": "Close-up heavy construction drill auger grinding slowly into wet earth, gritty soil crunch", "duration": 3.5, "influence": 0.6},
+ {"name": "gate_slam", "text": "Iron gate swinging shut with a heavy metal clang and rattle", "duration": 1.5, "influence": 0.6},
+ {"name": "crane_winch", "text": "Construction crane winch motor lowering a load, chain clinking", "duration": 3.0, "influence": 0.5},
+ {"name": "lead_thud", "text": "Heavy lead block dropping onto a stack of metal blocks, deep dull thud", "duration": 1.0, "influence": 0.6},
+ {"name": "nitrogen_hiss", "text": "Liquid nitrogen hissing out of metal pipes into cold ground, icy crackling frost", "duration": 3.0, "influence": 0.6},
+ {"name": "stone_creak", "text": "Deep groaning creak of a huge old stone tower shifting, low rumble", "duration": 2.5, "influence": 0.6},
+ {"name": "idea_ding", "text": "Single soft bright bell ding, a cartoon idea moment", "duration": 1.0, "influence": 0.7},
+ {"name": "rig_start", "text": "Drilling rig diesel engine starting and a drill beginning to bore into the ground", "duration": 3.0, "influence": 0.5},
+ {"name": "soil_scrape", "text": "Small amounts of soil being pulled out through a metal tube, gritty sliding scrape", "duration": 3.0, "influence": 0.6},
+ {"name": "tower_settle", "text": "Enormous stone building slowly settling back, long soft deep rumble and a gentle creak", "duration": 3.5, "influence": 0.5},
+ {"name": "crowd_cheer", "text": "Small crowd in an Italian square cheering and clapping, outdoors", "duration": 2.5, "influence": 0.5},
+ {"name": "whoosh", "text": "Fast cinematic swish whoosh transition, airy", "duration": 0.7, "influence": 0.7},
+ {"name": "amb_piazza", "text": "Overcast Italian piazza ambience, distant tourists murmuring and pigeons", "duration": 12, "influence": 0.4, "loop": true},
+ {"name": "amb_site_night", "text": "Construction site at dusk, distant generator hum, crickets, quiet", "duration": 10, "influence": 0.4, "loop": true},
+ {"name": "amb_underground", "text": "Low underground room tone, faint deep rumble", "duration": 10, "influence": 0.4, "loop": true},
+ {"name": "amb_evening", "text": "Warm evening Italian square ambience, swallows and soft distant voices", "duration": 10, "influence": 0.4, "loop": true}
+]
