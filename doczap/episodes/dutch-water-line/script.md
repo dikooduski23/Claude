@@ -7,7 +7,7 @@
 
 ## Script v2 (ElevenLabs Patrick, Eleven v4; tag-free), rewritten Nov 24 with the agent skills
 
-**Use this version for the MP3** (v1 is no longer used). 112 words, about 38–41 s.
+**Voiced by Claude via the ElevenLabs API** (Nov 25 2026): Patrick `ODq5zmih8GrVes37Dizd`, Eleven v4; 45.6 s raw, 40.6 s after trimming; Scribe word timing 112/112 words (`words.json`). 112 words, about 38–41 s.
 
 Imagine drowning your country... to stop France's army.
 
