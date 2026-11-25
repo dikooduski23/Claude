@@ -7,7 +7,7 @@
 
 ## Script (ElevenLabs Patrick, Eleven v4; tag-free)
 
-**v2** (Nov 24, after the virality-predictor skill): clearer danger in line 2, plus a "Sounds insane, right?" beat. 107 words, about 37–39 s.
+**v3** (Nov 25, after `viral-hooks` and `viral-short-form`): beats now joined by So/But instead of "and then"; the hook's missing stake is added on screen (see below). 109 words, about 37–40 s. **Use this version for the MP3.**
 
 Nobody tells you Pisa's tower was saved... by digging.
 
@@ -15,9 +15,9 @@ In nineteen ninety, experts feared it would fall.
 
 Pisa closed it.
 
-Engineers stacked hundreds of tonnes of lead on one side.
+So engineers stacked hundreds of tonnes of lead on one side.
 
-Then they froze the ground... and it leaned even more.
+But when they froze the ground... it leaned even more.
 
 So engineer John Burland had a better idea.
 
@@ -50,6 +50,11 @@ To stop Pisa's tower falling... they made it sink.
 | 59.6 OK | To stop Pisa's tower falling, they dug under it. |
 | 42.2 WEAK | To save the Leaning Tower, they dug under it. |
 | 28.2 WEAK | Your tower is falling... so you dig under it? |
+
+## Vyral skills (viral-hooks, viral-short-form), Nov 25
+- **Hook batch** (6 hooks, 4 archetypes, scored by both tools): the current hook stays (IG 87 / YT 42). Alternatives: "Nobody tells you they dug under Pisa's tower... on purpose." (81 / 42), "One wrong move and Pisa's tower falls. They dug anyway." (63 / 35), "How do you save a falling tower? Dig under it." (47 / 42).
+- **Three-layer hook:** the spoken line opens the curiosity loop but carries no stake. So the stake goes on screen without lengthening the line: a handwritten Caveat label **"about to fall"** with an arrow on the tilted tower in frame 1, over the drill bit in the soil. It sharpens rather than repeats the spoken line, and works muted.
+- **Retention:** "but / therefore" between beats ("So engineers stacked…", "But when they froze the ground…"); re-hook at the middle ("Sounds insane, right?"); payoff teased in the hook; last line loops into the first.
 
 ## Tool checks
 - **Beat timer** (`beats.py`): 13 beats, 37.5 s against a 38 s target, no beat over 4 s, and the last line repeats "Pisa's tower" from the hook, so it loops. The hook reads 3.3 s at the tool's 165 words a minute; Patrick on v4 ran about 180 words a minute on the Ice King, so it lands at about 3 s. The tool flags beats 6–8 as having "nothing concrete", but it doesn't count spelled-out numbers ("nineteen ninety"), which Patrick needs.
