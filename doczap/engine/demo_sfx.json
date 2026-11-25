@@ -1,0 +1,9 @@
+[
+ {"name": "torch_room", "text": "Medieval stone hall at night, torches crackling, faint wind, cozy", "duration": 6.5, "influence": 0.45},
+ {"name": "murmur", "text": "Two cartoon characters talking in muffled gibberish, playful", "duration": 2.0, "influence": 0.5},
+ {"name": "king_growl", "text": "Cartoon king growling angrily, rising furious grumble, no words", "duration": 1.8, "influence": 0.55},
+ {"name": "gulp", "text": "Cartoon nervous gulp", "duration": 0.6, "influence": 0.7},
+ {"name": "pop", "text": "Soft bubbly cartoon pop", "duration": 0.5, "influence": 0.7},
+ {"name": "whoosh", "text": "Fast cinematic swish whoosh transition, airy", "duration": 0.7, "influence": 0.7},
+ {"name": "sparkle", "text": "Small magical sparkle chime reveal", "duration": 1.2, "influence": 0.6}
+]

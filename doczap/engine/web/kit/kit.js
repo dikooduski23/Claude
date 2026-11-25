@@ -187,6 +187,22 @@ export function makeKit(ctx) {
     const m = new THREE.MeshBasicMaterial({ map: beamTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, opacity: op, fog: false }); m.color.set(col);
     const mesh = noInk(add(geo, m, A.x, A.y, A.z, parent, false)); mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), B.clone().sub(A).normalize()); mesh.renderOrder = 7; mesh.userData.beam = true; return mesh;
   };
+  /** a glowing lamp/bulb (Nov 25 2026 quality pass): HDR disc that blooms + soft additive halo + optional warm point light.
+   *  o: { col, size, light:true, i, dist, flicker, halo:true } -> { g, disc, halo, light } */
+  const bulb = (parent, x, y, z, o = {}) => { const g = grp(parent, x, y, z), size = o.size ?? 0.08, col = o.col || '#ffe2a8';
+    const dm = new THREE.MeshBasicMaterial({ color: col, fog: false }); dm.color.multiplyScalar(o.hdr ?? 2.2);
+    const disc = billboard(noInk(add(new THREE.CircleGeometry(size, 20), dm, 0, 0, 0, g, false))); disc.renderOrder = 8;
+    let halo = null; if (o.halo !== false) { const hm = new THREE.MeshBasicMaterial({ map: haloTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }); hm.color.set(col).multiplyScalar(o.haloK ?? 0.6);
+      halo = billboard(noInk(add(new THREE.PlaneGeometry(size * 9, size * 9), hm, 0, 0, 0, g, false))); halo.renderOrder = 9; }
+    const light = o.light === false ? null : warmLight(g, 0, 0, 0, { col, i: o.i ?? 2.2, dist: o.dist ?? 6, flicker: o.flicker ?? 0.03 });
+    return { g, disc, halo, light }; };
+  /** floating dust motes / embers that catch the light (golden hour, torch light). o: { n, box:[x0,y0,z0,x1,y1,z1], col, size, speed, rise } */
+  const motes = (parent, o = {}) => { const n = o.n ?? 50, b = o.box || [-2, 0.2, -2, 2, 2.6, 2], col = o.col || '#fff0c8', sz = o.size ?? 0.012, sp = o.speed ?? 0.0016, out = [];
+    const m = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: o.opacity ?? 0.85, fog: false }); m.color.multiplyScalar(o.hdr ?? 1.6);
+    const rr = (i, k) => { const v = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return v - Math.floor(v); };
+    for (let i = 0; i < n; i++) out.push(noInk(add(new THREE.SphereGeometry(sz * (0.6 + rr(i, 1)), 6, 4), m, 0, 0, 0, parent, false)));
+    onUpdate((f) => { out.forEach((d, i) => { const t = (f * sp * (o.rise === false ? 0 : 1) + rr(i, 2)) % 1; d.position.set(b[0] + rr(i, 3) * (b[3] - b[0]) + 0.15 * Math.sin(f * 0.012 + i), b[1] + t * (b[4] - b[1]), b[2] + rr(i, 4) * (b[5] - b[2]) + 0.1 * Math.cos(f * 0.01 + i * 1.7)); }); });
+    return out; };
 
   // =====================================================================================================================
   // PROPS
@@ -298,6 +314,18 @@ export function makeKit(ctx) {
     const c = prop.candle(g, { y: 0.03, h: 0.1, r: 0.02, holder: 'none' }); let lr = null; if (light > 0) lr = warmLight(g, 0, 0.2, 0, { col: '#ffb060', i: light, dist: o.dist ?? 4.5, flicker: 0.1, shadow: o.shadow });
     if (hang) add(new THREE.CylinderGeometry(0.006, 0.006, hang, 4), M.iron, 0, 0.4 + hang / 2, 0, g, false);
     g.userData.light = lr; return g; };
+  /** printed graphic: poster / notice / label with crisp text, like the reference's tickets and signs (quality pass).
+   *  o: { x,y,z, ry, w, h, bg, fg, accent, title, lines:[], footer, border, font, tilt, parchment } */
+  prop.poster = (parent, o = {}) => { const { x = 0, y = 1.4, z = 0, ry = 0, w = 0.6, h = 0.8 } = o, W = 1024, H = Math.round(1024 * h / w);
+    const c = cvs(W, H, (g) => { g.fillStyle = o.bg || (o.parchment ? '#ecd9ac' : '#fff6e0'); g.fillRect(0, 0, W, H);
+      if (o.parchment) for (let i = 0; i < 60; i++) { g.fillStyle = `rgba(120,80,30,${0.03 + (i % 5) * 0.01})`; g.beginPath(); g.arc((i * 137) % W, (i * 251) % H, 30 + (i % 7) * 12, 0, 7); g.fill(); }
+      g.strokeStyle = o.border || '#1e1a16'; g.lineWidth = 18; g.strokeRect(14, 14, W - 28, H - 28);
+      g.fillStyle = o.accent || '#d0283a'; g.fillRect(40, 40, W - 80, Math.round(H * 0.2));
+      g.fillStyle = '#ffffff'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = `900 ${Math.round(H * 0.11)}px ${o.font || 'Georgia, serif'}`; g.fillText(o.title || 'NOTICE', W / 2, 40 + H * 0.1);
+      g.fillStyle = o.fg || '#1e1a16'; g.font = `700 ${Math.round(H * 0.065)}px ${o.font || 'Georgia, serif'}`; (o.lines || []).forEach((l, i) => g.fillText(l, W / 2, H * 0.36 + i * H * 0.1));
+      if (o.footer) { g.font = `italic 700 ${Math.round(H * 0.05)}px ${o.font || 'Georgia, serif'}`; g.fillText(o.footer, W / 2, H * 0.9); } });
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+    const m = add(new THREE.PlaneGeometry(w, h), toon({ map: t }), x, y, z, parent, false); m.rotation.set(0, ry, o.tilt ?? 0); return m; };
   prop.rug = (parent, o = {}) => { const { x = 0, z = 0, ry = 0, w = 2.4, d = 1.6, y = 0.006 } = o; const m = materials.rug({ ...o, w: 512, h: Math.round(512 * d / w) });
     const r = add(new THREE.PlaneGeometry(w, d), m, x, y, z, parent, false); r.rotation.set(-Math.PI / 2, 0, ry); return r; };
   prop.jar = (parent, o = {}) => { const { x = 0, y = 0, z = 0, r = 0.08, h = 0.2, col = '#a87a4a' } = o; const pts = []; for (let i = 0; i <= 12; i++) { const t = i / 12; pts.push(new THREE.Vector2(r * (0.6 + 0.4 * Math.sin(Math.PI * Math.min(1, t * 1.15))) * (t > 0.85 ? 0.6 : 1), t * h)); }
@@ -400,5 +428,5 @@ vec3 n = normalize(vN); if(!gl_FrontFacing) n = -n; gl_FragColor = vec4(n*.5+.5,
   };
   const onUpdate = (fn) => UPD.push(fn);
 
-  return { THREE, scene, toon, add, grp, tbox, tplane, noInk, mat, materials, M, TEX, flame, warmLight, beam, billboard, prop, room, glass, glassMat, section, arrow3d, ring3d, update, onUpdate, flick, lights: LT, flames: FL };
+  return { THREE, scene, toon, add, grp, tbox, tplane, noInk, mat, materials, M, TEX, flame, warmLight, beam, billboard, bulb, motes, prop, room, glass, glassMat, section, arrow3d, ring3d, update, onUpdate, flick, lights: LT, flames: FL };
 }

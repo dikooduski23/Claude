@@ -31,6 +31,13 @@ python3 compose_plates.py ../work/demo/plates ../work/demo/DocZap_EngineDemo_108
 | Character sheet tool | `cardsheet.mjs`, `web/cardsheet.html` | QC |
 | Choose a story file per render | `?story=` (`QS="&story=x.js"`) | render.mjs |
 | Plates to MP4 with whip blur and loudnorm | `compose_plates.py` | delivery |
+| **Quality pass (Nov 25 2026)** — matches Diyar's reference reels | see §9 | everywhere |
+| Glowing lamp bulbs (HDR disc + halo + light) | `K.bulb()` | `sets(K)` |
+| Floating dust motes / embers | `K.motes()` | `sets(K)` |
+| Printed graphics with crisp text (posters, notices, decrees) | `K.prop.poster()` | `sets(K)` |
+| Hard hat | outfit `hat: 'hardhat'` | OUTFITS |
+| Rich presets by default (sat ≈1.3, bloom 0.85–1.05, thick ink 3.4) | `web/kit/lights.js` | `LIGHTS` |
+| Supersampled rendering by default (`RS=2`, 2160×3840) | `render.mjs` | rendering |
 
 After editing `toonbase.js` or `roman.js`, always rebuild: `cat toonbase.js roman.js > toon.js` (in `web/`).
 
@@ -83,6 +90,7 @@ Every material also takes `tint` and `bump` (strength). Use `K.tbox(w,h,d,tile)`
 | `lantern` | `light, hang` (chain length), `s` (glass panes and a candle inside) |
 | `rug` | `w, d, pattern, cols` |
 | `jar` | `r, h, col` |
+| `poster` | `x, y, z, ry, w, h, title, lines:[], footer, accent, bg, fg, font, parchment, tilt` (1024-px canvas, so the text stays crisp; a printed graphic like the reference's tickets, posters and name tags) |
 
 ## 2. Lighting
 - **Presets** are in `kit/lights.js`: `LP.day`, `LP.sunset`, `LP.night`, `LP.candle` (indoor candle and torch light) and `LP.indoor`. Use them as `LIGHTS` entries: `LIGHTS = { hall: tint(LP.candle, { hemi: 0.5 }) }`. `withHaze(L, k)` pulls the depth haze (fog) closer when `k > 1`.
@@ -90,6 +98,9 @@ Every material also takes `tint` and `bump` (strength). Use `K.tbox(w,h,d,tile)`
 - **Soft shadows**: `shadow: true` on a torch, candle or window gives a PCF-soft shadow map. Use it on the **1–2 key lights per shot** only, because each point-light shadow costs 6 extra depth renders. Lights more than 22 m from the camera are switched off automatically.
 - **Flames** (`K.flame`) are camera-facing HDR sprites with a halo, so they **bloom** through the existing selective bloom. They are skipped by the ink and depth-of-field depth pass.
 - **Depth haze**: the preset's `fog`, `fogNear` and `fogFar`. Light shafts come from `K.beam(parent, from, to, r0, r1, col, opacity)` (windows add one automatically).
+- **Glowing bulbs**: `K.bulb(parent, x, y, z, { col, size, hdr, halo, haloK, light, i, dist, flicker })` is a camera-facing HDR disc that blooms, a soft additive halo, and (unless `light: false`) a warm point light. Use it for work lamps, street lamps, desk lamps and anything whose bulb should visibly glow.
+- **Dust motes and embers**: `K.motes(parent, { n, box: [x0,y0,z0,x1,y1,z1], col, size, speed, rise, hdr, opacity })` adds small glowing specks that drift up through the box (self-updating). Golden light: `col: '#fff0c8'`; torch embers: `col: '#ffb060'`.
+- **Rich by default (Nov 25 2026)**: every preset now carries `sat` ≈ 1.3, `bloom` 0.85–1.05 with `bthr` ≈ 0.8, a warm `gain`, and thick outlines (`ink: 3.4` in `BASE`). Diyar asked for "rich colourful colours, blooms, glows"; never drain colour to mark a mood change.
 - **Characters are unlit cards.** Give them a warm `tint` (for example `'#ffe9cc'`) in dim sets so they sit in the light. Rim light comes from the preset (`rim`, `rimCol`, `rimDir`).
 
 ## 3. Faces (`expr:` on `romanFront`)
@@ -132,11 +143,12 @@ export const annotAt = (f) => [
 They render in **Caveat 700**, white with a dark outline and a soft shadow, after depth of field, so they're always sharp. They follow the moving camera because they're anchored to 3D points, and they draw on: text pops in, the arrow draws itself, then the circle. `out` (frames remaining) fades them out. `dx`/`dy` are in 1080×1920 pixels. Keep them few (STYLE: 1–2 labels). The old `labels.py` and post-overlay method still works if you need it.
 
 ## 7. Rendering and QC
+- **Resolution**: `render.mjs` now renders at `RS=2` by default (2160×3840 plates), and `compose_plates.py` downscales them to 1080×1920 with Lanczos. Edges and ink lines come out clean, and survive platform recompression. `RS=1` is about 3× faster, for quick stills only.
 - `QS="&story=demo_story.js"` (or any `*.js` in `web/`) chooses the story module through an import map in `index.html`. Without it, `story.js` renders as before.
 - Every story module must export what `main.js` and `overlay.js` import: `FPS, TOTAL, SHOTS, shotAt, camAt, dofAt, LIGHTS, lightFor, actorsAt, worldAt, fxAt, LOOK, overlayInfo` (plus the optional `sets`, `annotAt`, `CUTS`).
 - The render server now sends correct MIME types (fonts, PNG, JSON).
-- `compose_plates.py <plates> <out.mp4> --whips 280 --audio mix.wav --caps cap/caps.json --glow 0.85` encodes 60 fps H.264 with captions and the **glossy glow** (`--glow`: highlight bloom plus a soft sheen, blended in RGB under the captions; Diyar likes about 0.85). It also adds a `tmix` blur on each whip window (`[w−14, w+18]`) and loudnorm to −14 LUFS.
-- Speed: the demo room renders at about 5–7 s per frame on 4 CPU cores. Run three ranges in parallel.
+- `compose_plates.py <plates> <out.mp4> --whips 280 --audio mix.wav --caps cap/caps.json --glow 0.85` encodes 60 fps H.264 with captions and the **glossy glow** (`--glow`: highlight bloom plus a soft sheen, blended in RGB under the captions; Diyar likes about 0.85), followed by a light `unsharp`, and encodes at CRF 14 (`-preset slow`). It also adds a `tmix` blur on each whip window (`[w−14, w+18]`) and loudnorm to −14 LUFS.
+- Speed: at `RS=2` the demo room renders at about 12 s per frame on its own, roughly 25 s per frame with three processes in parallel (about 2.5× slower than `RS=1`). Run three ranges in parallel.
 - QC as always: stills, a contact sheet, fixes, the full render, then frames from the MP4.
 
 ## Known limits
@@ -154,3 +166,21 @@ Captions are no longer burned in with ffmpeg. The plates become `base.mp4` (whip
 - **One command** from the episode work folder: `bash ../../engine/finish_remotion.sh out/DocZap_<Name>_1080x1920.mp4 0.85`.
 - Setup: `cd engine/remotion && npm install`. It uses the machine's headless Chrome (`/opt/pw-browsers/...`) when present.
 - Respect remocn's craft rules where they don't conflict with STYLE.md: no gradient text, one accent colour, no `Math.random()`, and sequences are never shorter than a component's length.
+
+## 9. Quality pass (Nov 25 2026): matching Diyar's reference reels
+Diyar sent a reference reel (720p, 1.4 Mbps) that looks razor-sharp, and said our episodes looked like 480p and lacked rich colour and glow. The lessons are in `docs/STYLE.md` ("Colour, bloom and glow", "Image quality"). What the engine now does by default:
+
+| Problem | Fix in the engine | Where |
+|---|---|---|
+| Soft, muddy shading | Use `LOOK = 'toon'` in every story (flat cel shading). `'mini'` (MeshStandard, soft gradients) is no longer recommended | story.js, `main.js` |
+| Thin outlines | `ink: 3.4` in the preset `BASE` (scaled by RS) | `kit/lights.js` |
+| Aliased, soft edges | Supersampled plates (`RS=2` default) → Lanczos downscale → light unsharp → CRF 14 | `render.mjs`, `compose_plates.py`, `finish_remotion.sh` |
+| Smeared backgrounds | Keep DOF light: `cinf` about half of the old values (the demo multiplies by 0.5) | `dofAt` in story.js |
+| Grey, washed-out acts | Rich presets (sat ≈1.3, bloom ≈1.0, warm gain); change hue and lightness between acts, never saturation | `kit/lights.js` |
+| No glow sources | `K.bulb`, `K.motes`, emissive accents, `K.beam` sun shafts; the glossy glow (0.85) in the edit | `kit/kit.js` |
+| Plain props | `K.prop.poster` for crisp printed graphics (signs, notices, tickets) | `kit/kit.js` |
+
+**Preview with the glow**: judge stills with the same ffmpeg glow chain as `compose_plates.py --glow 0.85` applied, since that's what viewers see.
+
+The demo (`web/demo_story.js`) uses all of it: rich candle preset, thick ink, the toon look, torch embers (`K.motes`), a ROYAL DECREE poster (`K.prop.poster`), light DOF, and `TRANSITIONS` for the remocn whip.
+

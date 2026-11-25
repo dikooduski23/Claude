@@ -6,17 +6,18 @@
 import { M as E, clamp, lerp, lerp3, ramp, idle, blinkAt, talkAt, q } from './motion.js';
 import { LP, tint } from './kit/lights.js';
 import { emote } from './kit/emotes.js';
-export const FPS = 60, TOTAL = 360, DECK = 0, LOOK = 'mini';
+export const FPS = 60, TOTAL = 360, DECK = 0, LOOK = 'toon';
 const X0 = 40000;                                   // the demo set lives far from the other worlds
 const w = (x, y, z) => [X0 + x, y, z];              // room-local -> world
 // ---------------- shots (60-fps frames) ----------------
 const SH = [['two', 0, 131], ['king', 132, 221], ['knight', 222, 279], ['glass', 280, 359]];
 export const SHOTS = SH.map(([id, a, b]) => ({ id, a, b, light: 'hall' }));
 export const WHIPS = [280];                          // whip-pan into the cutaway (blur these windows in post)
+export const TRANSITIONS = [{ at: 280, type: 'whip', dir: 'left' }];   // for the Remotion/remocn edit
 export const WHIP_FRAMES = WHIPS.map((a) => [a - 14, a + 18]);
 const shot = (f) => { const s = SH.find((s) => f >= s[1] && f <= s[2]) || SH[SH.length - 1]; return { id: s[0], a: s[1], b: s[2], light: 'hall' }; };
 export const shotAt = shot;
-export const LIGHTS = { hall: tint(LP.candle, { hemi: 0.5, fogNear: 4, fogFar: 15, bloom: 0.8 }) };
+export const LIGHTS = { hall: tint(LP.candle, { fogNear: 5, fogFar: 18 }) };   // rich preset: sat 1.3, bloom 1.0, ink 3.4
 export const lightFor = (S) => ({ ...LIGHTS[S.light] });
 // ---------------- the set (built once with the kit) ----------------
 const KEY = [0.1, 0.97, -0.55], BAR = [0.8, 0, -0.5];   // bottle (key inside) on the table, sliced barrel beside it
@@ -62,6 +63,9 @@ export const sets = (K) => {
   prop.stairs(R, { x: -2.85, z: -0.4, n: 9, w: 1.0, ry: 0 });
   prop.lantern(R, { x: -1.9, y: 2.25, z: 0.3, light: 1.2, hang: 1.2 });
   prop.sign(R, { x: 2.55, y: 2.55, z: -3.08, text: 'VAULT', w: 0.7, h: 0.3, hang: false });
+  // quality pass (Nov 25 2026): a crisp printed graphic + embers drifting up through the torch light
+  prop.poster(R, { x: -0.75, y: 2.05, z: -3.12, w: 0.62, h: 0.82, parchment: true, accent: '#7a1a2a', title: 'ROYAL DECREE', lines: ['No one shall', 'touch the', "King's gold"], footer: '- by order of the Crown', tilt: 0.03 });
+  K.motes(R, { n: 60, box: [-2.4, 0.4, -2.9, 2.4, 3.2, 1.2], col: '#ffb060', size: 0.011, speed: 0.0022 });
   return { update: (W, f) => { if (SEC) SEC.set(W.cut ?? 0); } };
 };
 // ---------------- cast ----------------
@@ -104,7 +108,7 @@ const cam = (f) => { const S = shot(f); const c = camL(f); c.pos = w(...c.pos); 
   c.shadowAt = c.look; return c; };
 export const camAt = cam;
 const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
-export const dofAt = (f) => { const S = shot(f), C = cam(f), at = (p, k) => ({ focus: dist(C.pos, w(...p)), cinf: k });
+export const dofAt = (f) => { const S = shot(f), C = cam(f), at = (p, k) => ({ focus: dist(C.pos, w(...p)), cinf: k * 0.5 });   // light background blur (STYLE: image quality)
   switch (S.id) { case 'two': return at([0, HY, 0.56], 8); case 'king': return at([KP[0], HY, KP[2]], 12); case 'knight': return at([NP[0], HY, NP[2]], 12); case 'glass': return at([0.45, 0.75, -0.52], 9); }
   return { focus: 5, cinf: 0 }; };
 export const worldAt = (f) => { const S = shot(f), W = {}; W.cut = S.id === "glass" ? q(lerp(-0.4, 0, E.smooth(ramp(f, 292, 318))), 3) : -0.4; return W; };
