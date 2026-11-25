@@ -12,9 +12,9 @@ Load each skill with the Skill tool at the step named; don't work from memory. D
 
 | Step | Skills |
 |---|---|
-| Pick the story | `ig-viral`, `yt-viral` (what's over-indexing), `vt-youtube-stats` (our own winners, once Diyar connects YouTube Analytics) |
-| Hook + script | `ig-reel` (3 hooks, `hookscore.py`, `beats.py`), `yt-script` (YouTube hook score, tiebreaker), `ig-human` (`detect.py`) |
-| Virality | `virality-predictor` (full run, TikTok + Instagram), ig-viral's 8-line pre-build check |
+| Pick the story | `viral-short-form-ideas` (idea evaluation, evergreen vs trend), `ig-viral`, `yt-viral` (what's over-indexing), `vt-youtube-stats` (our own winners, once Diyar connects YouTube Analytics) |
+| Hook + script | `viral-hooks` (archetypes, three-layer hook: spoken + on-screen + visual), `viral-short-form` (retention shape, where viewers drop), `ig-reel` (3 hooks, `hookscore.py`, `beats.py`), `yt-script` (YouTube hook score, tiebreaker), `ig-human` (`detect.py`) |
+| Virality | `virality-predictor` (full run, TikTok + Instagram), ig-viral's 8-line pre-build check, platform reads from `viral-tiktok-content`, `viral-instagram-reels` (sends per reach) and `viral-youtube-shorts` (VVSA / engaged views) |
 | Look of the episode | `vt-video-design` (palette by act, 9:16 layout, safe zones) before building sets |
 | Sets, lights, camera (three.js engine) | `threejs-fundamentals`, `threejs-lighting`, `threejs-materials`, `threejs-textures`, `threejs-geometry`, `threejs-animation`, `threejs-shaders`, `threejs-postprocessing`, `threejs-performance` |
 | Sets, cast, camera (Blender, on Diyar's computer) | `vt-blender` (shot spec, rigged cartoon cast, cameras checked by geometry, beats on narration words, sound on the motion); toolkit = submodule `doczap/vendor/claude-code-video-toolkit` |
@@ -24,8 +24,8 @@ Load each skill with the Skill tool at the step named; don't work from memory. D
 | Media work | `vt-ffmpeg` (trims, loudness, encodes); `vt-moviepy` only for quick Python overlays |
 | QC | `vt-video-design` contact-sheet critique on the stills and on frames from the final MP4 |
 | Cover | `yt-package` (`title.py`, 100/100 pair); `vt-ideogram4` for text-heavy cover art if an Ideogram key is set |
-| Posting kit | `ig-caption` (+ `ig-human` on the caption), `yt-seo`, `yt-chapters` not needed for Shorts |
-| After posting | `ig-reply`, `yt-comment`, `ig-audit`, `yt-retention`, `vt-youtube-stats`, `ig-plan`/`yt-plan`, `ig-profile`/`yt-audit` monthly, `ig-repurpose`/`ig-carousel`/`ig-story` to reuse an episode |
+| Posting kit | `viral-captions-and-ctas` (caption, pinned comment, bait check), `ig-caption` (+ `ig-human` on the caption), platform notes from `viral-instagram-reels` / `viral-tiktok-content` / `viral-youtube-shorts`, `yt-seo`, `yt-chapters` not needed for Shorts |
+| After posting | `viral-instagram-reels` (diagnose a flop, Trial Reels), `viral-tiktok-content` / `viral-youtube-shorts` (flop diagnosis), `ig-reply`, `yt-comment`, `ig-audit`, `yt-retention`, `vt-youtube-stats`, `ig-plan`/`yt-plan`, `ig-profile`/`yt-audit` monthly, `ig-repurpose`/`ig-carousel`/`ig-story` to reuse an episode |
 
 **Not used for Doc Zap** (installed, but they don't fit the format): `remotion-saas`, `remotion-maps` (unless a story needs a map), `remotion-create`, `remotion-license`, `remotion-docs` (use when stuck), `threejs-react-three-fiber`, `threejs-interaction`, `threejs-loaders`/`threejs-asset-pipeline` (only for imported models), `elevenlabs-agents`, `-realtime`, `-speech-engine`, `-dubbing` (unless Diyar wants other languages), `-voice-changer`, `-onboarding`/`-setup-api-key` (only to set up his key), `elevenlabs-text-to-speech` (Diyar makes the Patrick MP3 himself), `vt-ltx2`, `vt-qwen-edit`, `vt-runpod`, `vt-acestep` (cloud GPU), `vt-synthetic-ui-demo`, `vt-playwright-recording`, `vt-parody-short`, `vt-video-toolkit` (its own pipeline), `ig-dm`, `ig-comment`, `yt-edit`, `yt-shorts`.
 

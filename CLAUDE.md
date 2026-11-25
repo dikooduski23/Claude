@@ -20,7 +20,7 @@ This repo holds the whole Doc Zap production system. When Diyar says **"let's cr
 7. Props must be physically right: hands grip tools, nothing floats, glass looks like glass.
 8. **QC frames before and after** the final render (contact sheets of stills, then frames from the finished MP4).
 9. When Diyar sends reference reels, study them, write the lessons into `doczap/docs/STYLE.md` and apply them.
-10. **All installed skills on every episode** (Diyar, Nov 24–25 2026): the IG/YT, virality-predictor, Remotion, three.js, Video Toolkit (`vt-*`, incl. `vt-blender`) and ElevenLabs skills each run at their step; the **Skill map** at the top of the `doczap-next-video` skill says which skill runs where, and which installed ones don't fit Doc Zap. Load each with the Skill tool rather than working from memory. Doc Zap rules win where they clash.
+10. **All installed skills on every episode** (Diyar, Nov 24–25 2026): the IG/YT, Vyral `viral-*`, virality-predictor, Remotion, three.js, Video Toolkit (`vt-*`, incl. `vt-blender`) and ElevenLabs skills each run at their step; the **Skill map** at the top of the `doczap-next-video` skill says which skill runs where, and which installed ones don't fit Doc Zap. Load each with the Skill tool rather than working from memory. Doc Zap rules win where they clash.
 
 ## The style (copied from 9 reference reels, Nov 23 2026: Rick's Clips + Segment Zero)
 See `doczap/docs/STYLE.md` for the full rules. In short:
