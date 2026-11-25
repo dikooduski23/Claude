@@ -39,6 +39,7 @@ See `doczap/docs/STYLE.md` for the full rules. In short:
   - `caps.py` makes captions, `labels.py` handwritten labels, `compose.py` the final video, `cover.py` the cover, `audio/mix.py` the SFX and music mix.
   - `web/kit/`: the **world kit** (textured materials, props, flickering torch/candle light, window beams, lighting presets, glass, cross-sections, handwritten labels, emotes). Episodes build sets with `export const sets = (K) => …` in story.js. **Read `doczap/docs/ENGINE.md` before building sets or characters**; `web/demo_story.js` is a working example.
   - `remotion/` + `finish_remotion.sh` + `remocn_add.py`: the **final edit is done in Remotion with remocn components**: remocn **transitions** (whip-pan, zoom-blur, focus-pull) on every cut and remocn animated captions. Diyar asked for remocn on every episode, including for transitions; see ENGINE.md §8.
+- `.claude/skills/`: besides the Doc Zap and IG/YT skills: official **Remotion** skills (`remotion-*`), **three.js** skills (`threejs-*`), official **ElevenLabs** skills (`elevenlabs-*`) and the **Claude Code Video Toolkit** skills (`vt-*`, incl. `vt-blender`); the toolkit's code is the git submodule `doczap/vendor/claude-code-video-toolkit` (`git submodule update --init`).
 - `doczap/tools/`: `trim_pauses.py`, `align_ps.py` (word timing), `audio_lib.py` (sound effects and music synth).
 - `doczap/episodes/<slug>/`: what to keep from each finished episode (script, story.js, words.json, post.md).
 - `doczap/work/<slug>/`: scratch working copy for an episode (gitignored; frames are big).

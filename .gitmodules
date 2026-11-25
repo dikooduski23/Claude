@@ -1,0 +1,3 @@
+[submodule "doczap/vendor/claude-code-video-toolkit"]
+	path = doczap/vendor/claude-code-video-toolkit
+	url = https://github.com/digitalsamba/claude-code-video-toolkit

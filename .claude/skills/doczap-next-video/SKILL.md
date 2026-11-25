@@ -28,6 +28,7 @@ The installed Instagram/YouTube agent skills (`.claude/skills/ig-*`, `yt-*`, MIT
 6. **Send Diyar** a .md with the script, the beat sheet, the score table, the fact check and the sources. Ask only for the MP3.
 
 ## Phase 2: after he sends the voiceover
+**Skills to use in this phase:** `threejs-*` (lighting, materials, post-processing, performance) for the current engine; `remotion-best-practices`, `remotion-captions` and `remotion-render` for the final edit; `vt-blender` (shot specs, a rigged cartoon cast, cameras checked by geometry, sound placed on the motion; toolkit in the submodule `doczap/vendor/claude-code-video-toolkit`) once episodes move to Blender on Diyar's computer; `vt-ffmpeg` for ffmpeg work. The `elevenlabs-*` skills (text-to-speech, sound-effects, music) need Diyar's ElevenLabs key; he still makes the Patrick MP3 himself unless he says otherwise.
 Work in `doczap/work/<slug>/`: `cp -r doczap/engine doczap/work/<slug>`, run `npm install` there (or symlink node_modules), and put the MP3 in as `voice_raw.mp3`.
 1. **Voice:**
    - `python3 ../../tools/trim_pauses.py voice_raw.mp3 voice.mp3`.
