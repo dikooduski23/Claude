@@ -72,3 +72,14 @@ Current style: the **reference style**, from 9 reels Diyar sent on Nov 23 2026. 
 - QC stills are judged **with the glow filter applied** (same chain as `compose_plates.py --glow 0.85`), since that's what viewers see.
 - Marble and white stone stay creamy white (`#fffaf0`-ish); warm light colours them, the texture doesn't.
 
+## Image quality: lessons from Diyar's reference #1 (Nov 25 2026, a 58 s lottery-clerk reel)
+The reference is only **720×1280 at 30 fps, 1.4 Mbps**, yet it reads razor-sharp. The sharpness comes from the **art style**, not the resolution:
+- **Flat cel shading** (2–3 tones per surface), no soft realistic gradients. Engine: `LOOK = 'toon'` (keeps MeshToonMaterial); the old `'mini'` look converted everything to MeshStandard and looked muddy and soft.
+- **Thick, even black outlines on everything**: characters *and* props, furniture, wall edges. Engine: `ink: 3.4` in `lightFor` (scaled by RS).
+- **Bright, flat, saturated colours**; little haze. Glow is a soft halo on real lamps, not fog over the whole frame.
+- **Graphic, illustration-quality props** with crisp printed text and logos (tickets, posters, name tags, signs). Readable details reward pausing and rewatching.
+- **Subject razor-sharp**; background blur smooth but light enough that objects stay readable (DOF `cinf` about half of the old values).
+- A subtle paper-speckle grain on big flat surfaces (floors, counters).
+- Many angles: extreme close-ups of the key object, top-down shots, POV, low angles.
+- **Render supersampled** (`RS=2` → 2160×3840, downscaled with Lanczos in `compose_plates.py`), then a light unsharp after the glow; encode at CRF 14. This keeps edges clean through platform recompression.
+
