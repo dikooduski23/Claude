@@ -44,10 +44,10 @@ The installed Instagram/YouTube agent skills (`.claude/skills/ig-*`, `yt-*`, MIT
    - no comment CTA.
    - **Time it (ig-reel):** `python3 -I .claude/skills/ig-reel/beats.py script.txt --target <seconds>`. Fix every flag: hook beat 8 words or fewer, **no beat over 4 s** (split the line or give it two shots), a concrete number or name in every run of 3 beats, total on target.
    - **Human check (ig-human):** `python3 -I .claude/skills/ig-human/detect.py script.txt`, and fix the weakest signal by hand. **Never apply `humanize.py`'s output to the voice script:** it capitalises after "..." and changes Patrick's pacing. Use it on captions and descriptions only.
-5. **Virality check:** score Hook /25, Value /20, Emotion /20, Platform fit /15, Shareability /10, Trend /10. It must total **> 90**; rework the script until it does.
+5. **Virality check:** score Hook /25, Value /20, Emotion /20, Platform fit /15, Shareability /10, Trend /10. It must score **80+** on the full virality-predictor run (TikTok and Instagram), scored honestly; rework the script until it does.
    - **virality-predictor skill (run it in full, every episode):** invoke the `virality-predictor` skill with the script, once for **TikTok** and once for **Instagram Reels**. Paste its whole output into the .md (score breakdown, what's working, what's holding it back, fixes) and apply its fixes before sending; show v1 → v2 scores. Score honestly; never round up to reach a bar.
    - **Also:** ig-viral's 8-line **pre-build virality check** (hook, evidence, one idea, specificity, payoff and loop, shareability, retention design, fresh angle). Fix the weakest two lines. Show the virality-predictor scores, the ig-viral average and both hookscores side by side.
-6. **Send Diyar** a .md with the script, the beat sheet, the score table, the fact check and the sources. Ask only for the MP3.
+6. **Send Diyar** a .md with the script, the beat sheet, the score table, the fact check and the sources. Then **generate the MP3 yourself** with the `elevenlabs-text-to-speech` skill (Patrick, Eleven v4) unless he says he'll make it, and go straight to Phase 2.
 
 ## Phase 2: after he sends the voiceover
 Work in `doczap/work/<slug>/`: `cp -r doczap/engine doczap/work/<slug>`, run `npm install` there (or symlink node_modules), and put the MP3 in as `voice_raw.mp3`.

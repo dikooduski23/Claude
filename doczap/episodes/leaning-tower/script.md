@@ -7,7 +7,7 @@
 
 ## Script (ElevenLabs Patrick, Eleven v4; tag-free)
 
-**v3** (Nov 25, after `viral-hooks` and `viral-short-form`): beats now joined by So/But instead of "and then"; the hook's missing stake is added on screen (see below). 109 words, about 37–40 s. **Use this version for the MP3.**
+**v3** (Nov 25, after `viral-hooks` and `viral-short-form`): beats now joined by So/But instead of "and then"; the hook's missing stake is added on screen (see below). 109 words, about 37–40 s. **Voiced by Claude via the ElevenLabs API** (Patrick `ODq5zmih8GrVes37Dizd`, matched to Diyar's own Patrick recording by pitch and spectrum; Eleven v4; 41.9 s raw, 36.7 s after trimming; Scribe word timing 108/108 words).
 
 Nobody tells you Pisa's tower was saved... by digging.
 

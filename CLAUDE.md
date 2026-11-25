@@ -10,9 +10,9 @@ This repo holds the whole Doc Zap production system. When Diyar says **"let's cr
 - Claude has creative ownership: lead the story ideas, style and editing.
 
 ## Standing rules (from Diyar; follow every time)
-1. **Virality check first:** run a virality check on every script; it must score **above 90/100** before building.
+1. **Virality check first:** run the full `virality-predictor` check on every script, scored honestly; it must score **80+/100** (the skill's "strong viral potential" band) on TikTok and Instagram before building. (Diyar lowered the bar from >90 on Nov 25 2026, once scoring was done honestly; never round up to reach it.)
 2. **Fact-check** every claim against **2+ sources**. Exact numbers and dates; no invented quotes presented as history.
-3. **Voice:** ElevenLabs **Patrick** on **Eleven v4** (Diyar switched from v3 on Nov 23 2026). Write the script so it paces well without tags: ellipses, short sentences, line breaks. Add [curious]/[deadpan]/[whispers]-style tags only once Diyar confirms v4 reads them; otherwise send a tag-free script. Numbers written as words. Diyar makes the MP3 and sends it.
+3. **Voice:** ElevenLabs **Patrick** on **Eleven v4** (Diyar switched from v3 on Nov 23 2026). Write the script so it paces well without tags: ellipses, short sentences, line breaks. Add [curious]/[deadpan]/[whispers]-style tags only once Diyar confirms v4 reads them; otherwise send a tag-free script. Numbers written as words. **Claude generates the MP3** with Diyar's ElevenLabs key (Patrick, Eleven v4, `elevenlabs-text-to-speech` skill) straight from the final script (Diyar decided Nov 25 2026); Diyar can still send his own MP3 instead.
 4. **Length 30-45 s.**
 5. **Output:** native **1080×1920 at 60 fps**, H.264, audio at **-14 LUFS**. **Captions version only.**
    **Voice first:** music and ambience sit **about 20 dB under the voice** while Patrick speaks (duck under speech, dip 1–4 kHz in the bed). Diyar said the Ice King music drowned the voice (Nov 24 2026). **SFX on their own bus**, soft (low-pass 5 kHz, ducked under speech) with peaks capped at about 0.16× the voice peak; Diyar said the SFX were too noisy and loud (Nov 24 2026).
