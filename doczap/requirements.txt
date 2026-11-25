@@ -2,3 +2,5 @@ numpy
 scipy
 pillow
 pocketsphinx
+elevenlabs
+python-dotenv
