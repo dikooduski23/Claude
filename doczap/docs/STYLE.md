@@ -83,3 +83,8 @@ The reference is only **720×1280 at 30 fps, 1.4 Mbps**, yet it reads razor-shar
 - Many angles: extreme close-ups of the key object, top-down shots, POV, low angles.
 - **Render supersampled** (`RS=2` → 2160×3840, downscaled with Lanczos in `compose_plates.py`), then a light unsharp after the glow; encode at CRF 14. This keeps edges clean through platform recompression.
 
+## Transitions: no fades or blends (Diyar, Nov 25 2026)
+- Diyar doesn't want the "fading layer" look: two shots blended through each other (cross-fades, `tmix` frame blending, zoom-blur or focus-pull blends, remocn presentations that overlay both shots).
+- Every cut is a **hard cut**, or a **real whip-pan made in the plates**: the camera yaws fast out of the last shot and into the next (`yawLook` in `camAt`, about 14 frames out, 18 in), with directional motion blur from the camera move only.
+- In story.js: `TRANSITIONS` entries use `type: 'cut'`; `compose_plates.py` is run **without** `--whips` (no `tmix`).
+
