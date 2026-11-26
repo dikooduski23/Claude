@@ -26,8 +26,8 @@ export const LIGHTS = {
   cut: tint(LP.indoor, { sky: '#ffe2b8', hemi: 1.1, sunI: 1.1, az: 30, el: 55, fog: '#3a2030', fogNear: 10, fogFar: 40, skyTop: '#2a1430', skyHor: '#6a3050', gain: '#fff0e0', bloom: 1.0, bthr: 0.8, shadowExt: 6 }),
 };
 // modern look: stronger sun vs. fill (contrast, readable form), image light, filmic exposure, deeper haze distance
-const MODL = { lily: { env: 0.7, sat: 1.1 }, room: { env: 0.5, hemiK: 0.45 }, rail: { env: 0.5, hemiK: 0.45 }, cut: { env: 0.6, hemiK: 0.5 }, park: { env: 0.65 }, gold: { env: 0.7 }, nave: { env: 0.75, hemiK: 0.6, skyTop: '#2a6ad6', skyHor: '#bcd8f6', fog: '#cfe0f0' } };
-for (const k in LIGHTS) { const L = LIGHTS[k]; LIGHTS[k] = { ...L, sunI: L.sunI * 1.45, hemiK: 0.3, expo: 1.0, con: 1.1, sat: (L.sat ?? 1.16) * 1.04, fogNear: L.fogNear * 1.5, fogFar: L.fogFar * 1.7, ao: 0.35, bloom: (L.bloom ?? 0.5) * 0.8, bthr: Math.max((L.bthr ?? 1) * 1.9, 1.55), expo: 0.9, con: 1.15, vig: Math.max(L.vig ?? 0.22, 0.3), ...(MODL[k] || {}) }; }
+const MODL = { lily: { env: 0.7 }, room: { env: 0.5, hemiK: 0.45 }, rail: { env: 0.5, hemiK: 0.45 }, cut: { env: 0.6, hemiK: 0.5 }, park: { env: 0.65 }, gold: { env: 0.7 }, nave: { env: 0.75, hemiK: 0.6, skyTop: '#2a6ad6', skyHor: '#bcd8f6', fog: '#cfe0f0' } };
+for (const k in LIGHTS) { const L = LIGHTS[k]; LIGHTS[k] = { ...L, sunI: L.sunI * 1.45, hemiK: 0.2, expo: 0.84, shadowExt: (L.shadowExt ?? 10) * 2.2, con: 1.1, sat: (L.sat ?? 1.16) * 0.64, gain: '#faf4f6', shCol: '#f5f0ff', hiCol: '#fff5f0', fogNear: L.fogNear * 1.5, fogFar: L.fogFar * 1.7, ao: 0.35, bloom: (L.bloom ?? 0.5) * 0.8, bthr: Math.max((L.bthr ?? 1) * 1.9, 1.55), con: 1.15, vig: Math.max(L.vig ?? 0.22, 0.38), inkA: 0.75, ...(MODL[k] || {}) }; }
 export const lightFor = (S) => ({ ...LIGHTS[S.light] });
 // ---------------- layout ----------------
 const XA = 60000, XB = 62000, XC = 64000, XD = 66000, XE = 68000, XF = 70000;

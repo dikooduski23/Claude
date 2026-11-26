@@ -676,9 +676,64 @@ const eye = (p, kind, x, ey, u, side, look, skin)=>{
                 ]);
                 p.stroke(s, 2.4 * u);
             }
+            break;
+        // ---- engine kit eyes (Nov 2026): angry, tiny (scared), cry, sleepy, side (smug side-eye) ----
+        case "angry": {
+            p.clip([[x - side * 10 * u, ey - 0.4 * u], [x + side * 10 * u, ey - 7.4 * u], [x + side * 10 * u, ey + 12 * u], [x - side * 10 * u, ey + 12 * u]], ()=>p.ell(lx, ey + 1.2 * u, 4.6 * u, 5.8 * u, INK, 0));
+            p.stroke([[x - side * 7.5 * u, ey - 0.2 * u], [x + side * 7.5 * u, ey - 5.6 * u]], 3.2 * u);
+            break; }
+        case "tiny":
+            p.ell(x, ey, 10.5 * u, 11.5 * u, WHITE, 2.6 * u);
+            p.dot(lx, ey + 0.5 * u, 2 * u);
+            break;
+        case "cry": {
+            p.arc(x, ey - 1 * u, 8 * u, 5.5 * u, 20, 160, lw);
+            const tx = x + side * 4 * u, top = ey + 4 * u, bot = ey + 34 * u, sw = 3.4 * u;
+            p.poly([[tx - sw, top], [tx + sw, top], [tx + side * 3 * u + sw * 1.2, bot], [tx + side * 3 * u - sw * 1.2, bot]], "#8fd0ff", 1.4 * u);
+            p.stroke([[tx - sw * 0.3, top + 3 * u], [tx + side * 1.5 * u - sw * 0.3, bot - 6 * u]], 1.2 * u, "#ffffff");
+            p.ell(tx + side * 3 * u, bot + 2 * u, 4.5 * u, 4 * u, "#8fd0ff", 1.4 * u);
+            break; }
+        case "sleepy":
+            p.ell(lx, ey + 1.5 * u, 6.2 * u, 4.2 * u, INK, 0, 0, 180);
+            p.stroke([[x - 9 * u, ey + 0.8 * u], [x + 9 * u, ey + 1.6 * u]], lw);
+            p.arc(x, ey + 3 * u, 6 * u, 3 * u, 30, 150, 1.6 * u);
+            break;
+        case "side": {
+            const sd = look === 0 ? 1 : Math.sign(look);
+            p.ell(x + sd * 4.2 * u, ey - 1.5 * u, 5.4 * u, 5.4 * u, INK, 0, 0, 180);
+            p.stroke([[x - 9.5 * u, ey - 1.6 * u], [x + 9.5 * u, ey - 1.6 * u]], lw);
+            p.stroke([[x - 6 * u, ey + 5.5 * u], [x + 6 * u, ey + 5.5 * u]], 1.8 * u);
+            break; }
     }
 };
-const dmouth = (p, mx, y, rx, ry, u, tongue = false)=>{
+// talking mouth: open = 0..1 (from motion.talkAt), mood picks the shape family
+const talkMouth = (p, mood, open, mx, my, u, fallback)=>{
+    if (open < 0.12) return fallback();
+    if (mood === "mad") {
+        const gap = (1.2 + 9 * open) * u, w = 14 * u;
+        p.poly([[mx - w - 2 * u, my - 4 * u], [mx + w + 2 * u, my - 4 * u], [mx + w, my + gap + 4 * u], [mx - w, my + gap + 4 * u]], MOUTH, 3 * u);
+        p.poly([[mx - w, my - 3.5 * u], [mx + w, my - 3.5 * u], [mx + w - 0.5 * u, my + 0.5 * u], [mx - w + 0.5 * u, my + 0.5 * u]], WHITE, 1.4 * u);
+        p.poly([[mx - w + 0.5 * u, my + gap - 0.5 * u], [mx + w - 0.5 * u, my + gap - 0.5 * u], [mx + w - 1 * u, my + gap + 3.5 * u], [mx - w + 1 * u, my + gap + 3.5 * u]], WHITE, 1.4 * u);
+        for (const j of [-2, -1, 0, 1, 2]) { p.stroke([[mx + j * 5.5 * u, my - 3.5 * u], [mx + j * 5.5 * u, my + 0.5 * u]], 1.1 * u); p.stroke([[mx + j * 5.5 * u, my + gap - 0.5 * u], [mx + j * 5.5 * u, my + gap + 3.5 * u]], 1.1 * u); }
+        return;
+    }
+    if (mood === "happy") { dmouth(p, mx, my - u, (10 + 3 * open) * u, (4 + 8 * open) * u, u, open > 0.5); return; }
+    const rx = (mood === "scared" ? 5 : 6.5) * u + 5.5 * u * open, ry = (2 + 8.5 * open) * u, cy = my + ry * 0.35;
+    p.ell(mx, cy, rx, ry, MOUTH, 0);
+    if (open > 0.35) p.clip(ellPts(mx, cy, rx, ry), ()=>p.ell(mx, cy - ry, rx * 0.95, 0.42 * ry, WHITE, 0));
+    if (open > 0.55) p.clip(ellPts(mx, cy, rx, ry), ()=>p.ell(mx + u, cy + ry * 0.75, rx * 0.6, ry * 0.4, TONGUE, 0));
+    p.ell(mx, cy, rx, ry, null, 3 * u);
+};
+const moodOf = (expr)=>["angry", "furious", "stern", "stubborn"].includes(expr) ? "mad" : ["grin", "laugh", "eureka", "smile_closed", "relief", "relief_open", "wink"].includes(expr) ? "happy" : ["scared", "nervous", "shock", "gulp"].includes(expr) ? "scared" : "plain";
+// moustache styles: default (taper), pencil, chevron, handlebar, walrus
+const drawStache = (p, style, col, mx, cy, u, stout)=>{
+    if (style === "pencil") { for (const s of [-1, 1]) taper(p, [mx + s * 1.5 * u, cy + 13.5 * u], [mx + s * 13 * u, cy + 14.5 * u], 2.6 * u, 1 * u, col); return; }
+    if (style === "chevron") { p.poly([[mx - 15 * u, cy + 16 * u], [mx - 13 * u, cy + 10 * u], [mx, cy + 9 * u], [mx + 13 * u, cy + 10 * u], [mx + 15 * u, cy + 16 * u], [mx, cy + 14 * u]], col, 2.2 * u); return; }
+    if (style === "handlebar") { for (const s of [-1, 1]) { taper(p, [mx + s * 1.5 * u, cy + 12.5 * u], [mx + s * 17 * u, cy + 13.5 * u], 5 * u, 2.4 * u, col); const c = []; for (let i = 0; i <= 12; i++) { const a = 2.16 - 4.2 * i / 12, r = 3.6 * u * (1 - 0.35 * i / 12); c.push([mx + s * (19 * u + Math.cos(a) * r), cy + 10.5 * u + Math.sin(a) * r]); } p.stroke(c, 3.2 * u, INK); p.stroke(c, 1.6 * u, col); } return; }
+    if (style === "walrus") { const pts = [[mx - 4 * u, cy + 9 * u], [mx + 4 * u, cy + 9 * u], [mx + 16 * u, cy + 13 * u], [mx + 19 * u, cy + 25 * u], [mx + 12 * u, cy + 21 * u], [mx + 6 * u, cy + 24 * u], [mx, cy + 20 * u], [mx - 6 * u, cy + 24 * u], [mx - 12 * u, cy + 21 * u], [mx - 19 * u, cy + 25 * u], [mx - 16 * u, cy + 13 * u]]; p.poly(pts, col, 2.4 * u); for (const j of [-2, -1, 1, 2]) p.stroke([[mx + j * 4 * u, cy + 13 * u], [mx + j * 5 * u, cy + 20 * u]], 1 * u, "rgba(0,0,0,.25)"); return; }
+    for (const s of [-1, 1]) taper(p, [mx + s * 1.5 * u, cy + 12.5 * u], [mx + s * (stout ? 19 : 15) * u, cy + (stout ? 10.5 : 15) * u], stout ? 5.5 * u : 4.5 * u, 1.6 * u, col);
+};
+const dmouth =(p, mx, y, rx, ry, u, tongue = false)=>{
     p.ell(mx, y, rx, ry, MOUTH, 0, 0, 180);
     p.clip([
         [
@@ -792,10 +847,47 @@ const mouth = (p, kind, mx, my, u, k = 1)=>{
             p.arc(mx, my - 3 * u, 8 * u * k, 4.5 * u, 20, 160, mw);
             p.ell(mx + 6 * u * k, my + 3 * u, 3.6 * u, 4.6 * u, TONGUE, 2.4 * u);
             break;
+        // ---- engine kit mouths (Nov 2026) ----
+        case "snarl": { // toothy anger: clenched teeth, corners pulled down
+            const w = 15 * u * k, pts = [];
+            for (let i = 0; i <= 10; i++) { const t = i / 10 * 2 - 1; pts.push([mx + t * w, my - 5.5 * u + 4 * u * t * t]); }
+            for (let i = 10; i >= 0; i--) { const t = i / 10 * 2 - 1; pts.push([mx + t * w * 0.9, my + 6 * u + 1.5 * u * t * t]); }
+            p.poly(pts, WHITE, 3 * u);
+            p.clip(pts, ()=>{ p.stroke([[mx - w, my + 0.5 * u], [mx + w, my + 0.5 * u]], 1.6 * u); for (const j of [-2, -1, 0, 1, 2]) p.stroke([[mx + j * 5.2 * u * k, my - 8 * u], [mx + j * 5.2 * u * k, my + 8 * u]], 1.3 * u); });
+            break; }
+        case "roar": { // furious open shout, both teeth rows
+            const w = 16 * u * k, top = my - 6 * u, bot = my + 15 * u;
+            const pts = [[mx - w, top], [mx + w, top], [mx + w * 0.75, bot], [mx - w * 0.75, bot]];
+            p.poly(pts, MOUTH, 0);
+            p.clip(pts, ()=>{ p.poly([[mx - w, top], [mx + w, top], [mx + w, top + 4.5 * u], [mx - w, top + 4.5 * u]], WHITE, 0); p.poly([[mx - w, bot - 4 * u], [mx + w, bot - 4 * u], [mx + w, bot], [mx - w, bot]], WHITE, 0);
+                for (const j of [-2, -1, 0, 1, 2]) { p.stroke([[mx + j * 5.6 * u, top], [mx + j * 5.6 * u, top + 4.5 * u]], 1.2 * u); p.stroke([[mx + j * 5 * u, bot - 4 * u], [mx + j * 5 * u, bot]], 1.2 * u); }
+                p.ell(mx + 2 * u, bot - 3 * u, 8 * u, 3.5 * u, TONGUE, 0); });
+            p.poly(pts, null, 3.2 * u);
+            break; }
+        case "wail": { // crying: open, wobbly, corners down
+            const pts = [];
+            for (let i = 0; i <= 12; i++) { const t = i / 12 * 2 - 1; pts.push([mx + t * 12 * u * k, my - 2 * u + 3.5 * u * t * t + 1.2 * u * Math.sin(i * 1.9)]); }
+            for (let i = 12; i >= 0; i--) { const t = i / 12 * 2 - 1; pts.push([mx + t * 10 * u * k, my + 11 * u - 3 * u * t * t]); }
+            p.poly(pts, MOUTH, 3 * u);
+            p.clip(pts, ()=>p.ell(mx, my + 10 * u, 6 * u, 3 * u, TONGUE, 0));
+            break; }
+        case "chatter": { // scared: gritted teeth with a zig-zag bite
+            const pts = [[mx - 11 * u * k, my - 4.5 * u], [mx + 11 * u * k, my - 4.5 * u], [mx + 10 * u * k, my + 4.5 * u], [mx - 10 * u * k, my + 4.5 * u]];
+            p.poly(pts, WHITE, 2.8 * u);
+            const z = []; for (let i = 0; i <= 8; i++) z.push([mx - 10.5 * u * k + i * 2.62 * u * k, my + (i % 2 ? 1.6 : -1.6) * u]);
+            p.clip(pts, ()=>p.stroke(z, 1.4 * u));
+            break; }
+        case "yawn":
+            p.ell(mx, my + 3 * u, 7 * u * k, 11 * u, MOUTH, 3 * u);
+            p.clip(ellPts(mx, my + 3 * u, 7 * u * k, 11 * u), ()=>p.ell(mx, my + 11 * u, 5 * u, 4 * u, TONGUE, 0));
+            break;
+        case "flat":
+            p.stroke([[mx - 9 * u * k, my], [mx + 9 * u * k, my]], mw);
+            break;
     }
 };
-const faceFront = (p, cx, cy, W, expr, facing, look, lid, brim, skin, moustache, stout = false)=>{
-    const u = W / 100, F = FACE[expr], fx = cx + 7 * u * facing;
+const faceFront = (p, cx, cy, W, expr, facing, look, lid, brim, skin, moustache, stout = false, X = {})=>{
+    const u = W / 100, F0 = FACE[expr] || FACE.neutral, F = X.brow ? { ...F0, brow: X.brow } : F0, fx = cx + 7 * u * facing;
     const ex = (F.eye[0] === "shock" ? 12 : 13) * u, ey = cy;
     for (const side of [
         -1,
@@ -815,17 +907,9 @@ const faceFront = (p, cx, cy, W, expr, facing, look, lid, brim, skin, moustache,
         ], 5 * u, 2.5 * u);
     }
     const mx = cx + 8 * u * facing, my = cy + 20 * u;
-    mouth(p, F.mouth, mx, my, u);
-    if (moustache) for (const s of [
-        -1,
-        1
-    ])taper(p, [
-        mx + s * 1.5 * u,
-        cy + 12.5 * u
-    ], [
-        mx + s * (stout ? 19 : 15) * u,
-        cy + (stout ? 10.5 : 15) * u
-    ], stout ? 5.5 * u : 4.5 * u, 1.6 * u, moustache);
+    if (X.talk != null && X.talk >= 0) talkMouth(p, moodOf(expr), X.talk, mx, my, u, ()=>mouth(p, F.mouth, mx, my, u));
+    else mouth(p, F.mouth, mx, my, u);
+    if (moustache && X.stache !== "none") drawStache(p, X.stache, moustache, mx, cy, u, stout);
     if (expr === "nervous") p.ell(cx + 40 * u * (facing || 1), cy - 22 * u, 3 * u, 5 * u, "#9fd4ff", 2 * u);
 };
 const faceSide = (p, hx, hy, W, expr, lid, brim, skin, moustache, stout = false)=>{

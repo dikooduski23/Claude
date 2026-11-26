@@ -2,6 +2,36 @@
 
 Newest first. Each entry: what went wrong, what changed, what to do next time. Engine decisions are recorded as short ADRs (decision, why, trade-off).
 
+## Version 6 kit study + measured look upgrade (Nov 26 2026)
+Diyar sent the Version 6 master prompt and animated-shorts-kit and asked to learn from them and apply them to Doc Zap.
+
+**What the numbers said** (Crystal Palace as posted vs his 9 reference reels, `doczap/tools/measure.py`):
+- Saturation 66 % vs 42 % (the biggest gap), white balance b* 29 vs 7 (yellow), a* -6 vs +9 (green instead of warm red).
+- The reference faces are pure white (L* about 100); ours topped out at 88-96 because the grade dulled the cards.
+- Outline pixels 0.6 % vs 1.6 %: the references outline every prop, and my modern look had switched world outlines off.
+- The references are darker with much more shadow (L* 48 vs 59, shadow 38 % vs 17 %). Most of that is set design, not a global setting.
+
+**What changed** (v1 → v6, measured each step on the same 13 stills):
+- v2: saturation × 0.74 plus a neutral white balance → 52 %.
+- v3: exposure. It didn't move until the cause was found: a duplicate `expo` key later in the same object.
+- v4: faces kept paper-white (burnt-highlight gap 2.1 → 0.5).
+- v5: warm brown-black world outlines back on (`inkA` 0.75).
+- v6: saturation × 0.64 → 47.5 %, b* 13.
+
+**Also:** the repo engine was missing `web/kit/` and newer web files, so a fresh session couldn't render. It's synced now and renders the same frame as the working engine.
+
+**Next time**
+- Run `measure.py` on the stills before the preview gate and include the table for Diyar.
+- Design sets warm (wood, brick, red), with shadowed corners.
+- Shadow area is the largest gap left: low sun, darker fills in interiors, and bigger occluders (roofs, walls) casting shade across the bottom of the frame.
+
+### ADR-002: measured grade + white faces + warm outlines (Nov 26 2026)
+- **Decision:**
+  - Modern lights use saturation × 0.64, gain `#faf4f6`, shadows `#f5f0ff`, highlights `#fff5f0`, exposure 0.84, fill `hemiK` 0.2, shadow box × 2.2, vignette ≥ 0.38 and world ink 0.75 (warm brown-black).
+  - Character cards skip ACES and take only 20 % of the grade.
+- **Why:** every change moved a measured gap toward Diyar's reference reels (`doczap/docs/reference_metrics.json`).
+- **Trade-off:** green-heavy stories will always read less warm-red than the references; that gap is content, not grade.
+
 ## Crystal Palace / Paxton lily leaf (Nov 26 2026)
 **What went wrong**
 - Diyar: the render looked "like 2018". The causes were flat toon bands, black outlines on the whole world, blocky low-poly trees, plain flat backgrounds, and a milky glow from the bloom plus a heavy compose glow.

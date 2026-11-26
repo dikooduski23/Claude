@@ -1549,8 +1549,9 @@ const inkScene = fs(new THREE.ShaderMaterial({ uniforms: inkU, vertexShader: `va
       xc = mix(xc, vec3(.55,.95,1.), e*.9);
       xc *= .9 + .1*sin(vUv.y*1400. + tm*6.);
       c = mix(mix(c, vec3(.012,.01,.014), e), xc, xray);
-    } else c = mix(c, vec3(.03,.022,.03), e*inkA);
-    if (tmo > 0.5) { if (isCard) c = mix(c, aces(c*expo*1.25), .35); else c = aces(c*expo); }
+    } else c = mix(c, vec3(.075,.045,.03), e*inkA);
+    if (tmo > 0.5) { if (!isCard) c = aces(c*expo); }
+    vec3 cCard = c;   // modern look: character cards keep paper-white faces (Version 6 kit rule: faces stay white in every light)
     if (flash < -0.5) c = vec3(e);
     float l = dot(c, vec3(.299,.587,.114)); c = mix(vec3(l), c, sat);
     c = c*gain + lift; c = (c-.45)*con+.45;
@@ -1559,6 +1560,7 @@ const inkScene = fs(new THREE.ShaderMaterial({ uniforms: inkU, vertexShader: `va
     if (fz > 0.) { float lf = dot(c, vec3(.299,.587,.114)); c = mix(c, mix(vec3(lf), c, .55)*vec3(.86,.97,1.12), fz*.6); }
     c = mix(c, vec3(.82,.95,1.), max(flash,0.));
     c = shoulder(max(c, 0.));
+    if (tmo > 0.5 && isCard) c = mix(c, min(cCard, vec3(1.)), .8);
     if (grain > 0.) { float gl = dot(c, vec3(.299,.587,.114)); c += (hash(vUv*res + fract(tm*.618)*97.) - .5) * grain * (1. - abs(gl - .5)*1.2); }
     gl_FragColor = vec4(c,1.); }` }));
 // ---------- selective HDR bloom: bright-pass (cards & sky excluded) + 3-level gaussian ----------

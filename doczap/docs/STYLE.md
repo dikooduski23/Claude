@@ -58,3 +58,20 @@ Current style: the **reference style**, from 9 reels Diyar sent on Nov 23 2026. 
 - Consistent format beats volume: treat the channel like a TV show.
 - Shares get views, saves get followers.
 - First frame matters more than words: show the real thing happening live, never a blank title card.
+
+## Lessons from the Version 6 animated-shorts kit (studied Nov 26 2026)
+Diyar sent the kit's master prompt and skill. It was built by copying the same channel (Ricks Clips), so its measured rules apply to us directly. Where it disagrees with Diyar's own rules, his rules win (no dissolves; music about 20 dB under the voice).
+- **Don't ask, measure.** Never judge the look by opinion. Measure our frames against the reference frames with `doczap/tools/measure.py` (brightness, shadow area, saturation, white balance, outlines, sharpness, cuts, camera motion, loudness). Fix only the biggest gap, then measure again. Keep every version (v1, v2 …) and compare the same moment before and after.
+- **Find the cause, not just a fix.** When a fix doesn't move the number, something else is overriding it. (Nov 26: a second `expo` later in the same light object cancelled the exposure change.)
+- **Story details:** a one-sentence hook built on a contradiction (strange action, paradox fact, or conditional promise). Small exact numbers ("every 12 feet", "three years"), never statistics. Grow things in threes ("One dropped. Then another. Then all eight."). Show the result first, then the reason, with an everyday analogy. End 0.1-0.5 s after the last word.
+- **Camera grammar (measured on Ricks Clips):**
+  - The camera moves about 77 % of the time and drifts almost always (10-40 % of the frame per second). Pure holds last about 0.4 s and still creep in.
+  - **Push-in is the default move** (53 %) and lands ON the narration word (its noun or verb). A pull-back is the reveal (22 %).
+  - Travel from subject to subject inside one take (push/pull plus arc or pan) instead of cutting.
+  - Moves are 0.6-1.3 s with an ease: speed peaks at about 40 % of the move and settles more slowly. No linear moves, no hard stops.
+  - Edits only at a location or time change or a punchline. We use whip-pans or hard cuts there (Diyar bans dissolves).
+- **Faces stay paper-white in every light** (the brightest pixels in the references are faces at L* about 100). The world gets graded; the character cards don't.
+- **Everything has an outline,** including props and sets, in a warm brown-black ink, heavier on the lower/shadow side.
+- **Shapes:** heads are an egg with a jaw, not a perfect circle. Brows are heavy wedges that taper to a point (the angle carries the mood). Mouths are small and slightly off-level. Hats sit askew with pointed brim tips. Posts taper and bases flare. Change a part's silhouette instead of adding parts.
+- **Palette:** the references average about 42 % saturation, a near-neutral white balance (b* about 7) and lean warm-red (a* about +9: wood, brick, red rugs). They are darker than us (L* about 48) with much more shadow (about 38 % of the frame). Prefer warm wood, brick and red sets with real shadowed corners over bright all-green or all-white sets.
+- **Checks with numbers before every render:** no face cut by the frame edge, no camera inside geometry, no subject hidden, nothing floating or sinking. Before saying "done", watch the WHOLE video as contact sheets every 0.5 s (`doczap/tools/watch.py`).

@@ -23,6 +23,8 @@ This is the written contract for every episode. **Nobody lowers a number here wi
 | Shot length | a new angle every **1.3-3 s** | shot table in `story.js` |
 | Captions | 1-2 words, Poppins Bold, white with dark stroke, sentence case, y≈1342; no caption on screen < 0.2 s | caption script output |
 | Look | `LOOK = 'modern'` (PBR + image light + filmic grade); never grey or milky; compose glow ≤ 0.35 | contact sheet before and after the render |
+| Measured look vs references (Diyar's 9 reels, `doczap/docs/reference_metrics.json`) | saturation **≤ 50 %**; white balance b* **≤ 15**; faces paper-white (top 0.5 % of pixels L* ≥ 95); world outline pixels **≥ 0.8 %**; no metric more than **1.5 reference spreads** away unless the story's setting explains it (e.g. a greenhouse is green) | `python3 doczap/tools/measure.py --refcache doczap/docs/reference_metrics.json --ours <stills or mp4>` |
+| Whole-video check | contact sheets every 0.5 s looked at before "done"; motion notes (CUT/POP/FREEZE) explained | `python3 doczap/tools/watch.py out.mp4 qc/` |
 
 ## Measured, not yet enforced
 - Instagram skip rate in the first 3 s, average % watched, shares per 1k plays (pull insights ~48 h after posting with vidIQ and log them in `doczap/docs/LESSONS.md`).
@@ -30,7 +32,7 @@ This is the written contract for every episode. **Nobody lowers a number here wi
 
 ## Gates (where each check runs)
 1. **Script gate** (before asking for the MP3): virality ≥ 80 on both platforms + fact check with 2+ sources + a fresh-context doubt review of the facts (`doubt-driven-development`).
-2. **Preview gate** (before the full render): contact sheet of stills sent to Diyar; wait for his OK.
+2. **Preview gate** (before the full render): stills measured against the references and improved one gap at a time (v1, v2 … each kept); contact sheet + the numbers table sent to Diyar; wait for his OK.
 3. **Ship gate** (before delivery): every row in the numbers table passes, frames from the finished MP4 checked, post kit run through `ig-caption` + `ig-human` + `youtube-agent`.
 
 ## Exceptions

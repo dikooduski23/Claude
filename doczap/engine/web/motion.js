@@ -47,3 +47,11 @@ export const blinkAt = (f, seed) => { const per = 38 + (seed * 17) % 31, ph = (f
 export const walk = (f, f0, speed = 1.1, stride = 0.8) => { const t = Math.max(0, f - f0) / 30; return { dist: t * speed, phase: (t * speed / (2 * stride)) % 1 }; };
 /** Round values used in card keys so canvas redraws happen only when the pose visibly changes. */
 export const q = (x, n = 2) => Math.round(x * 10 ** n) / 10 ** n;
+/** Talking: mouth openness 0..1 for a character speaking at frame f (60 fps). ~4 syllables/s with random accents and short pauses.
+ *  Pass the result as the card option `talk` (romanFront opts.talk). Quantised to 1/8 so cards only redraw when the mouth changes. */
+export const talkAt = (f, seed = 1, rate = 1) => {
+  const t = f * rate / 60 * 4.2 + seed * 0.37, i = Math.floor(t), ph = t - i;
+  const h = (k) => { const x = Math.sin((i + k) * 127.1 + seed * 311.7) * 43758.5453; return x - Math.floor(x); };
+  const amp = 0.35 + 0.65 * h(0), on = h(1) < 0.12 ? 0 : 1;
+  return Math.round(clamp(amp * Math.sin(Math.PI * ph) * on) * 8) / 8;
+};

@@ -5,7 +5,7 @@ description: Use when Diyar says "let's create next video" (or similar) for his 
 
 # Doc Zap: create the next video
 
-Read `CLAUDE.md`, `doczap/docs/STYLE.md` and `doczap/docs/CONSTRAINTS.md` first. CONSTRAINTS.md is the quality bar: never lower a number in it to make a check pass. Read `doczap/docs/LESSONS.md` and apply every lesson from earlier episodes.
+Read `CLAUDE.md`, `doczap/docs/STYLE.md` and `doczap/docs/CONSTRAINTS.md` first. CONSTRAINTS.md is the quality bar: never lower a number in it to make a check pass. Read `doczap/docs/LESSONS.md` and apply every lesson from earlier episodes. STYLE.md includes the measured rules from the Version 6 animated-shorts kit (push-in on the narration word, faces paper-white, everything outlined, warm palette).
 
 The work follows the agent-skills lifecycle (addyosmani/agent-skills, installed in `.claude/skills/`): DEFINE → SPEC → BUILD in slices → VERIFY → SHIP → LEARN. Load each named skill with the Skill tool at its step.
 
@@ -35,7 +35,8 @@ Use `incremental-implementation`: one slice at a time, each one checked before t
    - Material finishes go through `material.userData = { rough, metal, envK }`: glass and water low roughness, foliage via `canopyGeo` / `tree()`.
    - Outfits go in `web/roman.js`; then run `cat toonbase.js roman.js > toon.js`.
 4. **Stills first:** render a still per shot, make the contact sheet, apply the glow (`GLOW=0.35 python3 glowprev.py sheet.jpg 5`), look, and fix framing. If something renders wrong, use `debugging-and-error-recovery`: reproduce on one frame, change one thing, re-render that frame.
-5. **Preview gate:** send Diyar the sheet and wait for his OK.
+5. **Measure (Version 6 method: don't ask, measure):** `python3 ../../tools/measure.py --refcache ../../docs/reference_metrics.json --ours stills_glow/`. Fix only the biggest gap, re-render the same stills, measure again, and keep each version (`v1`, `v2` …; `lookrun.sh vN` does render, glow and measure in one go). If a change doesn't move its number, find the cause before trying anything else.
+6. **Preview gate:** send Diyar the sheet plus the numbers table (ours vs references) and wait for his OK.
 
 ## Phase 3: render, VERIFY, SHIP
 1. **Full render:** `RS=1 HASH="#raw" RESUME=1 node render.mjs plates a-b`, as 2 ranges in the background (one per core). Each range takes about 2 h at 10-12 s per frame. Restart with RESUME if killed. Send Diyar a short preview clip and progress while it runs.
@@ -44,7 +45,7 @@ Use `incremental-implementation`: one slice at a time, each one checked before t
 4. **Compose:** `python3 compose_plates.py plates out.mp4 --whips ... --audio audio/final_mix.wav --caps cap/caps.json --glow 0.35`.
 5. **Cover:** `cover.py` on a clean frame, text off the face, inside the frame edges.
 6. **Post kit:** run `ig-caption`, then `ig-human`, then `youtube-agent` (title linter): title, caption with one share ask, pinned comment with an easy either/or question, YouTube description, tags, sources.
-7. **Ship gate** (`shipping-and-launch` pre-launch checklist, adapted): every row in CONSTRAINTS.md passes (ffprobe for size, fps and length, ebur128 for LUFS, a frame strip from the finished MP4, no fades at the whips). For high-stakes episodes, a separate agent checks the finished video against the script.
+7. **Ship gate** (`shipping-and-launch` pre-launch checklist, adapted): every row in CONSTRAINTS.md passes (ffprobe for size, fps and length, ebur128 for LUFS, no fades at the whips). Watch the WHOLE video with `python3 ../../tools/watch.py out.mp4 qc/` (contact sheets every 0.5 s + CUT/POP/FREEZE notes) and run `measure.py` on the MP4. Encode the delivery file at CRF ~19 with a 16 Mbps cap. For high-stakes episodes, a separate agent checks the finished video against the script.
 8. **Deliver** the MP4, cover and post.md to Diyar.
 
 ## Phase 4: LEARN (`documentation-and-adrs`)
