@@ -27,3 +27,11 @@ Diyar asked for weekly 8-10 minute YouTube videos modelled on **Born in Lore** (
 - **Files:** `kit.py` (primitives, palette, fonts), `chars.py` (puppet characters and horse), `sets.py` (cached parallax layers: steppe, yurt, city, palace), `overlays.py` (chapter card, location tag, paper note, polaroid, red circle, year stamp, height chart, end card, film finish).
 - **Output:** 1920×1080 at 30 fps, rendered with skia on the CPU. Read frames back with `toarray(colorType=kRGBA_8888)`; the default order is BGRA.
 - **Film finish:** slight desaturation, warm split, vignette, grain.
+
+## Standing rule (Diyar, Nov 26 2026)
+Use the **youtube-agent** skill on every long-form episode:
+- **/yt-package:** write 10 titles and keep the top 3. The thumbnail must not repeat the title and has at most 3 words.
+- **/yt-seo:** the three searches the video should win must appear in the title and the first two lines of the description.
+- **/yt-chapters:** start at 0:00, at least 3 chapters, each at least 10 seconds.
+- **/yt-shorts:** list 20-55 s Shorts already inside the video, each with a new hook line and a loop point.
+- **/yt-retention:** about 48 hours after posting, ask for the retention CSV.
