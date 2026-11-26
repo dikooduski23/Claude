@@ -10,9 +10,9 @@ This repo holds the whole Doc Zap production system. When Diyar says **"let's cr
 - Claude has creative ownership: lead the story ideas, style and editing.
 
 ## Standing rules (from Diyar; follow every time)
-1. **Virality check first:** run a virality check on every script; it must score **above 90/100** before building.
+1. **Virality check first:** run a virality check on every script; it must score **80+/100 on both TikTok and Instagram**, honestly, before building (Diyar lowered it from 90 on Nov 25 2026). Full quality bar: `doczap/docs/CONSTRAINTS.md`.
 2. **Fact-check** every claim against **2+ sources**. Exact numbers and dates; no invented quotes presented as history.
-3. **Voice:** ElevenLabs **Patrick** (Eleven v3), with v3 tags like [curious] [deadpan] [whispers]. Numbers written as words. Diyar makes the MP3 and sends it.
+3. **Voice:** ElevenLabs **Patrick** on **Eleven v4**, tag-free pacing. Numbers written as words. Diyar makes the MP3 and sends it.
 4. **Length 30-45 s.**
 5. **Output:** native **1080×1920 at 60 fps**, H.264, audio at **-14 LUFS**. **Captions version only.**
 6. No episode number, watermark, username, progress bar or border on screen. Only essential in-world labels.
@@ -26,7 +26,8 @@ See `doczap/docs/STYLE.md` for the full rules. In short:
 - **Hook:** no title card. Frame 1 is a close-up of the character already doing the strange thing, or a macro slow-mo of the key object with a focus pull.
 - **Camera:** always moving (push-ins, arcs, following objects, POV, low angles), close framing, a new angle every 1.3-3 s, **whip-pans** with motion blur as transitions.
 - **Characters:** big white heads, very expressive faces, emotes (lightbulb, ?, !), hats, beards.
-- **Worlds:** textured, warm-lit, depth haze.
+- **Worlds:** textured, warm-lit, depth haze, rendered in the modern look (`LOOK = 'modern'`: soft realistic light, filmic colour, no outlines on the world). Never flat, grey or milky.
+- **Transitions:** hard cuts or whip-pans only; never fades or blended double images.
 - **Mechanism:** an in-world cutaway (glass object, cross-section, balance scale) with **handwritten labels and arrows** (Caveat font).
 - **Captions:** 1-2 words, Poppins Bold, white with a dark stroke, sentence case, y≈1342.
 
