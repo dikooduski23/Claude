@@ -5,42 +5,51 @@ description: Use when Diyar says "let's create next video" (or similar) for his 
 
 # Doc Zap: create the next video
 
-Read `CLAUDE.md` and `doczap/docs/STYLE.md` first and follow every rule in them.
+Read `CLAUDE.md`, `doczap/docs/STYLE.md` and `doczap/docs/CONSTRAINTS.md` first. CONSTRAINTS.md is the quality bar: never lower a number in it to make a check pass. Read `doczap/docs/LESSONS.md` and apply every lesson from earlier episodes.
 
-## Phase 1: after "let's create next video" (no questions needed)
-1. **Pick the story** in the STYLE.md formula. It must be true and little-known (most people should never have heard it) and have a clear mechanism to show in a cutaway. It must not repeat anything in `doczap/episodes/`.
-2. **Fact-check** against 2+ sources. Leave out anything with only one source and say so.
-3. **Write the script** for ElevenLabs **Patrick** (v3 tags, numbers as words):
-   - 30-45 s (~90-120 words);
+The work follows the agent-skills lifecycle (addyosmani/agent-skills, installed in `.claude/skills/`): DEFINE → SPEC → BUILD in slices → VERIFY → SHIP → LEARN. Load each named skill with the Skill tool at its step.
+
+## Phase 1: DEFINE (after "let's create next video"; no questions needed)
+1. **Story ideas** with `idea-refine`: write 5 candidate stories in the STYLE.md formula (someone did something that looked stupid on purpose → doubted → the trick pays off → "You see," + mechanism → ironic punchline). Score each for little-known (most people never heard it), a mechanism you can show in a cutaway, a strong first image, and a share trigger. Check demand with a vidIQ outlier search if credits allow. Converge on one and write a "Not doing" line for the rest. Never repeat anything in `doczap/episodes/`.
+2. **Fact-check** against 2+ sources. Leave out anything with one source or disagreeing sources, and list it.
+3. **Doubt review** with `doubt-driven-development`: hand the claims table to a fresh-context agent that has not seen your reasoning and ask it to find what is wrong, overstated or single-sourced. Fold its findings back in. One round, two at most.
+4. **Script** for ElevenLabs **Patrick on Eleven v4** (tag-free pacing, numbers as words):
+   - 30-45 s (~105-120 words);
    - line 1 names the strange act;
    - a "You see," setup, But/So beats and a rehook halfway;
    - the last line flows back into line 1;
-   - no comment CTA.
-4. **Virality check:** score Hook /25, Value /20, Emotion /20, Platform fit /15, Shareability /10, Trend /10. It must total **> 90**; rework the script until it does.
-5. **Send Diyar** a .md with the script, the score table, the fact check and the sources. Ask only for the MP3.
+   - no comment CTA in the video.
+5. **Virality check** with the `virality-predictor` skill for TikTok and Instagram. It must score **80+ on both**, honestly; rework until it does.
+6. **Send Diyar** a .md with the script, score table, fact check and sources. Ask only for the MP3.
 
-## Phase 2: after he sends the voiceover
-Work in `doczap/work/<slug>/`: `cp -r doczap/engine doczap/work/<slug>`, run `npm install` there (or symlink node_modules), and put the MP3 in as `voice_raw.mp3`.
+## Phase 2: SPEC and BUILD in slices (after he sends the voiceover)
+Use `incremental-implementation`: one slice at a time, each one checked before the next. Work in `doczap/work/<slug>/`: `cp -r doczap/engine doczap/work/<slug>`, symlink or install node_modules, put the MP3 in as `voice_raw.mp3`.
 1. **Voice:**
-   - `python3 ../../tools/trim_pauses.py voice_raw.mp3 voice.mp3`.
-   - Build `fake.html` (`const TOTAL=n;` + `const SCRIPT=[[i,i+1,"line"],...]`) and run `EP=fake.html python3 ../../tools/align_ps.py voice.mp3 0`, which gives warp.json.
-   - Write `words.json` (`[{w,s,e}]`) and cut `voice_loop.wav` right after the last word.
+   - Run `python3 ../../tools/trim_pauses.py voice_raw.mp3 voice.mp3`. If it is still over 45 s, apply `atempo` (up to about 1.08).
+   - Build `fake.html` (`const TOTAL=n;` + `const SCRIPT=[[i,i+1,"line"],...]`) and run `EP=fake.html python3 ../../tools/align_ps.py voice.mp3 0`.
+   - Write `words.json` (`[{w,s,e}]`).
    - TOTAL frames = duration × 60.
-2. **Sets and cast:**
-   - Add a new world block in `web/main.js` before `// ---------- cards ----------`, wrapped in a block scope (`let xState;\n{ ... }`), and call it from worldState. Toggle it with your own W flags.
-   - Outfits and faces go in `web/roman.js`; then run `cat toonbase.js roman.js > toon.js`.
-   - Build new sets for each story: textured, warm-lit, with foreground props.
-3. **Story** (`web/story.js`; use the Lottery Man version as the template):
-   - The SH shot table in 30-fps units (u = f/2).
-   - `cam30` with push-ins, orbits and object-follow shots.
-   - The `WHIPS` list for whip-pans.
-   - `dofAt` focus per shot, `worldAt` flags, `actorsAt` cast and expressions, and `fxAt` emotes and confetti.
-   - The last shot returns to the opening composition.
-4. **Stills first:** `HASH="#raw" timeout 300 node render.mjs stills "f1,f2,..."`, then `bash sheet.sh /tmp/sheet.jpg`. Look at the sheet and fix cropped heads, blocked faces, edge-on props and cameras inside objects before the full render.
-5. **Full render:** `HASH="#raw" RESUME=1 node render.mjs plates a-b`, as 2-3 parallel ranges in the background. If a process gets killed, restart with RESUME and validate the newest jpgs with PIL. Comma lists work (`693-1256,1374-1471`).
-6. **Captions:** `python3 caps.py` (set END and add number merges). **Labels:** `python3 labels.py` (set positions from a plate). Add the whip windows in `compose.py`.
-7. **Audio:** edit the SFX section of `audio/mix.py` for the new shot times (whooshes on whips, an SFX per action, music dips) and run it. It writes `final_mix.wav` at -14 LUFS.
-8. **Compose:** `python3 compose.py out/DocZap_<Name>_1080x1920.mp4`. Then check 2514-ish frames at 60 fps, the LUFS, and a frame strip.
-9. **Cover:** `python3 cover.py plates/fNNNN.jpg out/DocZap_<Name>_cover.jpg <y0>`, using a frame where the face is clean, with the text off the face.
-10. **Post .md:** title, caption with a share ask, pinned comment with a save ask, YouTube description, tags and sources.
-11. **Deliver** the MP4, cover and post.md to Diyar. Copy the script, story.js, words.json and post.md into `doczap/episodes/<slug>/` and commit. Delete `doczap/work/<slug>/plates`.
+2. **Shot spec** (`spec-driven-development`, kept short): write `SPEC.md` with the shot table (frames, set, camera move, cast, emote, label), the whip list and the cutaway. Each shot is 1.3-3 s.
+3. **Sets and cast:**
+   - New sets for every story, in `web/story.js` (or a world block in `web/main.js`), with `LOOK = 'modern'`.
+   - Material finishes go through `material.userData = { rough, metal, envK }`: glass and water low roughness, foliage via `canopyGeo` / `tree()`.
+   - Outfits go in `web/roman.js`; then run `cat toonbase.js roman.js > toon.js`.
+4. **Stills first:** render a still per shot, make the contact sheet, apply the glow (`GLOW=0.35 python3 glowprev.py sheet.jpg 5`), look, and fix framing. If something renders wrong, use `debugging-and-error-recovery`: reproduce on one frame, change one thing, re-render that frame.
+5. **Preview gate:** send Diyar the sheet and wait for his OK.
+
+## Phase 3: render, VERIFY, SHIP
+1. **Full render:** `RS=1 HASH="#raw" RESUME=1 node render.mjs plates a-b`, as 2 ranges in the background (one per core). Each range takes about 2 h at 10-12 s per frame. Restart with RESUME if killed. Send Diyar a short preview clip and progress while it runs.
+2. **Captions:** caption script from `words.json` (number merges such as 245, 1849, 6 million; merge any caption under 0.2 s).
+3. **Audio:** SFX section of `audio/mix.py` for the new shot times; voice first, bed about 20 dB under it. Output is `final_mix.wav` at -14 LUFS.
+4. **Compose:** `python3 compose_plates.py plates out.mp4 --whips ... --audio audio/final_mix.wav --caps cap/caps.json --glow 0.35`.
+5. **Cover:** `cover.py` on a clean frame, text off the face, inside the frame edges.
+6. **Post kit:** run `ig-caption`, then `ig-human`, then `youtube-agent` (title linter): title, caption with one share ask, pinned comment with an easy either/or question, YouTube description, tags, sources.
+7. **Ship gate** (`shipping-and-launch` pre-launch checklist, adapted): every row in CONSTRAINTS.md passes (ffprobe for size, fps and length, ebur128 for LUFS, a frame strip from the finished MP4, no fades at the whips). For high-stakes episodes, a separate agent checks the finished video against the script.
+8. **Deliver** the MP4, cover and post.md to Diyar.
+
+## Phase 4: LEARN (`documentation-and-adrs`)
+1. Copy the script, SPEC.md, story.js, words.json and post.md into `doczap/episodes/<slug>/`, along with engine improvements.
+2. Add an entry to `doczap/docs/LESSONS.md`: what went wrong, what you changed, what to do next time. Record any engine decision as a short ADR in the same file.
+3. Commit (never frames, MP4s or WAVs).
+4. Delete `doczap/work/<slug>/plates`.
+5. About 48 h after posting, offer to pull the insights and log them in LESSONS.md.

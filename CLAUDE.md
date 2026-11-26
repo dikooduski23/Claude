@@ -30,6 +30,9 @@ See `doczap/docs/STYLE.md` for the full rules. In short:
 - **Mechanism:** an in-world cutaway (glass object, cross-section, balance scale) with **handwritten labels and arrows** (Caveat font).
 - **Captions:** 1-2 words, Poppins Bold, white with a dark stroke, sentence case, y≈1342.
 
+## Agent skills (installed Nov 26 2026)
+`.claude/skills/` holds Addy Osmani's agent-skills (MIT, github.com/addyosmani/agent-skills): idea-refine, spec-driven-development, incremental-implementation, doubt-driven-development, constraint-driven-development, debugging-and-error-recovery, shipping-and-launch, documentation-and-adrs and more. The Doc Zap skill calls them at each stage. The quality bar is `doczap/docs/CONSTRAINTS.md`; lessons and engine decisions go in `doczap/docs/LESSONS.md`.
+
 ## Repo layout
 - `doczap/engine/`: the production template (latest = the Lottery Man rebuild).
   - `web/`: three.js engine. `main.js` holds the world sets, `toonbase.js` + `roman.js` the characters (`cat toonbase.js roman.js > toon.js` after editing), `story.js` the shots, camera, cast and FX of the current episode.

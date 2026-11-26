@@ -26,7 +26,7 @@ export const LIGHTS = {
   cut: tint(LP.indoor, { sky: '#ffe2b8', hemi: 1.1, sunI: 1.1, az: 30, el: 55, fog: '#3a2030', fogNear: 10, fogFar: 40, skyTop: '#2a1430', skyHor: '#6a3050', gain: '#fff0e0', bloom: 1.0, bthr: 0.8, shadowExt: 6 }),
 };
 // modern look: stronger sun vs. fill (contrast, readable form), image light, filmic exposure, deeper haze distance
-const MODL = { lily: { env: 0.7, sat: 1.1 }, room: { env: 0.5, hemiK: 0.45 }, rail: { env: 0.5, hemiK: 0.45 }, cut: { env: 0.6, hemiK: 0.5 }, park: { env: 0.65 }, gold: { env: 0.7 }, nave: { env: 0.75, skyTop: '#2a6ad6', skyHor: '#bcd8f6', fog: '#cfe0f0' } };
+const MODL = { lily: { env: 0.7, sat: 1.1 }, room: { env: 0.5, hemiK: 0.45 }, rail: { env: 0.5, hemiK: 0.45 }, cut: { env: 0.6, hemiK: 0.5 }, park: { env: 0.65 }, gold: { env: 0.7 }, nave: { env: 0.75, hemiK: 0.6, skyTop: '#2a6ad6', skyHor: '#bcd8f6', fog: '#cfe0f0' } };
 for (const k in LIGHTS) { const L = LIGHTS[k]; LIGHTS[k] = { ...L, sunI: L.sunI * 1.45, hemiK: 0.3, expo: 1.0, con: 1.1, sat: (L.sat ?? 1.16) * 1.04, fogNear: L.fogNear * 1.5, fogFar: L.fogFar * 1.7, ao: 0.35, bloom: (L.bloom ?? 0.5) * 0.8, bthr: Math.max((L.bthr ?? 1) * 1.9, 1.55), expo: 0.9, con: 1.15, vig: Math.max(L.vig ?? 0.22, 0.3), ...(MODL[k] || {}) }; }
 export const lightFor = (S) => ({ ...LIGHTS[S.light] });
 // ---------------- layout ----------------
@@ -51,7 +51,7 @@ export const sets = (K) => {
     for (let i = 0; i < 26; i++) { const a = i / 26 * Math.PI * 2; for (const [w, c] of [[11, 'rgba(10,40,12,.42)'], [4, 'rgba(160,220,110,.35)']]) { g.strokeStyle = c; g.lineWidth = w; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(a) * W / 2, cy + Math.sin(a) * H / 2); g.stroke(); } }
     for (let r = 70; r < W / 2; r += 58) for (let i = 0; i < 26; i++) { const a0 = i / 26 * Math.PI * 2, a1 = (i + 1) / 26 * Math.PI * 2; g.strokeStyle = 'rgba(10,40,12,.28)'; g.lineWidth = 4; g.beginPath(); g.arc(cx, cy, r + Math.sin(i * 3.1) * 6, a0 + 0.02, a1 - 0.02); g.stroke(); }
     const sh = g.createRadialGradient(cx, cy, W * 0.42, cx, cy, W / 2); sh.addColorStop(0, 'rgba(0,0,0,0)'); sh.addColorStop(1, 'rgba(120,30,40,.35)'); g.fillStyle = sh; g.fillRect(0, 0, W, H); });
-  const leafTopM = K.toon({ map: ctex(leafTopC), color: '#c2d0b2' }); leafTopM.userData = { rough: 0.38, envK: 0.9 }; const leafRimM = K.toon({ color: '#b8344a' });
+  const leafTopM = K.toon({ map: ctex(leafTopC), color: '#b2c2a2' }); leafTopM.userData = { rough: 0.38, envK: 0.9 }; const leafRimM = K.toon({ color: '#b8344a' });
   const makeLeaf = (parent, x, y, z, R, rot = 0) => { const g = K.grp(parent, x, y, z, rot);
     const top = K.add(new THREE.CircleGeometry(R * 0.97, 48), leafTopM, 0, 0.004, 0, g, false); top.rotation.x = -Math.PI / 2;
     const rimPts = []; for (let i = 0; i <= 6; i++) { const t = i / 6; rimPts.push(new THREE.Vector2(R * (0.96 + 0.05 * t), 0.004 + 0.085 * Math.sin(t * Math.PI / 2))); }
@@ -63,7 +63,7 @@ export const sets = (K) => {
   // modern trees: lumpy noise-displaced canopies with vertex-colour light (dark core, sunlit crown), trunk with branches
   const nz = (x, y, z) => Math.sin(x * 1.7 + Math.sin(z * 2.3)) * Math.cos(y * 1.9 + Math.sin(x * 1.3)) + 0.5 * Math.sin(x * 4.1 + y * 3.7 + z * 4.9) + 0.25 * Math.sin(x * 9.3 - z * 8.1 + y * 7.7);
   const canopyGeo = (r, seed, det = 10) => { const g = new THREE.IcosahedronGeometry(r, det); const P_ = g.attributes.position, cols = new Float32Array(P_.count * 3); const v = new THREE.Vector3();
-    const cA = new THREE.Color('#1c4a1e'), cB = new THREE.Color('#3f8a2e'), cC = new THREE.Color('#9fd456'), tmp = new THREE.Color();
+    const cA = new THREE.Color('#2a6226'), cB = new THREE.Color('#3f8a2e'), cC = new THREE.Color('#9fd456'), tmp = new THREE.Color();
     for (let i = 0; i < P_.count; i++) { v.fromBufferAttribute(P_, i); const n = v.clone().normalize(); const k = nz(n.x * 2 + seed, n.y * 2, n.z * 2 - seed);
       const bump = 1 + 0.15 * k;
       v.copy(n).multiplyScalar(r * bump); v.y *= 0.88; P_.setXYZ(i, v.x, v.y, v.z);
@@ -72,7 +72,7 @@ export const sets = (K) => {
     g.setAttribute('color', new THREE.BufferAttribute(cols, 3)); g.computeVertexNormals();
     { const N_ = g.attributes.normal; for (let i = 0; i < N_.count; i++) { v.fromBufferAttribute(P_, i).normalize(); const fx = N_.getX(i), fy = N_.getY(i), fz = N_.getZ(i); const m_ = v.multiplyScalar(0.75).add(new THREE.Vector3(fx, fy, fz).multiplyScalar(0.25)).normalize(); N_.setXYZ(i, m_.x, m_.y, m_.z); } }
     return g; };
-  const leafStd = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.78, metalness: 0 }); leafStd.userData.envK = 0.7;
+  const leafStd = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.78, metalness: 0, emissive: '#16380f', emissiveIntensity: 1 }); leafStd.userData.envK = 0.7;
   const barkM = new THREE.MeshStandardMaterial({ color: '#6e6050', roughness: 0.9 });
   const tree = (parent, x, z, s = 1, seed = 1, y = 0, det = 10) => { const g = K.grp(parent, x, y, z, rnd(seed, 40) * 6);
     K.add(new THREE.CylinderGeometry(0.13 * s, 0.26 * s, 2.6 * s, 20), barkM, 0, 1.3 * s, 0, g);
@@ -220,13 +220,13 @@ export const sets = (K) => {
   for (let z = -30; z <= 30; z += 2.4) for (const s of [-1, 1]) { const x = s * 3.2; K.add(new THREE.CylinderGeometry(0.09, 0.09, 5.0, 10), blueM, x, 2.5, z, NG); K.add(new THREE.BoxGeometry(0.24, 0.12, 0.24), redM, x, 0.06, z, NG); K.add(new THREE.BoxGeometry(0.22, 0.1, 0.22), yelM, x, 2.62, z, NG); }
   const GAL = []; for (const s of [-1, 1]) { const g = K.grp(NG, s * 4.6, 2.55, 0); GAL.push(g); K.add(new THREE.BoxGeometry(2.8, 0.14, 62), K.mat('planks', { seed: 52, lig: 44 }), 0, 0, 0, g);
     K.add(new THREE.BoxGeometry(0.05, 0.05, 62), redM, -s * 1.38, 0.62, 0, g); for (let z = -30; z <= 30; z += 0.6) K.add(new THREE.BoxGeometry(0.03, 0.6, 0.03), ironM, -s * 1.38, 0.32, z, g, false); }
-  const vault = K.add(new THREE.CylinderGeometry(3.25, 3.25, 64, 48, 1, true, 0, Math.PI), paneM(6, 24, 0.32), 0, 5.0, 0, NG, false); vault.rotation.set(Math.PI / 2, 0, Math.PI / 2); K.noInk(vault);
+  const vault = K.add(new THREE.CylinderGeometry(3.25, 3.25, 64, 48, 1, true, 0, Math.PI), paneM(6, 24, 0.22), 0, 5.0, 0, NG, false); vault.rotation.set(Math.PI / 2, 0, Math.PI / 2); K.noInk(vault); vault.material.userData = { rough: 0.35, metal: 0, envK: 0.25 };
   for (let z = -30; z <= 30; z += 2.4) { const r = K.add(new THREE.TorusGeometry(3.25, 0.05, 6, 40, Math.PI), ironM, 0, 5.0, z, NG, false); }
   for (const s of [-1, 1]) { const sr = K.add(new THREE.PlaneGeometry(3, 64), paneM(3, 24, 0.3), s * 4.7, 5.05, 0, NG, false); sr.rotation.x = -Math.PI / 2; K.noInk(sr); }
   { const sky = K.add(new THREE.PlaneGeometry(80, 80), new THREE.MeshBasicMaterial({ color: '#8ccaff', fog: false }), 0, 14, 0, NG, false); sky.rotation.x = Math.PI / 2; K.noInk(sky); }
   for (const s of [-1, 1]) { const ow = K.add(new THREE.PlaneGeometry(64, 5.2), paneM(24, 2, 0.5), s * 6.0, 2.6, 0, NG, false); ow.rotation.y = s * Math.PI / 2; K.noInk(ow); }
-  tree(NG, 0, -6, 1.5, 11);                                            // the elm trees grew inside the palace
-  for (let i = 0; i < 6; i++) K.beam(NG, [(i % 2 ? 1 : -1) * 1.2, 8.2, -24 + i * 9], [(i % 2 ? 1.6 : -1.4), 0, -22 + i * 9], 0.4, 1.4, '#fff4d8', 0.16);
+  tree(NG, 0, -6, 1.3, 11).traverse((o) => { if (o.isMesh) o.receiveShadow = false; });                                            // the elm trees grew inside the palace
+  for (let i = 0; i < 2; i++) K.beam(NG, [(i % 2 ? 1 : -1) * 1.2, 8.2, -24 + i * 9], [(i % 2 ? 1.6 : -1.4), 0, -22 + i * 9], 0.4, 1.4, '#fff4d8', 0.16);
   K.motes(NG, { n: 60, box: [-3, 0.4, -12, 3, 5, 6], col: '#fff6d8', size: 0.013, speed: 0.0011 });
   // the leaf's skeleton, glowing on the roof (it was the model for the frame)
   const ribC = cv(1024, 1024, (g, W, H) => { const cx = W / 2, cy = H / 2; g.clearRect(0, 0, W, H); g.strokeStyle = '#ffd25a'; g.lineCap = 'round';
@@ -356,7 +356,7 @@ export const dofAt = (f) => { const S = shot(f), C0 = cam(f), at = (p, k) => ({ 
     case 'palace': return at(C(0, 3, -8), 3);
     case 'critics': return at(C(0, 1.4, 3.5), 9);
     case 'march': return at(Ev(-4.6, 3.2, -3.4), 9);
-    case 'nave': return at(Ev(0, 2, -10), 5);
+    case 'nave': return at(Ev(0, 2.5, -7), 5);
     case 'roof': return at(Ev(0, 7.6, 10), 4);
   }
   return { focus: 5, cinf: 0 }; };
