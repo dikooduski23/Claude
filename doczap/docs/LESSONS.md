@@ -14,7 +14,17 @@ Newest first. Each entry: what went wrong, what changed, what to do next time. E
 - Captions merge any chunk shorter than 0.2 s.
 - Light-shaft cones are never placed between the camera and the subject; glass in front of a subject gets low reflectivity (`envK` 0.25).
 
+- Background jobs in this workspace are stopped at 2 h, and a stopped job shouldn't just be restarted. Rendering moved to foreground chunks (`chunk.sh` / `chunk2.sh` in the episode folder): two RESUME lanes for about 9 minutes per call, with the newest frames checked after each call.
+- The railway room wall (HSL 95/30/62) turned lime green under the modern grade. Changed to warm amber (22/26/54) and re-rendered that shot (306 frames, about 20 min).
+- The compose at CRF 14 with film grain made a 206 MB file (38 Mbps). The delivery file is re-encoded at CRF 19 with a 16 Mbps cap (72 MB).
+- Merging captions under 0.2 s produced a few 3-4 word captions ("Critics said it would").
+- The roof shot (glowing rib pattern) still looks pale and washed out.
+
 **Next time**
+- Merge a short caption into its neighbour only while the result stays ≤ 2 words; otherwise lengthen the short one.
+- Keep wall and set colours muted (saturation ≤ 30, hue in warm/neutral ranges) because the filmic grade boosts saturation.
+- Always encode delivery files at CRF ~19 with a bitrate cap.
+- Give glowing overlay shots a darker backdrop so the glow reads.
 - Build sets with modern materials from the start, so the preview gate isn't spent on look fixes.
 - With 2 cores, run 2 render ranges (not 3); budget about 11 s per frame, so a 43 s episode takes about 4 h.
 - Keep the voice ≤ 43 s before alignment, so `atempo` isn't needed.

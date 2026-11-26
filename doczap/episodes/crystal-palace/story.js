@@ -189,7 +189,7 @@ export const sets = (K) => {
     K.bulb(PAL, 0, 8.6, 0, { size: 0.0001, light: false, halo: false }); }
 
   // ======================= D. THE RAILWAY BOARD MEETING (Derby, June 1850) =======================
-  const RD = K.room({ x: XD, w: 7, d: 6, h: 3.6, floor: 'planks', wall: 'plaster', wallOpts: { seed: 41, col: [95, 30, 62], bricks: 0, stains: 0.5 }, floorOpts: { seed: 42, lig: 32 }, ceil: 'flat' });
+  const RD = K.room({ x: XD, w: 7, d: 6, h: 3.6, floor: 'planks', wall: 'plaster', wallOpts: { seed: 41, col: [22, 26, 54], bricks: 0, stains: 0.5 }, floorOpts: { seed: 42, lig: 32 }, ceil: 'flat' });
   prop.window(RD, { x: 2.3, y: 2.0, z: -2.94, w: 0.9, h: 1.4, kind: 'sun', depth: 0.12, beamTo: [1.2, 0, 0.6], i: 3.5 });
   prop.poster(RD, { x: -0.6, y: 2.3, z: -2.92, w: 1.5, h: 0.62, accent: '#1a4a2a', bg: '#f2e6c8', fg: '#1a3a22', title: 'MIDLAND RAILWAY', lines: ['Board of Directors'], footer: 'Derby' });
   prop.shelf(RD, { x: -3.15, z: -0.8, ry: Math.PI / 2, w: 1.6, seed: 7 });
