@@ -2,6 +2,9 @@ import * as THREE from './lib/three.module.js';
 import * as T from './toon.js';
 import * as P from './paint.js';
 import { SHOTS, TOTAL, shotAt, camAt, dofAt, LIGHTS, lightFor, actorsAt, worldAt, fxAt, LOOK } from './story.js';
+import * as STORY from './story.js';            // optional episode hooks: sets(K), annotAt(f)
+import { makeKit } from './kit/kit.js';
+import { drawAnnotations, fontReady, canvas as AnnCanvas } from './kit/annot.js';
 
 const RS = +(new URLSearchParams(location.search).get('rs') || 1); window.RS = RS;
 const W = Math.round(1080 * RS), H = Math.round(1920 * RS);
@@ -11,6 +14,7 @@ renderer.setPixelRatio(1); renderer.setSize(W, H, false);
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.NoToneMapping;
+renderer.localClippingEnabled = true; // kit cross-sections
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(40, W / H, 0.08, 1500);
@@ -1466,6 +1470,9 @@ lotState = function (W_, f) {
 };
 
 }
+// ---------- engine kit: episode sets built from story.js `sets(K)` (see docs/ENGINE.md) ----------
+const K = makeKit({ scene, grad, camera, renderer }); window.KIT = K;
+const SETS = typeof STORY.sets === 'function' ? (STORY.sets(K) || {}) : {};
 // ---------- cards ----------
 const CW = Math.round(1200 * RS), CH = Math.round(2000 * RS), CM = 2.25; // canvas px, card height in metres (design 600x1000 -> 2.25 m)
 const cardGeo = new THREE.PlaneGeometry(CM * 0.6, CM); cardGeo.translate(0, CM / 2 - CM * 0.025, 0);
@@ -1490,16 +1497,19 @@ class Card {
 const cards = []; const getCard = (i) => cards[i] || (cards[i] = new Card());
 
 // ---------- render targets & post ----------
-const rtColor = new THREE.WebGLRenderTarget(W, H, { samples: 4, type: THREE.HalfFloatType });
-const rtNd = new THREE.WebGLRenderTarget(W, H, { type: THREE.HalfFloatType, minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
+const rtColor = new THREE.WebGLRenderTarget(W, H, { samples: 4, type: THREE.HalfFloatType, stencilBuffer: true });
+const rtNd = new THREE.WebGLRenderTarget(W, H, { type: THREE.HalfFloatType, minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, stencilBuffer: true });
 const rtInk = new THREE.WebGLRenderTarget(W, H, { type: THREE.HalfFloatType });
 const fsCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1), fsGeo = new THREE.PlaneGeometry(2, 2);
 const fs = (mat) => { const s = new THREE.Scene(); s.add(new THREE.Mesh(fsGeo, mat)); return s; };
 const inkU = { col: { value: rtColor.texture }, nd: { value: rtNd.texture }, res: { value: new THREE.Vector2(W, H) }, px: { value: 1.6 }, fogCol: { value: new THREE.Color() },
   sat: { value: 1.08 }, lift: { value: new THREE.Color(0, 0, 0) }, gain: { value: new THREE.Color(1, 1, 1) }, vig: { value: 0.22 }, flash: { value: 0 }, xray: { value: 0 }, fz: { value: 0 }, tm: { value: 0 }, con: { value: 1 },
-  bl1: { value: null }, bl2: { value: null }, bl3: { value: null }, bStr: { value: 0 }, rimDir: { value: new THREE.Vector2(-0.7, 0.7) }, rimCol: { value: new THREE.Color('#ffd8a8') }, rimStr: { value: 0 }, aoStr: { value: 0 }, haze: { value: 0 } };
+  bl1: { value: null }, bl2: { value: null }, bl3: { value: null }, bStr: { value: 0 }, rimDir: { value: new THREE.Vector2(-0.7, 0.7) }, rimCol: { value: new THREE.Color('#ffd8a8') }, rimStr: { value: 0 }, aoStr: { value: 0 }, haze: { value: 0 },
+  tmo: { value: 0 }, expo: { value: 1 }, inkA: { value: 1 }, shCol: { value: new THREE.Color(1, 1, 1) }, hiCol: { value: new THREE.Color(1, 1, 1) }, grain: { value: 0 }, ca: { value: 0 } };
 const inkScene = fs(new THREE.ShaderMaterial({ uniforms: inkU, vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.,1.); }`,
-  fragmentShader: `uniform sampler2D col, nd, bl1, bl2, bl3; uniform vec2 res, rimDir; uniform float px, sat, vig, flash, xray, fz, tm, con, bStr, rimStr, aoStr, haze; uniform vec3 fogCol, lift, gain, rimCol; varying vec2 vUv;
+  fragmentShader: `uniform sampler2D col, nd, bl1, bl2, bl3; uniform vec2 res, rimDir; uniform float px, sat, vig, flash, xray, fz, tm, con, bStr, rimStr, aoStr, haze, tmo, expo, inkA, grain, ca; uniform vec3 fogCol, lift, gain, rimCol, shCol, hiCol; varying vec2 vUv;
+  vec3 aces(vec3 x){ return clamp(x*(2.51*x+.03)/(x*(2.43*x+.59)+.14), 0., 1.); }
+  float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233)))*43758.5453); }
   vec3 shoulder(vec3 c){ vec3 k = vec3(.82); vec3 o = c - k; return mix(c, k + (1. - k)*(1. - exp(-max(o,0.)/(1. - k))), step(k, c)); }
   float edgeAt(vec2 uv, float r){
     vec4 c = texture2D(nd, uv); if (dot(c.rgb,c.rgb) < .01) return 0.; float d = c.a; vec3 n = c.rgb*2.-1.;
@@ -1518,6 +1528,7 @@ const inkScene = fs(new THREE.ShaderMaterial({ uniforms: inkU, vertexShader: `va
   void main(){
     vec2 hz = haze > 0. ? vec2(sin(vUv.y*70. + tm*.21) + sin(vUv.y*31. - tm*.13), cos(vUv.x*55. + tm*.17)) * haze * .0018 * (1. - smoothstep(.0, .55, vUv.y)*.3) : vec2(0.);
     vec3 c = texture2D(col, vUv + hz).rgb;
+    if (ca > 0.) { vec2 cq = (vUv - .5)*ca; c.r = texture2D(col, vUv + hz + cq).r; c.b = texture2D(col, vUv + hz - cq).b; }
     float e = edgeAt(vUv, px);
     vec4 ndc = texture2D(nd, vUv);
     bool isCard = dot(ndc.rgb, ndc.rgb) < .01 && ndc.a > 0.;
@@ -1538,14 +1549,17 @@ const inkScene = fs(new THREE.ShaderMaterial({ uniforms: inkU, vertexShader: `va
       xc = mix(xc, vec3(.55,.95,1.), e*.9);
       xc *= .9 + .1*sin(vUv.y*1400. + tm*6.);
       c = mix(mix(c, vec3(.012,.01,.014), e), xc, xray);
-    } else c = mix(c, vec3(.012,.01,.014), e);
+    } else c = mix(c, vec3(.03,.022,.03), e*inkA);
+    if (tmo > 0.5) { if (isCard) c = mix(c, aces(c*expo*1.25), .35); else c = aces(c*expo); }
     if (flash < -0.5) c = vec3(e);
     float l = dot(c, vec3(.299,.587,.114)); c = mix(vec3(l), c, sat);
     c = c*gain + lift; c = (c-.45)*con+.45;
+    if (tmo > 0.5) { float ls = clamp(dot(c, vec3(.299,.587,.114)), 0., 1.); c *= mix(shCol, hiCol, smoothstep(.05, .85, ls)); }
     vec2 q = vUv-.5; c *= 1. - vig*dot(q*vec2(1.,.75), q*vec2(1.,.75))*2.2;
     if (fz > 0.) { float lf = dot(c, vec3(.299,.587,.114)); c = mix(c, mix(vec3(lf), c, .55)*vec3(.86,.97,1.12), fz*.6); }
     c = mix(c, vec3(.82,.95,1.), max(flash,0.));
     c = shoulder(max(c, 0.));
+    if (grain > 0.) { float gl = dot(c, vec3(.299,.587,.114)); c += (hash(vUv*res + fract(tm*.618)*97.) - .5) * grain * (1. - abs(gl - .5)*1.2); }
     gl_FragColor = vec4(c,1.); }` }));
 // ---------- selective HDR bloom: bright-pass (cards & sky excluded) + 3-level gaussian ----------
 const BL = [2, 4, 8].map((d) => ({ a: new THREE.WebGLRenderTarget(W / d, H / d, { type: THREE.HalfFloatType }), b: new THREE.WebGLRenderTarget(W / d, H / d, { type: THREE.HalfFloatType }), d }));
@@ -1673,6 +1687,8 @@ function worldState(W_, f) {
     sunPool.visible = lab && !XR.on; const nb = !!W_.sbed; bCandL.intensity = nb ? 2.6 * (0.9 + 0.1 * Math.sin(f * 0.8)) : 0; bMoonL.intensity = nb ? 2.2 : 0; bFl.scale.set(1, 1.8 + 0.25 * Math.sin(f * 0.9), 1); }
   goldState(W_, f);
   lotState(W_, f);
+  if (SETS.update) SETS.update(W_, f, camera);
+  K.update(f, camera);
 }
 
 function drawActors(list, cam) {
@@ -1715,15 +1731,77 @@ function setXray(v) {
     else { if (o.userData.xr0) o.material = o.userData.xr0; if (o.userData.xv0 !== undefined) o.visible = o.userData.xv0; delete o.userData.xr0; delete o.userData.xv0; } });
   renderer.shadowMap.enabled = !on;
 }
+// ===== MODERN look (Nov 26 2026): PBR + image-based light, smooth geometry, filmic grade =====
+const MODERN = LOOK === 'modern';
+const STDMATS = [];
+if (MODERN) {
+  // 1) smoother geometry: rebuild low-poly primitives with more segments (skip any that were transformed after creation)
+  const gcache = new Map(); const bbA = new THREE.Box3(), bbB = new THREE.Box3();
+  const upg = (g) => { const p = g.parameters; if (!p) return null; let n = null;
+    try {
+      if (g.type === 'SphereGeometry' && p.widthSegments < 40) n = new THREE.SphereGeometry(p.radius, 48, 32, p.phiStart, p.phiLength, p.thetaStart, p.thetaLength);
+      else if (g.type === 'CylinderGeometry' && p.radialSegments < 40) n = new THREE.CylinderGeometry(p.radiusTop, p.radiusBottom, p.height, 48, p.heightSegments, p.openEnded, p.thetaStart, p.thetaLength);
+      else if (g.type === 'ConeGeometry' && p.radialSegments < 40) n = new THREE.ConeGeometry(p.radius, p.height, 48, p.heightSegments, p.openEnded, p.thetaStart, p.thetaLength);
+      else if (g.type === 'TorusGeometry' && (p.tubularSegments < 64 || p.radialSegments < 16)) n = new THREE.TorusGeometry(p.radius, p.tube, Math.max(16, p.radialSegments), Math.max(72, p.tubularSegments), p.arc);
+      else if (g.type === 'CircleGeometry' && p.segments < 64) n = new THREE.CircleGeometry(p.radius, 72, p.thetaStart, p.thetaLength);
+      else if (g.type === 'CapsuleGeometry' && p.radialSegments < 24) n = new THREE.CapsuleGeometry(p.radius, p.length, Math.max(8, p.capSegments), 32);
+      else if (g.type === 'LatheGeometry' && p.segments < 48) n = new THREE.LatheGeometry(p.points, 64, p.phiStart, p.phiLength);
+    } catch (e) { n = null; }
+    if (!n) return null;
+    g.computeBoundingBox(); n.computeBoundingBox(); bbA.copy(g.boundingBox); bbB.copy(n.boundingBox);
+    const sz = bbA.getSize(new THREE.Vector3()).length() + 1e-6;
+    if (bbA.min.distanceTo(bbB.min) / sz > 0.04 || bbA.max.distanceTo(bbB.max) / sz > 0.04) { n.dispose(); return null; }
+    return n; };
+  scene.traverse((o) => { if (!o.isMesh || o.isInstancedMesh || !o.geometry) return; const g = o.geometry;
+    if (!gcache.has(g)) gcache.set(g, upg(g)); const n = gcache.get(g); if (n) o.geometry = n; });
+  // 2) toon -> physically based materials (soft light falloff, reflections from the environment)
+  const conv = new Map();
+  scene.traverse((o) => { if (!o.isMesh) return; const m = o.material; if (!m) return;
+    if (m.isMeshStandardMaterial) { if (!STDMATS.includes(m)) STDMATS.push(m); return; }
+    if (!m.isMeshToonMaterial) return;
+    if (!conv.has(m)) { const em = m.emissive && (m.emissive.r + m.emissive.g + m.emissive.b) > 0.01;
+      const n = new THREE.MeshStandardMaterial({ map: m.map, color: m.color, roughness: m.userData.rough ?? 0.58, metalness: m.userData.metal ?? 0.0, side: m.side, transparent: m.transparent, opacity: m.opacity, depthWrite: m.depthWrite, alphaTest: m.alphaTest, emissive: m.emissive, emissiveIntensity: em ? m.emissiveIntensity : 1, blending: m.blending, fog: m.fog });
+      for (const k of ['bumpMap', 'bumpScale', 'normalMap', 'clippingPlanes', 'clipShadows', 'stencilWrite', 'stencilRef', 'stencilFunc', 'stencilFail', 'stencilZFail', 'stencilZPass', 'emissiveMap', 'alphaMap', 'polygonOffset', 'polygonOffsetFactor', 'polygonOffsetUnits']) if (m[k] !== undefined && m[k] !== null) n[k] = m[k];
+      if (m.map && !n.bumpMap) { n.bumpMap = m.map; n.bumpScale = 0.6; }        // texture relief catches the light
+      n.userData = { ...m.userData, fromToon: true }; conv.set(m, n); STDMATS.push(n); }
+    o.material = conv.get(m); });
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap; sun.shadow.radius = 4; sun.shadow.bias = -0.0004;
+}
+// image-based light: a soft sky dome + sun glow + warm bounce, prefiltered once per lighting set
+const pmrem = new THREE.PMREMGenerator(renderer); const ENVC = new Map();
+const envU = { top: { value: new THREE.Color() }, hor: { value: new THREE.Color() }, gnd: { value: new THREE.Color() }, sunDir: { value: new THREE.Vector3() }, sunCol: { value: new THREE.Color() } };
+const envScene = new THREE.Scene(); envScene.add(new THREE.Mesh(new THREE.SphereGeometry(10, 64, 32), new THREE.ShaderMaterial({ uniforms: envU, side: THREE.BackSide, depthWrite: false,
+  vertexShader: `varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
+  fragmentShader: `uniform vec3 top, hor, gnd, sunDir, sunCol; varying vec3 vP; void main(){ vec3 d = normalize(vP); float h = d.y;
+    vec3 c = h > 0. ? mix(hor, top, pow(h, .6)) : mix(hor, gnd, pow(-h, .35));
+    float s = max(dot(d, normalize(sunDir)), 0.); c += sunCol * (pow(s, 64.) * 6. + pow(s, 6.) * .6);
+    gl_FragColor = vec4(c, 1.); }` })));
+function envFor(L) {
+  const key = [L.skyTop, L.skyHor, L.ground, L.sky, L.sun, L.az, L.el, L.envTop, L.envHor, L.envGnd].join('|'); if (ENVC.has(key)) return ENVC.get(key);
+  const az = rx(L.az), el = rx(Math.max(L.el, 8)); envU.sunDir.value.set(Math.cos(el) * Math.cos(az), Math.sin(el), Math.cos(el) * Math.sin(az));
+  envU.top.value.set(L.envTop || L.sky).multiplyScalar(0.9); envU.hor.value.set(L.envHor || L.skyHor).multiplyScalar(0.85); envU.gnd.value.set(L.envGnd || L.ground).multiplyScalar(0.8);
+  envU.sunCol.value.set(L.sun).multiplyScalar(L.sunI);
+  const t = pmrem.fromScene(envScene, 0.03).texture; ENVC.set(key, t); return t; }
+let envLast = -1;
+function applyModern(L) {
+  if (!MODERN) return;
+  scene.environment = envFor(L);
+  const ei = L.env ?? 0.9; if (ei !== envLast) { envLast = ei; for (const m of STDMATS) m.envMapIntensity = ei * (m.userData.envK ?? 1); }
+  hemi.intensity = L.hemi * (L.hemiK ?? 0.35);
+}
 if (LOOK === 'mini') {
   const conv = new Map();
   scene.traverse((o) => { if (!o.isMesh) return; const m = o.material; if (!m || !m.isMeshToonMaterial) return;
-    if (!conv.has(m)) conv.set(m, new THREE.MeshStandardMaterial({ map: m.map, color: m.color, roughness: 0.62, metalness: 0.0, side: m.side, transparent: m.transparent, opacity: m.opacity, depthWrite: m.depthWrite, alphaTest: m.alphaTest, emissive: m.emissive, emissiveIntensity: m.emissiveIntensity }));
+    if (!conv.has(m)) { const n = new THREE.MeshStandardMaterial({ map: m.map, color: m.color, roughness: 0.62, metalness: 0.0, side: m.side, transparent: m.transparent, opacity: m.opacity, depthWrite: m.depthWrite, alphaTest: m.alphaTest, emissive: m.emissive, emissiveIntensity: m.emissiveIntensity });
+      for (const k of ['bumpMap', 'bumpScale', 'normalMap', 'clippingPlanes', 'clipShadows', 'stencilWrite', 'stencilRef', 'stencilFunc', 'stencilFail', 'stencilZFail', 'stencilZPass', 'emissiveMap', 'alphaMap']) if (m[k] !== undefined && m[k] !== null) n[k] = m[k];
+      conv.set(m, n); }
     o.material = conv.get(m); });
 }
+const annMat = new THREE.MeshBasicMaterial({ map: null, transparent: true, depthTest: false, depthWrite: false, toneMapped: false }); let annT = null;
+const annScene = fs(annMat);
 window.renderFrame = (f) => {
   const S = shotAt(f), L = lightFor(S, f), C = camAt(f);
-  applyLight(L, f);
+  applyLight(L, f); applyModern(L);
   camera.position.set(...C.pos); camera.up.set(0, 1, 0); camera.lookAt(...C.look); camera.rotateZ(rx(C.roll || 0));
   camera.fov = C.fov; camera.updateProjectionMatrix(); camera.updateMatrixWorld();
   const W_ = worldAt(f); worldState(W_, f); setXray(W_.xray || 0);
@@ -1744,11 +1822,17 @@ window.renderFrame = (f) => {
   window.CAMPOS = [camera.position.x, camera.position.y, camera.position.z]; window.PROJ = (x, y, z) => { tmpV.set(x, y, z).project(camera); return [(tmpV.x + 1) / 2 * 1080, (1 - tmpV.y) / 2 * 1920, tmpV.z]; };
   const bS = window.BLOOM_OFF ? 0 : (W_.bloom ?? L.bloom ?? 0.5); inkU.bStr.value = bS; if (bS > 0) runBloom(L.bthr ?? 1.0);
   inkU.rimStr.value = window.BLOOM_OFF ? 0 : (L.rim ?? 0.16); inkU.rimCol.value.set(L.rimCol || '#ffe0b8'); inkU.rimDir.value.set(...(L.rimDir || [-0.7, 0.7])); inkU.aoStr.value = L.ao ?? 0.22; inkU.haze.value = W_.haze || 0;
+  inkU.tmo.value = MODERN ? 1 : 0; inkU.expo.value = L.expo ?? 0.95; inkU.inkA.value = MODERN ? (L.inkA ?? 0.0) : 1; inkU.shCol.value.set(MODERN ? (L.shCol || '#f4faff') : '#ffffff'); inkU.hiCol.value.set(MODERN ? (L.hiCol || '#fff8ee') : '#ffffff'); inkU.grain.value = MODERN ? (L.grain ?? 0.03) : 0; inkU.ca.value = MODERN ? (L.ca ?? 0.0025) : 0;
   renderer.setRenderTarget(rtInk); renderer.render(inkScene, fsCam);
   dofU.focus.value = D.focus; dofU.cinf.value = D.cinf * RS; dofU.near.value = D.near ?? 1;
   renderer.setRenderTarget(null); renderer.render(dofScene, fsCam);
+  // ---- hand-drawn annotations (labels / arrows / red circles) on top, crisp and camera-tracked ----
+  const AN = typeof STORY.annotAt === 'function' ? STORY.annotAt(f) : null;
+  if (AN && AN.length && drawAnnotations(AN, window.PROJ, W, H, RS)) { if (!annT) { annT = new THREE.CanvasTexture(AnnCanvas()); annT.colorSpace = THREE.SRGBColorSpace; annMat.map = annT; annMat.needsUpdate = true; } annT.needsUpdate = true;
+    renderer.autoClear = false; renderer.render(annScene, fsCam); renderer.autoClear = true; }
   if (window.overlay) window.overlay(f);
   return true;
 };
 window.TOTAL = TOTAL;
+await fontReady;
 window.ready = true;
