@@ -1,341 +1,252 @@
-// Doc Zap — "A gardener stood his daughter on a leaf… and it beat 245 experts" (Joseph Paxton, Victoria lily → Crystal Palace, 1849–51).
-// Reference style: close moving camera, macro opener, in-plate whip-pans (no blends), expressive faces, glass cutaway, toon look.
-// Voice: Patrick, Eleven v4 (Diyar's MP3), trimmed + 1.06x = 43.3 s -> 2600 frames @ 60 fps. Last shot returns to frame 0.
+// Doc Zap — "Captain Cook got his crew eating stinky pickled cabbage... by feeding it to his officers." (HMB Endeavour, 1768-69)
+// Voice: Patrick, Eleven v4 (generated with Diyar's ElevenLabs), pauses trimmed -> 37.7 s -> 2262 frames @ 60 fps.
+// Look: the modern measured grade (ADR-002) in warm wooden ship interiors with lantern light and deep shadows (the gap our
+// measurements found vs. the reference reels). Last shot returns to frame 0 so the video loops.
 import { M as E, clamp, lerp, lerp3, ramp, idle, blinkAt, talkAt, q } from './motion.js';
 import { LP, tint } from './kit/lights.js';
 import { emote } from './kit/emotes.js';
-export const FPS = 60, TOTAL = 2600, DECK = 0, LOOK = 'modern';
+export const FPS = 60, TOTAL = 2262, DECK = 0, LOOK = 'modern';
 const SH = [
-  ['hook', 0, 170, 'lily'], ['tease', 171, 347, 'room'], ['lily', 348, 607, 'lily'], ['cut', 608, 952, 'cut'], ['park', 953, 1167, 'park'],
-  ['reject', 1168, 1440, 'room'], ['doodle', 1441, 1746, 'rail'], ['palace', 1747, 1854, 'gold'], ['critics', 1855, 1945, 'gold'],
-  ['march', 1946, 2077, 'nave'], ['nave', 2078, 2283, 'nave'], ['roof', 2284, 2540, 'nave'], ['loop', 2541, 2599, 'lily']];
+  ['hook', 0, 299, 'cabin'], ['scurvy', 300, 539, 'low'], ['hold', 540, 821, 'hold'], ['trick', 822, 1048, 'cabin'], ['door', 1049, 1149, 'cabin'],
+  ['galley', 1150, 1489, 'galley'], ['scale', 1490, 1599, 'cut'], ['finest', 1600, 1704, 'galley'], ['voyage', 1705, 1959, 'deck'],
+  ['punch', 1960, 2109, 'cabin'], ['kids', 2110, 2197, 'kitchen'], ['loop', 2198, 2261, 'cabin']];
 export const SHOTS = SH.map(([id, a, b, light]) => ({ id, a, b, light }));
-export const WHIPS = [171, 348, 608, 953, 1441, 1747, 1946, 2541];      // camera whip-pans made in the plates
+export const WHIPS = [300, 540, 822, 1150, 1490, 1600, 1705, 1960, 2110, 2198];   // in-camera whip-pans (no blends)
 export const WHIP_FRAMES = WHIPS.map((a) => [a - 14, a + 18]);
 export const TRANSITIONS = SH.slice(1).map(([, a]) => ({ at: a, type: 'cut' }));
 export const CUTS = [];
 const shot = (f) => { const s = SH.find((s) => f >= s[1] && f <= s[2]) || SH[SH.length - 1]; return { id: s[0], a: s[1], b: s[2], light: s[3] }; };
 export const shotAt = shot;
+// light: warm lantern interiors with real dark corners; a sunlit deck; a cosy modern kitchen
 export const LIGHTS = {
-  lily: tint(LP.day, { sky: '#f4ffe8', ground: '#5a7a4a', hemi: 1.2, sun: '#ffe8b8', sunI: 1.35, az: 140, el: 58, fog: '#e6f6dc', fogNear: 9, fogFar: 46, skyTop: '#6ab8ff', skyHor: '#e8fff0', gain: '#fff8ea', bloom: 0.9, bthr: 0.82, rimCol: '#fff0c8', shadowExt: 9 }),
-  room: tint(LP.indoor, { hemi: 1.05, sunI: 1.0, az: 100, el: 35, fog: '#c8a070', fogNear: 7, fogFar: 26, gain: '#fff2e0', shadowExt: 7 }),
-  park: tint(LP.day, { az: 120, el: 45, sunI: 1.35, fogNear: 30, fogFar: 220, shadowExt: 18 }),
-  rail: tint(LP.indoor, { hemi: 1.0, sunI: 0.95, az: 60, el: 32, sky: '#ffe6c0', fog: '#a87a50', fogNear: 6, fogFar: 22, gain: '#fff0dc', shadowExt: 6 }),
-  gold: tint(LP.day, { sun: '#ffd89a', sunI: 1.5, az: 210, el: 24, sky: '#ffe6c0', skyTop: '#2a6ee0', skyHor: '#cfe4ff', fog: '#e8eef6', fogNear: 40, fogFar: 240, gain: '#fff2dc', rim: 0.45, rimCol: '#ffd08a', shadowExt: 24 }),
-  nave: tint(LP.day, { sky: '#eaf6ff', hemi: 1.25, sunI: 1.3, az: 150, el: 62, fog: '#dcecf8', fogNear: 14, fogFar: 70, gain: '#fffaf0', shadowExt: 14 }),
-  cut: tint(LP.indoor, { sky: '#ffe2b8', hemi: 1.1, sunI: 1.1, az: 30, el: 55, fog: '#3a2030', fogNear: 10, fogFar: 40, skyTop: '#2a1430', skyHor: '#6a3050', gain: '#fff0e0', bloom: 1.0, bthr: 0.8, shadowExt: 6 }),
+  cabin: tint(LP.indoor, { sky: '#ffe2b8', ground: '#3a2418', hemi: 0.75, sun: '#ffd8a8', sunI: 0.75, az: 200, el: 28, fog: '#2a1a12', fogNear: 5, fogFar: 18, gain: '#fff0dc', bloom: 0.9, bthr: 0.8, rimCol: '#ffb870', shadowExt: 6 }),
+  low: tint(LP.candle, { hemi: 0.8, sunI: 0.45, fog: '#1a120e', fogNear: 3, fogFar: 13, rimCol: '#ffa860', shadowExt: 5 }),
+  hold: tint(LP.candle, { hemi: 0.85, sunI: 0.5, az: 160, el: 70, fog: '#20150e', fogNear: 3.5, fogFar: 15, rimCol: '#ffb060', shadowExt: 6 }),
+  galley: tint(LP.candle, { hemi: 0.85, sunI: 0.5, fog: '#2a170c', fogNear: 4, fogFar: 15, gain: '#fff0dc', rimCol: '#ff9a50', shadowExt: 6 }),
+  cut: tint(LP.indoor, { sky: '#ffe2b8', hemi: 1.0, sunI: 1.0, az: 30, el: 55, fog: '#2a1810', fogNear: 10, fogFar: 40, skyTop: '#1a0e08', skyHor: '#4a2a18', bloom: 1.0, bthr: 0.8, shadowExt: 6 }),
+  deck: tint(LP.day, { sun: '#ffdca0', sunI: 1.35, az: 215, el: 22, sky: '#ffe6c0', skyTop: '#2a6ad6', skyHor: '#ffd8a8', fog: '#f0dcc0', fogNear: 30, fogFar: 260, rim: 0.42, rimCol: '#ffcf88', shadowExt: 14 }),
+  kitchen: tint(LP.indoor, { hemi: 0.95, sunI: 1.0, az: 130, el: 40, fog: '#c8a888', fogNear: 6, fogFar: 26, shadowExt: 6 }),
 };
-// modern look: stronger sun vs. fill (contrast, readable form), image light, filmic exposure, deeper haze distance
-const MODL = { lily: { env: 0.7 }, room: { env: 0.5, hemiK: 0.45 }, rail: { env: 0.5, hemiK: 0.45 }, cut: { env: 0.6, hemiK: 0.5 }, park: { env: 0.65 }, gold: { env: 0.7 }, nave: { env: 0.75, hemiK: 0.6, skyTop: '#2a6ad6', skyHor: '#bcd8f6', fog: '#cfe0f0' } };
-for (const k in LIGHTS) { const L = LIGHTS[k]; LIGHTS[k] = { ...L, sunI: L.sunI * 1.45, hemiK: 0.2, expo: 0.84, shadowExt: (L.shadowExt ?? 10) * 2.2, con: 1.1, sat: (L.sat ?? 1.16) * 0.64, gain: '#faf4f6', shCol: '#f5f0ff', hiCol: '#fff5f0', fogNear: L.fogNear * 1.5, fogFar: L.fogFar * 1.7, ao: 0.35, bloom: (L.bloom ?? 0.5) * 0.8, bthr: Math.max((L.bthr ?? 1) * 1.9, 1.55), con: 1.15, vig: Math.max(L.vig ?? 0.22, 0.38), inkA: 0.75, ...(MODL[k] || {}) }; }
+// modern measured grade (ADR-002, Nov 26 2026): saturation x0.64, neutral white balance, darker fill, white faces, warm outlines
+const MODL = { cabin: { env: 0.8, hemiK: 0.8 }, low: { env: 0.8, hemiK: 1.1 }, hold: { env: 0.9, hemiK: 1.4 }, galley: { env: 0.8, hemiK: 1.05 }, cut: { env: 0.5, hemiK: 0.5 }, deck: { env: 0.7 }, kitchen: { env: 0.55, hemiK: 0.4 } };
+for (const k in LIGHTS) { const L = LIGHTS[k]; LIGHTS[k] = { ...L, sunI: L.sunI * 1.45, hemiK: 0.2, expo: 1.45, shadowExt: (L.shadowExt ?? 10) * 2.2, con: 1.0, sat: (L.sat ?? 1.16) * 0.64, gain: '#faf4f6', shCol: '#f5f0ff', hiCol: '#fff5f0', fogNear: L.fogNear * 1.5, fogFar: L.fogFar * 1.7, ao: 0.35, bloom: (L.bloom ?? 0.5) * 0.8, bthr: Math.max((L.bthr ?? 1) * 1.9, 1.55), vig: Math.max(L.vig ?? 0.22, 0.4), inkA: 0.75, ...(MODL[k] || {}) }; }
 export const lightFor = (S) => ({ ...LIGHTS[S.light] });
 // ---------------- layout ----------------
-const XA = 60000, XB = 62000, XC = 64000, XD = 66000, XE = 68000, XF = 70000;
-const A = (x, y, z) => [XA + x, y, z], B = (x, y, z) => [XB + x, y, z], C = (x, y, z) => [XC + x, y, z], D = (x, y, z) => [XD + x, y, z], Ev = (x, y, z) => [XE + x, y, z], F = (x, y, z) => [XF + x, y, z];
-const RIM = 0.25, POND = 3.2;                          // lily house floor level, pond radius
-const PAD = [0.2, 0.05, -1.6], PADR = 0.95;            // hero leaf (Annie stands on a small tray on it)
-const PAX = [-0.95, RIM, -3.4], GARD1 = [1.35, RIM, -3.5], GARD2 = [2.05, RIM, -3.15];
-const dipAt = (f) => { const t = f - 4; return t < 0 ? 0 : -0.035 * Math.exp(-t / 22) * Math.cos(t / 6.5); };   // the leaf dips, then holds
+const XA = 80000, XB = 82000, XC = 84000, XD = 86000, XE = 88000, XF = 90000, XG = 92000;
+const A = (x, y, z) => [XA + x, y, z], B = (x, y, z) => [XB + x, y, z], C = (x, y, z) => [XC + x, y, z], D = (x, y, z) => [XD + x, y, z], Ev = (x, y, z) => [XE + x, y, z], F = (x, y, z) => [XF + x, y, z], G = (x, y, z) => [XG + x, y, z];
+// cabin: officers stand behind the table (z -1.2); sailors peek in from the doorway on the left (x -2.35)
+const OFF = [[-0.75, 0, -1.25], [0.05, 0, -1.35], [0.85, 0, -1.25]], COOKP = [1.55, 0, -0.9], SAIL = [[-2.25, 0, 0.55], [-2.35, 0, 1.05], [-2.15, 0, 1.5]];
 let ST = {};
 const rnd = (i, k = 0) => { const x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return x - Math.floor(x); };
 export const sets = (K) => {
   const { THREE, prop } = K;
   const cv = (w, h, draw) => { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); return c; };
   const ctex = (c, rx = 1, ry = 1) => { const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry); t.anisotropy = 8; return t; };
-  const gridC = (bg, line, n = 8, lw = 3) => cv(256, 256, (g, W, H) => { g.fillStyle = bg; g.fillRect(0, 0, W, H); g.strokeStyle = line; g.lineWidth = lw; for (let i = 0; i <= n; i++) { g.beginPath(); g.moveTo(i * W / n, 0); g.lineTo(i * W / n, H); g.stroke(); g.beginPath(); g.moveTo(0, i * H / n); g.lineTo(W, i * H / n); g.stroke(); } });
-  const paneM = (rx, ry, op = 0.28) => { const m = K.toon({ map: ctex(gridC('rgba(190,235,255,1)', '#ffffff', 6, 5), rx, ry), transparent: true, opacity: op, depthWrite: false, side: THREE.DoubleSide }); m.userData = { rough: 0.06, metal: 0.25, envK: 2.2 }; return m; };
-  const leafTopC = cv(1024, 1024, (g, W, H) => { const cx = W / 2, cy = H / 2; const gr = g.createRadialGradient(cx, cy, 10, cx, cy, W / 2);
-    gr.addColorStop(0, '#2a6a26'); gr.addColorStop(0.6, '#3c8a32'); gr.addColorStop(1, '#4f9c3a'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
-    for (let i = 0; i < 1400; i++) { const x = rnd(i, 1) * W, y = rnd(i, 2) * H; g.fillStyle = rnd(i, 4) < 0.5 ? `rgba(15,50,15,${0.06 + rnd(i) * 0.06})` : `rgba(170,230,120,${0.05 + rnd(i) * 0.06})`; g.beginPath(); g.arc(x, y, 3 + rnd(i, 3) * 9, 0, 7); g.fill(); }
-    // the radial ribs and cross-ribs (the trick of the story), sunk slightly with a light edge
-    for (let i = 0; i < 26; i++) { const a = i / 26 * Math.PI * 2; for (const [w, c] of [[11, 'rgba(10,40,12,.42)'], [4, 'rgba(160,220,110,.35)']]) { g.strokeStyle = c; g.lineWidth = w; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(a) * W / 2, cy + Math.sin(a) * H / 2); g.stroke(); } }
-    for (let r = 70; r < W / 2; r += 58) for (let i = 0; i < 26; i++) { const a0 = i / 26 * Math.PI * 2, a1 = (i + 1) / 26 * Math.PI * 2; g.strokeStyle = 'rgba(10,40,12,.28)'; g.lineWidth = 4; g.beginPath(); g.arc(cx, cy, r + Math.sin(i * 3.1) * 6, a0 + 0.02, a1 - 0.02); g.stroke(); }
-    const sh = g.createRadialGradient(cx, cy, W * 0.42, cx, cy, W / 2); sh.addColorStop(0, 'rgba(0,0,0,0)'); sh.addColorStop(1, 'rgba(120,30,40,.35)'); g.fillStyle = sh; g.fillRect(0, 0, W, H); });
-  const leafTopM = K.toon({ map: ctex(leafTopC), color: '#b2c2a2' }); leafTopM.userData = { rough: 0.38, envK: 0.9 }; const leafRimM = K.toon({ color: '#b8344a' });
-  const makeLeaf = (parent, x, y, z, R, rot = 0) => { const g = K.grp(parent, x, y, z, rot);
-    const top = K.add(new THREE.CircleGeometry(R * 0.97, 48), leafTopM, 0, 0.004, 0, g, false); top.rotation.x = -Math.PI / 2;
-    const rimPts = []; for (let i = 0; i <= 6; i++) { const t = i / 6; rimPts.push(new THREE.Vector2(R * (0.96 + 0.05 * t), 0.004 + 0.085 * Math.sin(t * Math.PI / 2))); }
-    K.add(new THREE.LatheGeometry(rimPts, 48), K.toon({ color: '#6aaa3a', side: THREE.DoubleSide }), 0, 0, 0, g, false);
-    K.add(new THREE.CylinderGeometry(R * 1.0, R * 0.95, 0.02, 48, 1, true), leafRimM, 0, 0.02, 0, g, false);
+  const wood = (o = {}) => ({ seed: 41, hue: 24, sat: 44, lig: 30, ...o });
+  // sauerkraut: a pale gold-green shredded mound (canvas strands) on a white plate / in a barrel
+  const krautC = cv(512, 512, (g, W, H) => { g.fillStyle = '#c8c070'; g.fillRect(0, 0, W, H); for (let i = 0; i < 1600; i++) { const x = rnd(i, 1) * W, y = rnd(i, 2) * H, a = rnd(i, 3) * 6.28, l = 14 + rnd(i, 4) * 26;
+    g.strokeStyle = ['#e8e09a', '#b8b060', '#f2ecb8', '#a8a050', '#d8d088'][i % 5]; g.lineWidth = 2 + rnd(i, 5) * 2; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + Math.cos(a + 1) * l * 0.5, y + Math.sin(a + 1) * l * 0.5, x + Math.cos(a) * l, y + Math.sin(a) * l); g.stroke(); } });
+  const krautM = K.toon({ map: ctex(krautC, 2, 2), color: '#ffffff' }); krautM.userData = { rough: 0.45, envK: 0.6 };
+  const plateM = K.toon({ color: '#f4f0ea' }); plateM.userData = { rough: 0.2, envK: 1.2 };
+  const plate = (parent, x, y, z, kraut = true, s = 1) => { const g = K.grp(parent, x, y, z); g.scale.setScalar(s); K.add(new THREE.CylinderGeometry(0.17, 0.12, 0.025, 32), plateM, 0, 0.012, 0, g);
+    if (kraut) { const m = K.add(new THREE.SphereGeometry(0.11, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), krautM, 0, 0.022, 0, g); m.scale.set(1, 0.55, 1); } return g; };
+  const sternWin = (parent, x, y, z, w, h) => { const g = K.grp(parent, x, 0, z); const skyC = cv(256, 384, (gg, W, H) => { const gr = gg.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#5a8ad8'); gr.addColorStop(0.62, '#ffd8a8'); gr.addColorStop(0.64, '#2a5a8a'); gr.addColorStop(1, '#1a3a5a'); gg.fillStyle = gr; gg.fillRect(0, 0, W, H);
+      gg.fillStyle = 'rgba(255,240,200,.9)'; gg.beginPath(); gg.arc(W * 0.7, H * 0.5, 22, 0, 7); gg.fill(); for (let i = 0; i < 30; i++) { gg.fillStyle = 'rgba(255,230,180,.5)'; gg.fillRect(rnd(i, 7) * W, H * 0.66 + rnd(i, 8) * H * 0.3, 10 + rnd(i, 9) * 30, 2); } });
+    const m = new THREE.MeshBasicMaterial({ map: ctex(skyC), fog: false }); m.color.setScalar(1.5); K.noInk(K.add(new THREE.PlaneGeometry(w, h), m, 0, y, 0, g, false));
+    const fr = K.M.woodD; for (let i = 0; i <= 3; i++) K.add(new THREE.BoxGeometry(0.05, h, 0.06), fr, -w / 2 + i * w / 3, y, 0.03, g); for (let j = 0; j <= 2; j++) K.add(new THREE.BoxGeometry(w, 0.05, 0.06), fr, 0, y - h / 2 + j * h / 2, 0.03, g);
     return g; };
-  const waterC = cv(1024, 1024, (g, W, H) => { const gr = g.createRadialGradient(W / 2, H / 2, 20, W / 2, H / 2, W / 2); gr.addColorStop(0, '#2a8a8a'); gr.addColorStop(1, '#0f4f5a'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
-    for (let i = 0; i < 500; i++) { const x = rnd(i, 5) * W, y = rnd(i, 6) * H, l = 20 + rnd(i, 9) * 40; g.strokeStyle = rnd(i, 7) < 0.6 ? `rgba(190,245,240,${0.08 + rnd(i, 10) * 0.12})` : 'rgba(5,30,40,.18)'; g.lineWidth = 1.5 + rnd(i, 8) * 2; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + l / 2, y - 4, x + l, y); g.stroke(); } });
-  // modern trees: lumpy noise-displaced canopies with vertex-colour light (dark core, sunlit crown), trunk with branches
-  const nz = (x, y, z) => Math.sin(x * 1.7 + Math.sin(z * 2.3)) * Math.cos(y * 1.9 + Math.sin(x * 1.3)) + 0.5 * Math.sin(x * 4.1 + y * 3.7 + z * 4.9) + 0.25 * Math.sin(x * 9.3 - z * 8.1 + y * 7.7);
-  const canopyGeo = (r, seed, det = 10) => { const g = new THREE.IcosahedronGeometry(r, det); const P_ = g.attributes.position, cols = new Float32Array(P_.count * 3); const v = new THREE.Vector3();
-    const cA = new THREE.Color('#2a6226'), cB = new THREE.Color('#3f8a2e'), cC = new THREE.Color('#9fd456'), tmp = new THREE.Color();
-    for (let i = 0; i < P_.count; i++) { v.fromBufferAttribute(P_, i); const n = v.clone().normalize(); const k = nz(n.x * 2 + seed, n.y * 2, n.z * 2 - seed);
-      const bump = 1 + 0.15 * k;
-      v.copy(n).multiplyScalar(r * bump); v.y *= 0.88; P_.setXYZ(i, v.x, v.y, v.z);
-      const h = n.y * 0.5 + 0.5, lit = Math.max(0, n.dot(new THREE.Vector3(0.5, 0.75, 0.35))) ;
-      tmp.copy(cA).lerp(cB, Math.min(1, h * 1.3)).lerp(cC, Math.pow(lit, 2.2) * 0.55 + Math.max(0, k) * 0.12); cols.set([tmp.r, tmp.g, tmp.b], i * 3); }
-    g.setAttribute('color', new THREE.BufferAttribute(cols, 3)); g.computeVertexNormals();
-    { const N_ = g.attributes.normal; for (let i = 0; i < N_.count; i++) { v.fromBufferAttribute(P_, i).normalize(); const fx = N_.getX(i), fy = N_.getY(i), fz = N_.getZ(i); const m_ = v.multiplyScalar(0.75).add(new THREE.Vector3(fx, fy, fz).multiplyScalar(0.25)).normalize(); N_.setXYZ(i, m_.x, m_.y, m_.z); } }
-    return g; };
-  const leafStd = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.78, metalness: 0, emissive: '#16380f', emissiveIntensity: 1 }); leafStd.userData.envK = 0.7;
-  const barkM = new THREE.MeshStandardMaterial({ color: '#6e6050', roughness: 0.9 });
-  const tree = (parent, x, z, s = 1, seed = 1, y = 0, det = 10) => { const g = K.grp(parent, x, y, z, rnd(seed, 40) * 6);
-    K.add(new THREE.CylinderGeometry(0.13 * s, 0.26 * s, 2.6 * s, 20), barkM, 0, 1.3 * s, 0, g);
-    for (let b = 0; b < 3; b++) { const br = K.add(new THREE.CylinderGeometry(0.04 * s, 0.09 * s, 1.3 * s, 10), barkM, 0, 2.3 * s, 0, g); br.rotation.set(0.75, b * 2.1, 0); br.translateY(0.55 * s); }
-    const n = 7; for (let i = 0; i < n; i++) { const a = i / n * 6.28 + rnd(seed, i) * 0.8, rr = (0.55 + rnd(seed, i + 9) * 0.45) * s, d = i === 0 ? 0 : 0.75 * s;
-      K.add(canopyGeo(rr, seed * 3.1 + i, det), leafStd, Math.cos(a) * d, (i === 0 ? 3.9 : 3.0 + rnd(seed, i + 3) * 1.0) * s, Math.sin(a) * d, g); }
-    return g; };
-  const ironM = K.toon({ color: '#f2f4f0' }), blueM = K.toon({ color: '#3a6ac8' }), redM = K.toon({ color: '#d0303a' }), yelM = K.toon({ color: '#f2c230' });
 
-  // ======================= A. THE LILY HOUSE (Chatsworth, Nov 1849) =======================
-  const LG = K.grp(K.scene, XA, 0, 0);
-  { const fl = K.add(K.tbox(30, 0.5, 30, 2), K.mat('stone', { seed: 21, lig: 74, hue: 38 }), 0, RIM - 0.25, 0, LG); }
-  // the pond: water disc sunk into the floor, a stone kerb
-  K.add(new THREE.CylinderGeometry(POND, POND, 0.5, 64), K.toon({ color: '#155a80' }), 0, -0.2, 0, LG, false);
-  const waterM = K.toon({ map: ctex(waterC), color: '#ffffff' }); waterM.userData = { rough: 0.12, metal: 0.1, envK: 0.75 }; const water = K.add(new THREE.CircleGeometry(POND, 64), waterM, 0, 0.05, 0, LG, false); water.rotation.x = -Math.PI / 2;
-  K.add(new THREE.TorusGeometry(POND + 0.05, 0.12, 10, 72), K.mat('stone', { seed: 22, lig: 66 }), 0, RIM - 0.04, 0, LG).rotation.x = Math.PI / 2;
-  // hole in the floor for the pond: the floor box above covers it, so lift the water region by cutting a ring of floor tiles instead
-  LG.children[0].visible = false;
-  const ringShape = new THREE.Shape(); ringShape.moveTo(-15, -15); ringShape.lineTo(15, -15); ringShape.lineTo(15, 15); ringShape.lineTo(-15, 15); ringShape.lineTo(-15, -15);
-  const hole = new THREE.Path(); hole.absarc(0, 0, POND, 0, Math.PI * 2, true); ringShape.holes.push(hole);
-  const floorG = new THREE.ShapeGeometry(ringShape, 64); { const uv = floorG.attributes.uv, p = floorG.attributes.position; for (let i = 0; i < uv.count; i++) uv.setXY(i, p.getX(i) / 2, p.getY(i) / 2); }
-  const floor = K.add(floorG, K.mat('stone', { seed: 21, lig: 74, hue: 38 }), 0, RIM, 0, LG, false); floor.rotation.x = -Math.PI / 2;
-  // lily leaves (hero + others) and two big flowers
-  const HERO = makeLeaf(LG, PAD[0], PAD[1], PAD[2], PADR);
-  K.add(new THREE.CylinderGeometry(0.2, 0.2, 0.015, 32), K.toon({ color: '#e8eef4', emissive: '#556070', emissiveIntensity: 0.2 }), 0, 0.012, 0, HERO);   // the tray under her feet
-  [[1.7, 0.4, 0.75, 0.3], [-1.6, -0.6, 0.85, 1.1], [-0.8, 1.6, 0.7, 2.0], [1.4, 1.9, 0.6, 0.6], [0.95, 2.45, 0.42, 1.2], [-2.2, 1.2, 0.5, 0.2], [2.3, -1.7, 0.55, 1.7]].forEach(([x, z, r, rot]) => makeLeaf(LG, x, 0.05, z, r, rot));
-  const petalM = K.toon({ color: '#fff6f2' }), petalP = K.toon({ color: '#ff9ab8' });
-  [[1.15, -0.55], [-1.05, 0.55]].forEach(([x, z], k) => { const g = K.grp(LG, x, 0.08, z); for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2, inner = i % 2;
-    const p = K.add(new THREE.ConeGeometry(0.06, 0.32, 6), inner ? petalP : petalM, Math.cos(a) * 0.1, 0.12, Math.sin(a) * 0.1, g, false); p.rotation.set(Math.sin(a) * 0.9, 0, -Math.cos(a) * 0.9); } K.add(new THREE.SphereGeometry(0.07, 10, 8), yelM, 0, 0.1, 0, g); });
-  // the glasshouse: white iron columns, glass walls with outside greenery, ridge-and-furrow roof
-  for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2; K.add(new THREE.CylinderGeometry(0.07, 0.09, 5.6, 10), ironM, Math.cos(a) * 6.2, RIM + 2.8, Math.sin(a) * 6.2, LG); }
-  const wall = K.add(new THREE.CylinderGeometry(6.25, 6.25, 5.6, 28, 1, true), paneM(14, 3, 0.3), 0, RIM + 2.8, 0, LG, false); K.noInk(wall);
-  const outC = cv(1024, 256, (g, W, H) => { const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#bfe8ff'); gr.addColorStop(0.55, '#e8fff0'); gr.addColorStop(0.56, '#6aba5a'); gr.addColorStop(1, '#3a8a3a'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
-    for (let i = 0; i < 40; i++) { g.fillStyle = ['#2f7a2a', '#3f9a32', '#4aaa3a'][i % 3]; const x = rnd(i, 1) * W, r = 18 + rnd(i, 2) * 30; g.beginPath(); g.arc(x, H * 0.55 - rnd(i, 3) * 30, r, 0, 7); g.fill(); } });
-  const outside = K.add(new THREE.CylinderGeometry(9, 9, 9, 32, 1, true), new THREE.MeshBasicMaterial({ map: ctex(outC, 3, 1), side: THREE.BackSide, fog: false }), 0, RIM + 3.2, 0, LG, false); K.noInk(outside);
-  { const ridge = new THREE.Group(); ridge.position.set(0, RIM + 5.6, 0); LG.add(ridge); const roofM = paneM(1, 6, 0.35);
-    for (let i = -6; i <= 6; i++) { for (const s of [-1, 1]) { const p = K.add(new THREE.PlaneGeometry(0.75, 12.5), roofM, i + s * 0.25, 0.25, 0, ridge, false); p.rotation.set(Math.PI / 2, s * 0.6, 0); K.noInk(p); }
-      K.add(new THREE.BoxGeometry(0.05, 0.05, 12.5), ironM, i, 0.5, 0, ridge, false); K.add(new THREE.BoxGeometry(0.05, 0.05, 12.5), ironM, i + 0.5, 0.02, 0, ridge, false); } }
-  // tropical plants in pots + a banana (Paxton grew the Cavendish banana here)
-  const potM = K.toon({ color: '#c8643a' }), bigLeafM = K.toon({ color: '#3aa83a', side: THREE.DoubleSide });
-  [[-4.3, -2.2], [4.4, -1.9], [-4.6, 1.8], [4.2, 2.4], [-2.6, -4.6], [2.9, -4.5]].forEach(([x, z], k) => { const g = K.grp(LG, x, RIM, z, k); K.add(new THREE.CylinderGeometry(0.32, 0.24, 0.5, 14), potM, 0, 0.25, 0, g);
-    K.add(new THREE.CylinderGeometry(0.06, 0.08, 1.6, 8), K.toon({ color: '#6a8a3a' }), 0, 1.2, 0, g); for (let i = 0; i < 6; i++) { const lf = K.add(new THREE.PlaneGeometry(0.4, 1.3), bigLeafM, 0, 2.0, 0, g, false); lf.rotation.set(-0.9, i * 1.05, 0); lf.translateY(0.55); } });
-  // dense tropical planting all round the glass (modern look: real depth behind the cast instead of a flat wall)
-  { const tleafC = cv(256, 512, (g, W, H) => { g.clearRect(0, 0, W, H); g.beginPath(); g.moveTo(W / 2, H); g.bezierCurveTo(W * 1.05, H * 0.7, W * 0.95, H * 0.2, W / 2, 0); g.bezierCurveTo(W * 0.05, H * 0.2, -W * 0.05, H * 0.7, W / 2, H); g.closePath();
-      const gr = g.createLinearGradient(0, H, 0, 0); gr.addColorStop(0, '#1f5a22'); gr.addColorStop(0.6, '#3c8c30'); gr.addColorStop(1, '#6fb84a'); g.fillStyle = gr; g.fill();
-      g.strokeStyle = 'rgba(200,240,150,.55)'; g.lineWidth = 5; g.beginPath(); g.moveTo(W / 2, H); g.lineTo(W / 2, 8); g.stroke();
-      g.strokeStyle = 'rgba(20,60,20,.35)'; g.lineWidth = 2; for (let i = 1; i < 14; i++) { const y = H - i * H / 14; g.beginPath(); g.moveTo(W / 2, y); g.lineTo(W * 0.1, y - 40); g.moveTo(W / 2, y); g.lineTo(W * 0.9, y - 40); g.stroke(); } });
-    const tleafM = new THREE.MeshStandardMaterial({ map: ctex(tleafC), alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.55 }); tleafM.userData.envK = 0.8;
-    const leafGeo = (() => { const g = new THREE.PlaneGeometry(0.55, 1.5, 2, 10); g.translate(0, 0.75, 0); const P_ = g.attributes.position; for (let i = 0; i < P_.count; i++) { const y = P_.getY(i), x = P_.getX(i); P_.setZ(i, 0.35 * Math.pow(y / 1.5, 2) - Math.abs(x) * 0.25); } g.computeVertexNormals(); return g; })();
-    const stemM = new THREE.MeshStandardMaterial({ color: '#4f6e2c', roughness: 0.8 });
-    for (let i = 0; i < 34; i++) { const a = i / 34 * Math.PI * 2 + rnd(i, 81) * 0.15, r = 4.9 + rnd(i, 82) * 1.0, h = 1.4 + rnd(i, 83) * 2.2; const g = K.grp(LG, Math.cos(a) * r, RIM, Math.sin(a) * r, rnd(i, 84) * 6);
-      K.add(new THREE.CylinderGeometry(0.03, 0.06, h, 10), stemM, 0, h / 2, 0, g);
-      const nl = 5 + Math.floor(rnd(i, 85) * 4); for (let j = 0; j < nl; j++) { const lf = K.add(leafGeo, tleafM, 0, h - 0.1 - rnd(i, 86 + j) * 0.4, 0, g, false); const sc = 0.8 + rnd(i, 90 + j) * 0.7; lf.scale.setScalar(sc); lf.rotation.set(-0.5 - rnd(i, 95 + j) * 0.7, j / nl * 6.28 + rnd(i, 99 + j), 0, 'YXZ'); } }
-    for (let i = 0; i < 22; i++) { const a = i / 22 * Math.PI * 2 + 0.1, r = 5.4 + rnd(i, 120) * 0.5; K.add(canopyGeo(0.45 + rnd(i, 121) * 0.35, 200 + i, 8), leafStd, Math.cos(a) * r, RIM + 0.3, Math.sin(a) * r, LG, false); }
-  }
-  // a small water wheel that keeps the water moving
-  const WHEEL = K.grp(LG, 2.6, 0.25, -1.9, -0.9); { for (let i = 0; i < 8; i++) { const sp = K.add(new THREE.BoxGeometry(0.05, 0.9, 0.05), K.M.woodD, 0, 0, 0, WHEEL); sp.rotation.z = i * Math.PI / 4; const pd = K.add(new THREE.BoxGeometry(0.22, 0.05, 0.16), K.M.woodD, Math.cos(i * Math.PI / 4) * 0.45, Math.sin(i * Math.PI / 4) * 0.45, 0, WHEEL); pd.rotation.z = i * Math.PI / 4; }
-    K.add(new THREE.TorusGeometry(0.45, 0.025, 6, 32), K.M.woodD, 0, 0, 0, WHEEL); }
-  K.beam(LG, [-1.5, RIM + 5.6, -2.5], [0.2, 0.1, -1.6], 0.4, 1.2, '#fff0c0', 0.22); K.beam(LG, [2.5, RIM + 5.6, -3.5], [1.5, 0.1, -0.6], 0.3, 1.0, '#fff0c0', 0.18);
-  K.motes(LG, { n: 70, box: [-3, 0.2, -3.5, 3, 3.6, 2.5], col: '#fff6d8', size: 0.012, speed: 0.0012 });
-  K.warmLight(LG, 0, RIM + 3.2, 0, { i: 1.6, dist: 12, col: '#fff0d0', flicker: 0.01 });
+  // ======================= A. THE GREAT CABIN (officers' table) =======================
+  const RA = K.room({ x: XA, w: 6.4, d: 5.6, h: 2.7, floor: 'planks', wall: 'planks', wallOpts: wood({ seed: 42, lig: 34 }), floorOpts: wood({ seed: 43, lig: 26 }), ceil: 'beams' });
+  sternWin(RA, -1.6, 1.55, -2.79, 1.2, 1.0); sternWin(RA, 0.1, 1.55, -2.79, 1.2, 1.0); sternWin(RA, 1.8, 1.55, -2.79, 1.2, 1.0);
+  K.beam(RA, [0.1, 1.9, -2.7], [0.2, 0.0, 0.4], 0.5, 1.3, '#ffd8a0', 0.14); K.beam(RA, [-1.6, 1.9, -2.7], [-1.2, 0.0, 0.2], 0.45, 1.1, '#ffd8a0', 0.1);
+  prop.rug(RA, { x: 0.1, z: -0.5, w: 3.6, d: 2.4, pattern: 'persian', cols: ['#7a1a22', '#1f2a4a', '#d8a848', '#f0e2c0'] });
+  prop.table(RA, { x: 0.05, z: -0.75, w: 2.5, d: 1.05 });
+  const cloth = K.add(new THREE.BoxGeometry(2.56, 0.012, 1.1), K.toon({ color: '#efe6d4' }), 0.05, 0.786, -0.75, RA, false); cloth.receiveShadow = true;
+  ST.platesA = [plate(RA, -0.75, 0.79, -0.6), plate(RA, 0.05, 0.79, -0.62), plate(RA, 0.85, 0.79, -0.6)];
+  ST.bowlA = plate(RA, 0.05, 0.79, -0.95, true, 1.6);
+  for (const [x, z] of [[-0.35, -0.8], [0.45, -0.8]]) prop.candle(RA, { x: 0.05 + x, y: 0.79, z, h: 0.2, light: 0.9, holder: 'brass' });
+  K.add(new THREE.CylinderGeometry(0.05, 0.04, 0.16, 16), K.toon({ color: '#5a1a22' }), -1.0, 0.87, -0.95, RA); K.add(new THREE.CylinderGeometry(0.03, 0.03, 0.12, 12), K.toon({ color: '#2a4a2a' }), 1.05, 0.85, -0.98, RA);
+  for (const x of [-0.75, 0.05, 0.85]) prop.chair(RA, { x, z: -1.55, ry: 0 });
+  prop.door(RA, { x: -3.17, z: 1.0, ry: Math.PI / 2, w: 0.9, h: 1.95, open: 0.85, arch: false });
+  prop.shelf(RA, { x: 3.0, z: -1.6, ry: -Math.PI / 2, w: 1.4, h: 1.6, seed: 9 });
+  prop.lantern(RA, { x: -1.2, y: 2.05, z: -0.4, hang: 0.25, light: 1.6, dist: 5, shadow: true }); prop.lantern(RA, { x: 1.3, y: 2.05, z: -0.4, hang: 0.25, light: 1.3, dist: 5 });
+  // a chart and a brass globe: Cook's table
+  K.add(new THREE.SphereGeometry(0.14, 24, 16), K.toon({ color: '#3a6a8a' }), 2.65, 1.75, -1.6, RA); K.add(new THREE.TorusGeometry(0.16, 0.008, 6, 32), K.toon({ color: '#c89a3a' }), 2.65, 1.75, -1.6, RA);
+  K.motes(RA, { n: 40, box: [-2, 0.4, -2.4, 2, 2.3, 1], col: '#ffe8c0', size: 0.01, speed: 0.001 });
 
-  // ======================= B. THE BUILDING COMMITTEE ROOM (London, 1850) =======================
-  const RB = K.room({ x: XB, w: 8, d: 6.4, h: 4.0, floor: 'planks', wall: 'plaster', wallOpts: { seed: 31, col: [35, 45, 76], bricks: 0, stains: 0.4 }, floorOpts: { seed: 32, lig: 36 }, ceil: 'flat' });
-  prop.window(RB, { x: -2.2, y: 2.3, z: -3.14, w: 1.0, h: 1.6, kind: 'sun', depth: 0.12, beamTo: [-0.6, 0, 0.5], i: 4 }); prop.window(RB, { x: 2.2, y: 2.3, z: -3.14, w: 1.0, h: 1.6, kind: 'sun', depth: 0.12, beamTo: [1.2, 0, 0.5], i: 3 });
-  prop.poster(RB, { x: 0, y: 2.6, z: -3.12, w: 1.3, h: 0.9, parchment: true, accent: '#7a1a2a', title: 'GREAT EXHIBITION', lines: ['of the Works of Industry', 'of All Nations'], footer: 'Hyde Park · 1851' });
-  prop.rug(RB, { x: 0, z: -0.3, w: 4.6, d: 3.0, pattern: 'persian', cols: ['#8a2030', '#1f3a6a', '#e0b050', '#f0e2c0'] });
-  prop.table(RB, { x: 0, z: -0.6, w: 3.2, d: 1.4 }); prop.shelf(RB, { x: 3.6, z: -1.0, ry: -Math.PI / 2, w: 1.8, seed: 3 });
-  const paperM = [K.toon({ color: '#f4ecd8' }), K.toon({ color: '#d8e8ff' }), K.toon({ color: '#ece0c0' })];
-  for (let i = 0; i < 90; i++) { const x = (rnd(i, 1) - 0.5) * 2.6, z = -0.6 + (rnd(i, 2) - 0.5) * 1.1, y = 0.79 + Math.max(0, 0.28 - Math.hypot(x / 1.4, (z + 0.6) / 0.6) * 0.26) * rnd(i, 3) + (i % 12) * 0.004;
-    if (i % 3) { const s = K.add(new THREE.BoxGeometry(0.52, 0.006, 0.38), paperM[i % 3], x, y, z, RB); s.rotation.set(0, rnd(i, 4) * 3, 0); }
-    else { const r = K.add(new THREE.CylinderGeometry(0.035, 0.035, 0.6, 10), paperM[(i + 1) % 3], x, y + 0.03, z, RB); r.rotation.set(0, (rnd(i, 5) - 0.5) * 0.8, Math.PI / 2); } }
-  // the rubber stamp and its red mark on the top plan
-  const STAMP = K.grp(RB, 0.55, 1.45, -0.25); K.add(new THREE.BoxGeometry(0.16, 0.05, 0.1), K.toon({ color: '#5a3a22' }), 0, 0, 0, STAMP); K.add(new THREE.CylinderGeometry(0.03, 0.03, 0.12, 10), K.toon({ color: '#8a5a32' }), 0, 0.08, 0, STAMP); K.add(new THREE.SphereGeometry(0.05, 12, 8), K.toon({ color: '#8a5a32' }), 0, 0.16, 0, STAMP);
-  const topPlan = K.add(new THREE.BoxGeometry(0.6, 0.006, 0.42), K.toon({ map: ctex(cv(512, 360, (g, W, H) => { g.fillStyle = '#e6f0ff'; g.fillRect(0, 0, W, H); g.strokeStyle = '#2a4aa8'; g.lineWidth = 4; g.strokeRect(40, 60, W - 80, H - 120); g.beginPath(); g.moveTo(40, 180); g.lineTo(W - 40, 180); g.moveTo(W / 2, 60); g.lineTo(W / 2, H - 60); g.stroke(); g.beginPath(); g.arc(W / 2, 180, 60, 0, 7); g.stroke(); })) }), 0.55, 1.12, -0.25, RB);
-  const markC = cv(512, 256, (g, W, H) => { g.save(); g.translate(W / 2, H / 2); g.rotate(-0.15); g.strokeStyle = '#d0202a'; g.lineWidth = 12; g.strokeRect(-200, -60, 400, 120); g.fillStyle = '#d0202a'; g.font = '900 84px Arial Black, Arial'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('REJECTED', 0, 6); g.restore(); });
-  const MARK = K.add(new THREE.PlaneGeometry(0.42, 0.21), new THREE.MeshBasicMaterial({ map: ctex(markC), transparent: true, depthWrite: false }), 0.55, 1.127, -0.25, RB, false); MARK.rotation.x = -Math.PI / 2; K.noInk(MARK); MARK.visible = false;
-  const FLY = []; for (let i = 0; i < 10; i++) FLY.push(K.add(new THREE.BoxGeometry(0.5, 0.006, 0.36), paperM[i % 3], 0, -5, 0, RB));
-  K.bulb(RB, -2.6, 2.6, 0.8, { size: 0.05, i: 1.2, dist: 5 }); K.bulb(RB, 2.6, 2.6, 0.8, { size: 0.05, i: 1.2, dist: 5 });
+  // ======================= B. THE LOWER DECK (hammocks, scurvy) =======================
+  const RB = K.room({ x: XB, w: 6, d: 7, h: 2.3, floor: 'planks', wall: 'planks', wallOpts: wood({ seed: 51, lig: 24 }), floorOpts: wood({ seed: 52, lig: 22 }), ceil: 'beams' });
+  const hamM = K.toon({ color: '#c8b890', side: THREE.DoubleSide });
+  for (let r = 0; r < 4; r++) for (let c = -1; c <= 1; c++) { if (r === 0 && c === 0) continue; const h = K.add(new THREE.CylinderGeometry(0.32, 0.32, 1.7, 16, 1, true, Math.PI * 0.65, Math.PI * 0.7), hamM, c * 1.5, 1.45, -0.6 - r * 1.3, RB);
+    h.rotation.set(0, 0, Math.PI / 2); for (const s of [-1, 1]) K.add(new THREE.CylinderGeometry(0.008, 0.008, 0.7, 4), K.M.iron, c * 1.5 + s * 0.95, 1.9, -0.6 - r * 1.3, RB, false); }
+  for (let i = 0; i < 5; i++) prop.crate(RB, { x: -2.5 + rnd(i, 3) * 0.3, z: 1.6 - i * 1.3, s: 0.5, ry: rnd(i, 4) });
+  prop.lantern(RB, { x: 0.6, y: 1.75, z: 0.9, hang: 0.25, light: 2.4, dist: 5, shadow: true }); prop.lantern(RB, { x: -0.8, y: 1.75, z: -2.2, hang: 0.25, light: 1.6, dist: 5 });
+  K.motes(RB, { n: 30, box: [-1.5, 0.4, -2, 1.5, 2, 0.6], col: '#ffd8a0', size: 0.009, speed: 0.0008 });
 
-  // ======================= C. HYDE PARK + THE CRYSTAL PALACE =======================
-  const PG = K.grp(K.scene, XC, 0, 0);
-  const grassC = cv(512, 512, (g, W, H) => { g.fillStyle = '#4c9634'; g.fillRect(0, 0, W, H); for (let k = 0; k < 8; k++) { g.fillStyle = k % 2 ? 'rgba(255,255,200,.06)' : 'rgba(20,80,20,.06)'; g.fillRect(0, k * H / 8, W, H / 8); }
-    for (let i = 0; i < 900; i++) { g.strokeStyle = `rgba(${rnd(i) < 0.5 ? '30,90,25' : '170,230,120'},${0.25 + rnd(i, 1) * 0.3})`; g.lineWidth = 2; const x = rnd(i, 2) * W, y = rnd(i, 3) * H; g.beginPath(); g.moveTo(x, y); g.lineTo(x + 2, y - 7); g.stroke(); } });
-  { const lawn = K.add(new THREE.PlaneGeometry(220, 220), K.toon({ map: ctex(grassC, 40, 40) }), 0, 0, 0, PG, false); lawn.rotation.x = -Math.PI / 2; }
-  { const lawnBig = cv(512, 512, (g, W, H) => { g.fillStyle = 'rgba(0,0,0,0)'; g.clearRect(0, 0, W, H); for (let i = 0; i < 70; i++) { const x = rnd(i, 31) * W, y = rnd(i, 32) * H, r = 30 + rnd(i, 33) * 90; const gr = g.createRadialGradient(x, y, 0, x, y, r);
-      const c = rnd(i, 34) < 0.5 ? '20,70,20' : '190,230,110'; gr.addColorStop(0, `rgba(${c},.22)`); gr.addColorStop(1, `rgba(${c},0)`); g.fillStyle = gr; g.fillRect(0, 0, W, H); } });
-    const ov = K.add(new THREE.PlaneGeometry(220, 220), new THREE.MeshStandardMaterial({ map: ctex(lawnBig, 6, 6), transparent: true, depthWrite: false, roughness: 0.9 }), 0, 0.004, 0, PG, false); ov.rotation.x = -Math.PI / 2;
-    // grass tufts around the action
-    const blade = new THREE.ConeGeometry(0.022, 0.2, 3); blade.translate(0, 0.1, 0);
-    const N = 9000, IM = new THREE.InstancedMesh(blade, new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.85 }), N); const m4 = new THREE.Matrix4(), qq = new THREE.Quaternion(), e = new THREE.Euler(), sc = new THREE.Vector3(), ps = new THREE.Vector3(), col = new THREE.Color();
-    let k = 0; for (let i = 0; k < N && i < N * 3; i++) { const x = (rnd(i, 51) - 0.5) * 34, z = -6 + rnd(i, 52) * 26; if (z > 4.3 && z < 7.7) continue; if (Math.abs(x) < 1.7 && z > 1.6 && z < 4.2) continue;
-      e.set((rnd(i, 53) - 0.5) * 0.5, rnd(i, 54) * 6, (rnd(i, 55) - 0.5) * 0.5); qq.setFromEuler(e); const h = 0.6 + rnd(i, 56) * 0.9; sc.set(1, h, 1); ps.set(x, 0, z); m4.compose(ps, qq, sc); IM.setMatrixAt(k, m4);
-      col.setHSL(0.24 + rnd(i, 57) * 0.06, 0.55 + rnd(i, 58) * 0.2, 0.28 + rnd(i, 59) * 0.18); IM.setColorAt(k, col); k++; }
-    IM.count = k; IM.castShadow = false; IM.receiveShadow = true; PG.add(IM);
-    const fl = new THREE.SphereGeometry(0.03, 8, 6), FN = 500, FI = new THREE.InstancedMesh(fl, new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.6 }), FN);
-    for (let i = 0; i < FN; i++) { let x = (rnd(i, 61) - 0.5) * 34, z = -6 + rnd(i, 62) * 26; if (z > 4.3 && z < 7.7) z += 4; ps.set(x, 0.08 + rnd(i, 63) * 0.06, z); m4.compose(ps, qq.identity(), sc.set(1, 1, 1)); FI.setMatrixAt(i, m4); FI.setColorAt(i, col.set(['#ffffff', '#ffe04a', '#ff9ac0', '#c8a0ff'][i % 4])); }
-    FI.castShadow = false; PG.add(FI);
-    // far tree line and hedges for depth
-    for (let i = 0; i < 26; i++) { const a = i / 26; tree(PG, -60 + a * 120 + (rnd(i, 71) - 0.5) * 3, -34 - rnd(i, 72) * 10, 1.6 + rnd(i, 73) * 0.9, 40 + i, 0, 5); }
-    for (const sx of [-1, 1]) for (let i = 0; i < 7; i++) tree(PG, sx * (24 + rnd(i, 74) * 8), -20 + i * 7, 1.5 + rnd(i, 75) * 0.6, 80 + i + (sx > 0 ? 9 : 0), 0, 6);
-  }
-  { const path = K.add(new THREE.PlaneGeometry(3, 200), K.toon({ color: '#e0c890' }), 0, 0.01, 6, PG, false); path.rotation.set(-Math.PI / 2, 0, Math.PI / 2); }
-  [[-9, -2, 1.4], [8, -3, 1.5], [11, 3, 1.3], [-14, 1, 1.6], [15, -1, 1.4], [6, -9, 1.3], [-18, -8, 1.8], [19, -9, 1.7], [0, -14, 2.2]].forEach(([x, z, s], k) => tree(PG, x, z, s, k + 3));
-  const PAL = K.grp(PG, 0, 0, -8); PAL.visible = false;
-  { const glassC = cv(512, 512, (g, W, H) => { const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#9fd2f0'); gr.addColorStop(1, '#2f6fa8'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
-      g.strokeStyle = 'rgba(255,255,255,.95)'; g.lineWidth = 3; for (let i = 0; i <= 16; i++) { g.beginPath(); g.moveTo(i * W / 16, 0); g.lineTo(i * W / 16, H); g.stroke(); } for (let i = 0; i <= 8; i++) { g.beginPath(); g.moveTo(0, i * H / 8); g.lineTo(W, i * H / 8); g.stroke(); }
-      for (let i = 0; i < 40; i++) { g.fillStyle = `rgba(255,255,255,${0.15 + rnd(i) * 0.3})`; const x = Math.floor(rnd(i, 1) * 16) * W / 16, y = Math.floor(rnd(i, 2) * 8) * H / 8; g.fillRect(x + 3, y + 3, W / 16 - 6, H / 8 - 6); } });
-    const gm = (rx, ry) => { const m = K.toon({ map: ctex(glassC, rx, ry), emissive: '#2a5a8a', emissiveIntensity: 0.12 }); m.userData = { rough: 0.1, metal: 0.5, envK: 1.3 }; return m; };
-    K.add(new THREE.BoxGeometry(34, 3.0, 7), gm(8, 1), 0, 1.5, 0, PAL); K.add(new THREE.BoxGeometry(34, 2.0, 4.6), gm(8, 1), 0, 4.0, 0, PAL); K.add(new THREE.BoxGeometry(34, 1.4, 2.4), gm(8, 1), 0, 5.7, 0, PAL);
-    const tr = K.add(new THREE.CylinderGeometry(3.6, 3.6, 9.5, 40, 1, false, 0, Math.PI), gm(6, 2), 0, 5.0, 0, PAL); tr.rotation.set(Math.PI / 2, 0, Math.PI / 2);
-    K.add(new THREE.BoxGeometry(7.2, 5.0, 9.5), gm(2, 1), 0, 2.5, 0, PAL);
-    for (let i = -8; i <= 8; i++) { const f = K.add(new THREE.PlaneGeometry(0.5, 0.3), K.toon({ color: i % 2 ? '#d0303a' : '#ffffff', side: THREE.DoubleSide }), i * 2, 6.75, 0, PAL, false); K.add(new THREE.CylinderGeometry(0.02, 0.02, 0.8, 4), ironM, i * 2 - 0.25, 6.6, 0, PAL, false); f.position.x += 0.0; }
-    K.bulb(PAL, 0, 8.6, 0, { size: 0.0001, light: false, halo: false }); }
+  // ======================= C. THE HOLD (barrels of sauerkraut) =======================
+  const RC = K.room({ x: XC, w: 6.5, d: 9, h: 2.4, floor: 'planks', wall: 'planks', wallOpts: wood({ seed: 61, lig: 26 }), floorOpts: wood({ seed: 62, lig: 22 }), ceil: 'beams' });
+  for (let r = 0; r < 6; r++) for (const s of [-1, 1]) for (let k = 0; k < 2; k++) prop.barrel(RC, { x: s * (1.2 + k * 0.72), z: 2.6 - r * 1.25, r: 0.32, h: 0.86, ry: rnd(r, s + k) });
+  for (let r = 0; r < 5; r++) for (const s of [-1, 1]) { const b = prop.barrel(RC, { x: s * 1.55, z: 2.0 - r * 1.25, y: 0.86 + 0.02, r: 0.3, h: 0.8, ry: rnd(r, 9 + s) }); }
+  const stencil = cv(512, 512, (g, W, H) => { g.fillStyle = '#8a6438'; g.fillRect(0, 0, W, H); g.fillStyle = 'rgba(40,24,12,.9)'; g.font = '900 92px Georgia, serif'; g.textAlign = 'center'; g.fillText('SOUR', W / 2, 190); g.fillText('KROUT', W / 2, 300); g.font = '900 70px Georgia, serif'; g.fillText('1768', W / 2, 410);
+    g.strokeStyle = 'rgba(40,24,12,.6)'; g.lineWidth = 8; g.strokeRect(30, 30, W - 60, H - 60); });
+  const stM = K.toon({ map: ctex(stencil) });
+  { const c = prop.crate(RC, { x: 0.55, z: 2.15, s: 0.62, ry: -0.25 }); const f = K.add(new THREE.PlaneGeometry(0.5, 0.5), stM, 0, 0.31, 0.317, c, false); }
+  ST.openBarrel = prop.barrel(RC, { x: -0.25, z: 1.9, r: 0.33, h: 0.86, hollow: true });
+  { const m = K.add(new THREE.CylinderGeometry(0.29, 0.29, 0.06, 24), krautM, -0.25, 0.8, 1.9, RC, false); const top = K.add(new THREE.SphereGeometry(0.27, 24, 10, 0, Math.PI * 2, 0, Math.PI / 2), krautM, -0.25, 0.82, 1.9, RC, false); top.scale.set(1, 0.3, 1); }
+  prop.lantern(RC, { x: 0.1, y: 1.85, z: 1.3, hang: 0.25, light: 2.6, dist: 6, shadow: true }); prop.lantern(RC, { x: 0, y: 1.85, z: -1.0, hang: 0.25, light: 2.0, dist: 6 }); prop.lantern(RC, { x: 0, y: 1.85, z: -3.2, hang: 0.25, light: 1.6, dist: 5 }); K.warmLight(RC, 0, 1.6, 3.4, { col: '#ffb870', i: 1.8, dist: 6, flicker: 0.08 }); K.beam(RC, [0.6, 2.4, 0.4], [0.2, 0, 1.2], 0.15, 0.6, '#ffd8a0', 0.12);
+  K.motes(RC, { n: 25, box: [-1.5, 0.4, -3, 1.5, 2.1, 0.4], col: '#ffd8a0', size: 0.009, speed: 0.0008 });
 
-  // ======================= D. THE RAILWAY BOARD MEETING (Derby, June 1850) =======================
-  const RD = K.room({ x: XD, w: 7, d: 6, h: 3.6, floor: 'planks', wall: 'plaster', wallOpts: { seed: 41, col: [22, 26, 54], bricks: 0, stains: 0.5 }, floorOpts: { seed: 42, lig: 32 }, ceil: 'flat' });
-  prop.window(RD, { x: 2.3, y: 2.0, z: -2.94, w: 0.9, h: 1.4, kind: 'sun', depth: 0.12, beamTo: [1.2, 0, 0.6], i: 3.5 });
-  prop.poster(RD, { x: -0.6, y: 2.3, z: -2.92, w: 1.5, h: 0.62, accent: '#1a4a2a', bg: '#f2e6c8', fg: '#1a3a22', title: 'MIDLAND RAILWAY', lines: ['Board of Directors'], footer: 'Derby' });
-  prop.shelf(RD, { x: -3.15, z: -0.8, ry: Math.PI / 2, w: 1.6, seed: 7 });
-  const RTAB = prop.table(RD, { x: 0, z: -0.6, w: 3.0, d: 1.1 });
-  { const cloth = K.add(new THREE.BoxGeometry(3.04, 0.02, 1.14), K.toon({ color: '#2a7a4a' }), 0, 0.775, -0.6, RD); }
-  for (let i = 0; i < 6; i++) { const s = K.add(new THREE.BoxGeometry(0.32, 0.006, 0.22), paperM[i % 3], -1.1 + i * 0.42, 0.79, -0.85 + (i % 2) * 0.3, RD); s.rotation.y = rnd(i, 3) - 0.5; }
-  K.add(new THREE.CylinderGeometry(0.04, 0.05, 0.06, 12), K.toon({ color: '#1e1e2a' }), 0.95, 0.81, -0.25, RD);                       // inkwell
-  const BLOT_CV = document.createElement('canvas'); BLOT_CV.width = 1024; BLOT_CV.height = 720; const BLOT_T = ctex(BLOT_CV);
-  const BLOT = K.add(new THREE.PlaneGeometry(0.46, 0.32), K.toon({ map: BLOT_T, color: '#ffffff' }), 0.62, 0.792, -0.22, RD, false); BLOT.rotation.set(-Math.PI / 2, 0, 0.12);
-  K.bulb(RD, -1.0, 2.5, -0.6, { size: 0.06, i: 1.6, dist: 5 }); K.bulb(RD, 1.0, 2.5, -0.6, { size: 0.06, i: 1.6, dist: 5 });
-  // the sketch draws itself: a long glass hall, an arched transept, the ridge-and-furrow roof
-  let lastK = -1;
-  const drawSketch = (k) => { const kk = q(k, 2); if (kk === lastK) return; lastK = kk; const g = BLOT_CV.getContext('2d'), W = 1024, H = 720;
-    g.fillStyle = '#f6c2cc'; g.fillRect(0, 0, W, H); for (let i = 0; i < 500; i++) { g.fillStyle = `rgba(200,120,140,${0.05 + rnd(i) * 0.06})`; g.fillRect(rnd(i, 1) * W, rnd(i, 2) * H, 3, 3); }
-    g.strokeStyle = '#1a1a3a'; g.lineWidth = 7; g.lineCap = 'round'; g.lineJoin = 'round';
-    const segs = [[[300, 470], [724, 470]], [[300, 470], [300, 390]], [[724, 470], [724, 390]], [[300, 390], [724, 390]], [[340, 390], [340, 340]], [[684, 390], [684, 340]], [[340, 340], [684, 340]]];
-    const arc = (t) => { g.beginPath(); g.arc(512, 340, 70, Math.PI, Math.PI + Math.PI * t); g.stroke(); };
-    const total = segs.length + 2; let left = kk * total;
-    for (const [a, b] of segs) { if (left <= 0) break; const t = Math.min(1, left); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t); g.stroke(); left -= 1; }
-    if (left > 0) { arc(Math.min(1, left)); left -= 1; }
-    if (left > 0) { g.lineWidth = 4; const n = Math.floor(14 * Math.min(1, left)); for (let i = 0; i < n; i++) { const x = 318 + i * 29; g.beginPath(); g.moveTo(x, 470); g.lineTo(x, 390); g.stroke(); } }
-    BLOT_T.needsUpdate = true; };
-  drawSketch(0);
+  // ======================= D. THE GALLEY (queue, ration, grumbling) =======================
+  const RD = K.room({ x: XD, w: 6.4, d: 6, h: 2.5, floor: 'planks', wall: 'planks', wallOpts: wood({ seed: 71, lig: 30 }), floorOpts: wood({ seed: 72, lig: 24 }), ceil: 'beams' });
+  { const st = K.add(K.tbox(1.6, 1.0, 0.8, 0.8), K.mat('brick', { seed: 73, lig: 38 }), -1.6, 0.5, -2.55, RD); K.flame(RD, -1.6, 1.02, -2.45, 0.16); K.warmLight(RD, -1.6, 1.3, -2.1, { col: '#ff9040', i: 2.6, dist: 6, flicker: 0.18, shadow: true });
+    const pot = K.add(new THREE.SphereGeometry(0.34, 24, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), K.M.iron, -1.6, 1.42, -2.5, RD); pot.rotation.x = Math.PI;
+    K.add(new THREE.TorusGeometry(0.34, 0.025, 8, 32), K.M.iron, -1.6, 1.42, -2.5, RD).rotation.x = Math.PI / 2; }
+  prop.table(RD, { x: 0.4, z: -1.4, w: 2.2, d: 0.8 });
+  ST.galleyBarrel = prop.barrel(RD, { x: 0.4, z: -1.75, y: 0.78, r: 0.26, h: 0.5, hollow: true }); K.add(new THREE.CylinderGeometry(0.23, 0.23, 0.05, 20), krautM, 0.4, 1.22, -1.75, RD, false);
+  for (let i = 0; i < 4; i++) plate(RD, -0.4 + i * 0.5, 0.79, -1.15);
+  prop.table(RD, { x: 1.7, z: 1.2, w: 1.8, d: 0.8 }); prop.bench(RD, { x: 1.7, z: 1.85 }); for (let i = 0; i < 3; i++) plate(RD, 1.1 + i * 0.55, 0.79, 1.25);
+  for (let i = 0; i < 6; i++) prop.barrel(RD, { x: 2.7, z: -2.4 + i * 0.7, r: 0.28, h: 0.75 });
+  prop.lantern(RD, { x: 0.4, y: 1.95, z: -0.6, hang: 0.25, light: 1.4, dist: 5 }); prop.lantern(RD, { x: 1.7, y: 1.95, z: 1.0, hang: 0.25, light: 1.2, dist: 4.5 });
+  ST.glowG = K.bulb(RD, 0.4, 1.35, 0.9, { size: 0.03, i: 0.0, light: false, haloK: 0.9, col: '#ffd890' });
+  K.motes(RD, { n: 50, box: [-2, 0.4, -2.5, 2, 2.2, 0.8], col: '#ffc890', size: 0.01, speed: 0.0012 });
 
-  // ======================= E. INSIDE THE CRYSTAL PALACE (1851) =======================
-  const NG = K.grp(K.scene, XE, 0, 0);
-  { const fl = K.add(K.tbox(14, 0.2, 70, 2), K.mat('planks', { seed: 51, lig: 46 }), 0, -0.1, 0, NG, false); }
-  for (let z = -30; z <= 30; z += 2.4) for (const s of [-1, 1]) { const x = s * 3.2; K.add(new THREE.CylinderGeometry(0.09, 0.09, 5.0, 10), blueM, x, 2.5, z, NG); K.add(new THREE.BoxGeometry(0.24, 0.12, 0.24), redM, x, 0.06, z, NG); K.add(new THREE.BoxGeometry(0.22, 0.1, 0.22), yelM, x, 2.62, z, NG); }
-  const GAL = []; for (const s of [-1, 1]) { const g = K.grp(NG, s * 4.6, 2.55, 0); GAL.push(g); K.add(new THREE.BoxGeometry(2.8, 0.14, 62), K.mat('planks', { seed: 52, lig: 44 }), 0, 0, 0, g);
-    K.add(new THREE.BoxGeometry(0.05, 0.05, 62), redM, -s * 1.38, 0.62, 0, g); for (let z = -30; z <= 30; z += 0.6) K.add(new THREE.BoxGeometry(0.03, 0.6, 0.03), ironM, -s * 1.38, 0.32, z, g, false); }
-  const vault = K.add(new THREE.CylinderGeometry(3.25, 3.25, 64, 48, 1, true, 0, Math.PI), paneM(6, 24, 0.22), 0, 5.0, 0, NG, false); vault.rotation.set(Math.PI / 2, 0, Math.PI / 2); K.noInk(vault); vault.material.userData = { rough: 0.35, metal: 0, envK: 0.25 };
-  for (let z = -30; z <= 30; z += 2.4) { const r = K.add(new THREE.TorusGeometry(3.25, 0.05, 6, 40, Math.PI), ironM, 0, 5.0, z, NG, false); }
-  for (const s of [-1, 1]) { const sr = K.add(new THREE.PlaneGeometry(3, 64), paneM(3, 24, 0.3), s * 4.7, 5.05, 0, NG, false); sr.rotation.x = -Math.PI / 2; K.noInk(sr); }
-  { const sky = K.add(new THREE.PlaneGeometry(80, 80), new THREE.MeshBasicMaterial({ color: '#8ccaff', fog: false }), 0, 14, 0, NG, false); sky.rotation.x = Math.PI / 2; K.noInk(sky); }
-  for (const s of [-1, 1]) { const ow = K.add(new THREE.PlaneGeometry(64, 5.2), paneM(24, 2, 0.5), s * 6.0, 2.6, 0, NG, false); ow.rotation.y = s * Math.PI / 2; K.noInk(ow); }
-  tree(NG, 0, -6, 1.3, 11).traverse((o) => { if (o.isMesh) o.receiveShadow = false; });                                            // the elm trees grew inside the palace
-  for (let i = 0; i < 2; i++) K.beam(NG, [(i % 2 ? 1 : -1) * 1.2, 8.2, -24 + i * 9], [(i % 2 ? 1.6 : -1.4), 0, -22 + i * 9], 0.4, 1.4, '#fff4d8', 0.16);
-  K.motes(NG, { n: 60, box: [-3, 0.4, -12, 3, 5, 6], col: '#fff6d8', size: 0.013, speed: 0.0011 });
-  // the leaf's skeleton, glowing on the roof (it was the model for the frame)
-  const ribC = cv(1024, 1024, (g, W, H) => { const cx = W / 2, cy = H / 2; g.clearRect(0, 0, W, H); g.strokeStyle = '#ffd25a'; g.lineCap = 'round';
-    for (let i = 0; i < 28; i++) { const a = i / 28 * Math.PI * 2; g.lineWidth = 14; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(a) * 480, cy + Math.sin(a) * 480); g.stroke(); }
-    g.lineWidth = 7; for (let r = 70; r < 480; r += 52) { g.beginPath(); g.arc(cx, cy, r, 0, 7); g.stroke(); } });
-  const RIBS_ROOF = K.add(new THREE.PlaneGeometry(6.4, 6.4), new THREE.MeshBasicMaterial({ map: ctex(ribC), transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }), 0, 7.6, 10, NG, false);
-  RIBS_ROOF.rotation.x = Math.PI / 2; K.noInk(RIBS_ROOF); RIBS_ROOF.material.color.setRGB(0.9, 0.55, 0.18);
+  // ======================= E. THE DECK AT SEA (HMS Resolution, the next voyage) =======================
+  const EG = K.grp(K.scene, XE, 0, 0);
+  const seaC = cv(512, 512, (g, W, H) => { const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#1e5a8a'); gr.addColorStop(1, '#2a7aa8'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+    for (let i = 0; i < 700; i++) { g.strokeStyle = rnd(i, 3) < 0.6 ? `rgba(255,236,200,${0.15 + rnd(i, 4) * 0.25})` : 'rgba(10,40,70,.3)'; g.lineWidth = 2; const x = rnd(i, 1) * W, y = rnd(i, 2) * H, l = 10 + rnd(i, 5) * 22; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + l / 2, y - 3, x + l, y); g.stroke(); } });
+  const seaM = K.toon({ map: ctex(seaC, 40, 40) }); seaM.userData = { rough: 0.1, metal: 0.2, envK: 1.4 }; { const s = K.add(new THREE.PlaneGeometry(600, 600), seaM, 0, -1.2, 0, EG, false); s.rotation.x = -Math.PI / 2; }
+  ST.ship = K.grp(EG, 0, 0, 0);
+  { const S = ST.ship; const deck = K.add(K.tbox(4.4, 0.25, 14, 1.2), K.mat('planks', wood({ seed: 81, lig: 42 })), 0, -0.125, 0, S);
+    const hullM = K.toon({ color: '#3a2618' }); K.add(new THREE.BoxGeometry(4.6, 1.4, 14.2), hullM, 0, -0.85, 0, S);
+    for (const s of [-1, 1]) { K.add(new THREE.BoxGeometry(0.12, 0.9, 14), K.M.woodD, s * 2.2, 0.45, 0, S); for (let i = 0; i < 14; i++) K.add(new THREE.CylinderGeometry(0.03, 0.03, 0.9, 8), K.M.woodD, s * 2.2, 0.45, -6.5 + i, S); K.add(new THREE.BoxGeometry(0.16, 0.06, 14.1), K.toon({ color: '#c8a050' }), s * 2.2, 0.92, 0, S); }
+    const mastM = K.toon({ color: '#7a5434' }); K.add(new THREE.CylinderGeometry(0.16, 0.22, 11, 20), mastM, 0, 5.5, -1.5, S); K.add(new THREE.CylinderGeometry(0.12, 0.16, 8, 16), mastM, 0, 4.0, -6.5, S);
+    const sailM = K.toon({ color: '#f2e8d2', side: THREE.DoubleSide }); sailM.userData = { rough: 0.8 };
+    for (const [y, w, h, z] of [[3.4, 4.6, 2.4, -1.4], [6.2, 3.8, 2.2, -1.4], [8.6, 3.0, 1.8, -1.4], [3.2, 3.6, 2.0, -6.4], [5.6, 3.0, 1.8, -6.4]]) { const g = new THREE.PlaneGeometry(w, h, 8, 4); const P_ = g.attributes.position; for (let i = 0; i < P_.count; i++) { const x = P_.getX(i) / w, yy = P_.getY(i) / h; P_.setZ(i, 0.45 * (1 - 4 * x * x) * (0.6 + 0.4 * (0.5 - yy))); } g.computeVertexNormals(); K.add(g, sailM, 0, y, z + 0.25, S);
+      K.add(new THREE.CylinderGeometry(0.05, 0.05, w + 0.4, 8), mastM, 0, y + h / 2, z + 0.2, S).rotation.z = Math.PI / 2; }
+    for (const s of [-1, 1]) for (let i = 0; i < 6; i++) { const ln = K.add(new THREE.CylinderGeometry(0.008, 0.008, 9, 4), K.toon({ color: '#3a2a1a' }), s * 1.1, 4.8, -0.5 + i * 0.4, S, false); ln.rotation.z = s * 0.24; }
+    const flagC = cv(256, 128, (g, W, H) => { g.fillStyle = '#c8202a'; g.fillRect(0, 0, W, H); g.fillStyle = '#1e2a6a'; g.fillRect(0, 0, W * 0.45, H * 0.5); });
+    K.add(new THREE.PlaneGeometry(1.0, 0.5), K.toon({ map: ctex(flagC), side: THREE.DoubleSide }), 0.55, 11.1, -1.5, S, false);
+    prop.barrel(S, { x: 1.5, z: 2.5, r: 0.3, h: 0.8 }); prop.barrel(S, { x: 1.5, z: 3.2, r: 0.3, h: 0.8 }); prop.crate(S, { x: -1.5, z: 3.0, s: 0.55 });
+    const wheel = K.grp(S, 0, 1.15, 5.6); for (let i = 0; i < 8; i++) { const sp = K.add(new THREE.BoxGeometry(0.04, 0.95, 0.04), K.M.woodD, 0, 0, 0, wheel); sp.rotation.z = i * Math.PI / 8; } K.add(new THREE.TorusGeometry(0.36, 0.03, 8, 32), K.M.woodD, 0, 0, 0, wheel); K.add(new THREE.BoxGeometry(0.1, 1.15, 0.1), K.M.woodD, 0, -0.58, 0.05, S === wheel ? S : wheel); }
+  // the sky dome with a low gold sun and a few clouds
+  const skyC = cv(512, 512, (g, W, H) => { const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#2a62c8'); gr.addColorStop(0.55, '#8ab0e0'); gr.addColorStop(0.82, '#ffd8a8'); gr.addColorStop(1, '#ffc890'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+    for (let i = 0; i < 14; i++) { const x = rnd(i, 1) * W, y = H * (0.3 + rnd(i, 2) * 0.4); g.fillStyle = 'rgba(255,246,236,.75)'; for (let k = 0; k < 5; k++) { g.beginPath(); g.arc(x + k * 16, y - Math.sin(k) * 8, 14 + rnd(i, k + 3) * 10, 0, 7); g.fill(); } } });
+  K.noInk(K.add(new THREE.SphereGeometry(300, 32, 16), new THREE.MeshBasicMaterial({ map: ctex(skyC), side: THREE.BackSide, fog: false }), 0, -20, 0, EG, false));
+  K.bulb(EG, 90, 30, -200, { size: 6, i: 0, light: false, haloK: 0.7, col: '#ffe0a8' });
 
-  // ======================= F. THE CUTAWAY: the leaf's secret underneath =======================
-  const FG = K.grp(K.scene, XF, 0, 0);
-  const bgC = cv(512, 1024, (g, W, H) => { const gr = g.createRadialGradient(W / 2, H * 0.45, 40, W / 2, H * 0.45, H * 0.7); gr.addColorStop(0, '#ffcf7a'); gr.addColorStop(0.45, '#d8603a'); gr.addColorStop(1, '#3a1a3a'); g.fillStyle = gr; g.fillRect(0, 0, W, H); });
-  { const bg = K.add(new THREE.PlaneGeometry(26, 44), new THREE.MeshBasicMaterial({ map: ctex(bgC), fog: false }), 0, 2, -8, FG, false); K.noInk(bg); }
-  const LEAF = K.grp(FG, 0, 1.6, 0);                                    // pivot for the flip
-  const LR = 1.55;
-  const cutTop = K.add(new THREE.CircleGeometry(LR, 64), K.toon({ map: ctex(leafTopC), color: '#ffffff', transparent: true, opacity: 1, side: THREE.DoubleSide }), 0, 0.01, 0, LEAF, false); cutTop.rotation.x = -Math.PI / 2;
-  K.add(new THREE.CylinderGeometry(LR * 1.02, LR, 0.07, 64, 1, true), K.toon({ color: '#c8344a', side: THREE.DoubleSide }), 0, 0.04, 0, LEAF, false);
-  const ribM = K.toon({ color: '#c83a5a', emissive: '#ff6a3a', emissiveIntensity: 0 }), crossM = K.toon({ color: '#e05a6a', emissive: '#ffb04a', emissiveIntensity: 0 });
-  const RIBS = [], CROSS = [];
-  for (let i = 0; i < 24; i++) { const a = i / 24 * Math.PI * 2, g = K.grp(LEAF, 0, -0.01, 0); g.rotation.y = a; const r = K.add(new THREE.BoxGeometry(LR * 0.95, 0.08, 0.04), ribM, LR * 0.48, -0.045, 0, g); r.scale.set(1, 1, 1); RIBS.push(r); }
-  for (let k = 1; k <= 6; k++) { const rr = LR * k / 6.6; const t = K.add(new THREE.TorusGeometry(rr, 0.032, 6, 72), crossM, 0, -0.035, 0, LEAF); t.rotation.x = Math.PI / 2; CROSS.push(t); }
-  const gridM = new THREE.MeshBasicMaterial({ color: '#e8f4ff', transparent: true, opacity: 0, depthWrite: false, fog: false }); const GRID = K.grp(LEAF, 0, -0.12, 0);
-  for (let i = -6; i <= 6; i++) { K.noInk(K.add(new THREE.BoxGeometry(LR * 2, 0.012, 0.012), gridM, 0, 0, i * LR / 6, GRID, false)); K.noInk(K.add(new THREE.BoxGeometry(0.012, 0.012, LR * 2), gridM, i * LR / 6, 0, 0, GRID, false)); }
-  K.warmLight(FG, 0, 3.5, 2.5, { i: 2.4, dist: 10, col: '#fff0d8', flicker: 0.0 }); K.warmLight(FG, -2, -0.5, 2, { i: 1.4, dist: 8, col: '#ffb8a0', flicker: 0.0 });
-  K.motes(FG, { n: 40, box: [-3, -1, -2, 3, 4, 2], col: '#ffe0a0', size: 0.012, speed: 0.0012 });
+  // ======================= F. A MODERN KITCHEN (it still works on kids) =======================
+  const RF = K.room({ x: XF, w: 5.6, d: 5, h: 2.7, floor: 'planks', wall: 'plaster', wallOpts: { seed: 91, col: [28, 40, 70], bricks: 0, stains: 0.1 }, floorOpts: wood({ seed: 92, lig: 52, hue: 30 }), ceil: 'flat' });
+  prop.window(RF, { x: 1.4, y: 1.6, z: -2.49, w: 1.1, h: 1.1, kind: 'sun', depth: 0.12, beamTo: [0.6, 0, 0.3], i: 4 });
+  prop.table(RF, { x: 0, z: -0.6, w: 1.6, d: 0.9 }); K.add(new THREE.BoxGeometry(1.64, 0.01, 0.94), K.toon({ color: '#e8f0f4' }), 0, 0.786, -0.6, RF, false);
+  { const g = K.grp(RF, -0.35, 0.79, -0.45); K.add(new THREE.CylinderGeometry(0.17, 0.12, 0.025, 32), plateM, 0, 0.012, 0, g); const brM = K.toon({ color: '#3a8a3a' });
+    for (let i = 0; i < 6; i++) { const a = i / 6 * 6.28; const b = K.add(new THREE.IcosahedronGeometry(0.05, 2), brM, Math.cos(a) * 0.06, 0.07, Math.sin(a) * 0.06, g); K.add(new THREE.CylinderGeometry(0.012, 0.016, 0.06, 8), K.toon({ color: '#8ac06a' }), Math.cos(a) * 0.06, 0.035, Math.sin(a) * 0.06, g); } }
+  { const g = K.grp(RF, 0.4, 0.79, -0.45); K.add(new THREE.CylinderGeometry(0.17, 0.12, 0.025, 32), plateM, 0, 0.012, 0, g); }
+  K.add(new THREE.BoxGeometry(0.75, 1.9, 0.7), K.toon({ color: '#f2f2f0' }), -2.3, 0.95, -2.0, RF); prop.shelf(RF, { x: 2.5, z: -1.2, ry: -Math.PI / 2, w: 1.2, h: 1.4, seed: 4 });
+  K.add(new THREE.BoxGeometry(2.2, 0.9, 0.6), K.toon({ color: '#d86a4a' }), -0.6, 0.45, -2.15, RF);
+  K.bulb(RF, 0, 2.45, -0.4, { size: 0.06, i: 1.2, dist: 5 });
 
-  ST = { HERO, WHEEL, STAMP, MARK, FLY, PAL, GAL, RIBS_ROOF, LEAF, cutTop, ribM, crossM, gridM, drawSketch, water };
+  // ======================= G. CUTAWAY: the balance of a sailor's mind =======================
+  const GG = K.grp(K.scene, XG, 0, 0);
+  const bgC = cv(512, 1024, (g, W, H) => { const gr = g.createRadialGradient(W / 2, H * 0.45, 30, W / 2, H * 0.45, H * 0.6); gr.addColorStop(0, '#6a3a1e'); gr.addColorStop(1, '#140a06'); g.fillStyle = gr; g.fillRect(0, 0, W, H); });
+  K.noInk(K.add(new THREE.PlaneGeometry(14, 24), new THREE.MeshBasicMaterial({ map: ctex(bgC), fog: false }), 0, 1.5, -3, GG, false));
+  const brass = K.toon({ color: '#d8a83a' }); brass.userData = { rough: 0.3, metal: 0.8, envK: 1.6 };
+  K.add(new THREE.CylinderGeometry(0.06, 0.08, 2.0, 20), brass, 0, 1.0, 0, GG); K.add(new THREE.CylinderGeometry(0.45, 0.55, 0.12, 32), brass, 0, 0.06, 0, GG); K.add(new THREE.SphereGeometry(0.1, 16, 12), brass, 0, 2.05, 0, GG);
+  ST.beam = K.grp(GG, 0, 2.0, 0); K.add(new THREE.BoxGeometry(1.7, 0.07, 0.07), brass, 0, 0, 0, ST.beam);
+  ST.pans = [-1, 1].map((s) => { const p = K.grp(GG, s * 0.8, 1.4, 0); for (let k = 0; k < 3; k++) { const a = k / 3 * 6.28; const ch = K.add(new THREE.CylinderGeometry(0.006, 0.006, 0.6, 4), K.M.iron, Math.cos(a) * 0.17, 0.3, Math.sin(a) * 0.17, p, false); ch.rotation.set(Math.sin(a) * 0.28, 0, -Math.cos(a) * 0.28); }
+    K.add(new THREE.CylinderGeometry(0.34, 0.24, 0.06, 28), brass, 0, 0, 0, p); return p; });
+  plate(ST.pans[0], 0, 0.03, 0, true, 1.4);
+  { const hat = K.grp(ST.pans[1], 0, 0.05, 0); ST.hat = hat; const hm = K.toon({ color: '#1e1e26' }); const c = K.add(new THREE.SphereGeometry(0.14, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2), hm, 0, 0.02, 0, hat); c.scale.set(1, 0.9, 1);
+    for (let k = 0; k < 3; k++) { const s = K.add(new THREE.BoxGeometry(0.34, 0.1, 0.03), hm, 0, 0.05, 0, hat); s.rotation.y = k * Math.PI / 3 * 2; s.translateZ(0.12); s.rotation.x = -0.6; } K.add(new THREE.TorusGeometry(0.17, 0.012, 6, 24), K.toon({ color: '#d8b040' }), 0, 0.02, 0, hat).rotation.x = Math.PI / 2; }
+  K.bulb(GG, -2.2, 3.2, 0.5, { size: 0.05, i: 1.6, dist: 6, col: '#ffd8a0' });
+  const SETG = { cabin: RA, low: RB, hold: RC, galley: RD, deck: EG, kitchen: RF, cut: GG };
   return { update: (W, f) => {
-    HERO.position.y = PAD[1] + (W.dip ?? 0); WHEEL.rotation.z = -f * 0.02;
-    ST.water.material.map.offset.set(f * 0.0004, f * 0.0002);
-    STAMP.position.y = W.stampY ?? 1.45; MARK.visible = !!W.mark;
-    FLY.forEach((s, i) => { const t = W.fly ?? -1; if (t < 0) { s.position.y = -5; return; } const k = clamp(t - i * 0.05); s.position.set(0.55 + (rnd(i, 1) - 0.5) * 3.2 * k, 1.12 + Math.sin(k * Math.PI) * (0.8 + rnd(i, 2)), -0.25 + (rnd(i, 3) - 0.2) * 2.2 * k); s.rotation.set(k * 6 * rnd(i, 4), k * 4, k * 5 * rnd(i, 5)); });
-    PAL.visible = !!W.palace; PAL.position.y = W.palY ?? 0;
-    GAL.forEach((g) => { g.position.y = 2.55 + (W.bounce ?? 0); });
-    RIBS_ROOF.material.opacity = W.roofRibs ?? 0;
-    LEAF.rotation.x = W.flip ?? 0; LEAF.rotation.y = W.spin ?? 0; cutTop.material.opacity = W.topOp ?? 1;
-    ribM.emissiveIntensity = (W.ribs ?? 0) * 0.9; crossM.emissiveIntensity = (W.cross ?? 0) * 0.9; gridM.opacity = (W.grid ?? 0) * 0.85;
-    drawSketch(W.sketch ?? 0);
+    for (const k in SETG) SETG[k].visible = k === W.set;      // only the set in shot exists: its lanterns and shadow maps are the only ones computed
+    const t = W.tip ?? 0, a = lerp(0.18, -0.24, t); ST.beam.rotation.z = a;
+    ST.pans.forEach((p, i) => { const sg = i ? 1 : -1; p.position.set(sg * 0.8 * Math.cos(a), 2.0 + sg * 0.8 * Math.sin(a) - 0.6, 0); });
+    ST.ship.rotation.z = W.roll ?? 0;
   } };
 };
 // ---------------- cast ----------------
 const SK = '#f7f4ee';
-const PAXTON = { tunic: '#2a5a3a', stick: true, skin: SK, hair: '#6a4228', hat: 'tophat', hatCol: '#22222a', hatBand: '#3a2a1e', collar: '#ffffff', tie: '#1e1e2a', moustache: '#6a4228', stache: 'chevron' };
-const ANNIE = { tunic: '#f28ab0', dress: '#f28ab0', stick: true, skin: SK, hair: '#e8b860', collar: '#ffffff', pattern: { type: 'dots', col: '#ffffff' } };
-const GARD = { tunic: '#7a5a3a', stick: true, skin: SK, hair: '#8a5a2a', hat: 'brim17', hatCol: '#d8b460', hatBand: '#7a4a2a', apron: '#3a6a3a' };
-const GARDB = { tunic: '#3a6aa8', stick: true, skin: SK, hair: '#3a2a1c', hat: 'brim17', hatCol: '#c8a050', hatBand: '#3a2418', apron: '#efe2c4', beard: '#3a2a1c', beardStyle: 'short' };
-const EXP = [
-  { tunic: '#2a2a3a', stick: true, skin: SK, hair: '#d8d8d8', collar: '#ffffff', tie: '#1e1e2a', beard: '#d8d8d8', beardStyle: 'full' },
-  { tunic: '#4a2a2a', stick: true, skin: SK, hair: '#3a2a1c', collar: '#ffffff', tie: '#7a1a2a', moustache: '#3a2a1c', stache: 'handlebar' },
-  { tunic: '#1e3a5a', stick: true, skin: SK, hair: '#a8a8a8', collar: '#ffffff', tie: '#1e1e2a', glasses: true, beard: '#a8a8a8', beardStyle: 'goatee' },
-  { tunic: '#3a3a2a', stick: true, skin: SK, hair: '#6a4228', collar: '#ffffff', tie: '#2a4a2a', moustache: '#6a4228', stache: 'walrus' }];
-const TOP = (O, col = '#22222a') => ({ ...O, hat: 'tophat', hatCol: col, hatBand: '#3a2a1e' });
-const SOLDIER = { tunic: '#c8202a', stick: true, skin: SK, hair: '#3a2a1c', hat: 'soldier', hatCol: '#1e1e24', hatBand: '#ffffff', collar: '#ffffff', pattern: { type: 'vstripes', col: 'rgba(255,255,255,.18)', scale: 1.6 } };
-const CROWD = [{ tunic: '#7a3aa8', dress: '#7a3aa8', stick: true, skin: SK, hair: '#6a4228' }, { tunic: '#2a5a8a', stick: true, skin: SK, hair: '#3a2a1c', hat: 'tophat', hatCol: '#1e1e24' }, { tunic: '#2a8a6a', dress: '#2a8a6a', stick: true, skin: SK, hair: '#e8b860' }, { tunic: '#8a4a2a', stick: true, skin: SK, hair: '#a8a8a8', hat: 'tophat', hatCol: '#3a2a1e', beard: '#a8a8a8', beardStyle: 'short' }, { tunic: '#d8503a', dress: '#d8503a', stick: true, skin: SK, hair: '#3a2a1c' }];
+const COOK = { tunic: '#1f2c58', stick: true, skin: SK, hair: '#e2ddd2', hat: 'tricorn', hatCol: '#1a1a22', hatBand: '#d8b040', collar: '#ffffff', pattern: { type: 'vstripes', col: 'rgba(216,176,64,.35)', scale: 0.6 } };
+const OFFI = [
+  { tunic: '#25336a', stick: true, skin: SK, hair: '#6a4228', hat: 'tricorn', hatCol: '#1a1a22', hatBand: '#d8b040', collar: '#ffffff' },
+  { tunic: '#25336a', stick: true, skin: SK, hair: '#e8b860', hat: 'tricorn', hatCol: '#22222a', hatBand: '#d8b040', collar: '#ffffff', glasses: true },
+  { tunic: '#25336a', stick: true, skin: SK, hair: '#3a2a1c', hat: 'tricorn', hatCol: '#1a1a22', hatBand: '#d8b040', collar: '#ffffff', moustache: '#3a2a1c', stache: 'chevron' }];
+const SAILORS = [
+  { tunic: '#e8e2d6', stick: true, skin: SK, hair: '#3a2a1c', tie: '#c8202a', pattern: { type: 'stripes', col: '#2a4a8a', scale: 1.2 }, beard: '#3a2a1c', beardStyle: 'short' },
+  { tunic: '#b8402a', stick: true, skin: SK, hair: '#c86a2a', hat: 'brim17', hatCol: '#2a2420', hatBand: '#3a2418' },
+  { tunic: '#3a5a7a', stick: true, skin: SK, hair: '#e8c870', tie: '#f2c230' },
+  { tunic: '#e8e2d6', stick: true, skin: SK, hair: '#6a4228', pattern: { type: 'stripes', col: '#b8202a', scale: 1.2 }, moustache: '#6a4228', stache: 'walrus' },
+  { tunic: '#5a4a3a', stick: true, skin: SK, hair: '#2a1e18', hat: 'brim17', hatCol: '#3a3028', hatBand: '#1e1812', beard: '#2a1e18', beardStyle: 'full' },
+  { tunic: '#2a6a5a', stick: true, skin: SK, hair: '#a8a8a8', tie: '#ffffff' }];
+const STEWARD = { tunic: '#7a5a3a', stick: true, skin: SK, hair: '#8a5a2a', apron: '#efe6d4', moustache: '#8a5a2a', stache: 'handlebar' };
+const MOM = { tunic: '#2a8a8a', dress: '#2a8a8a', stick: true, skin: SK, hair: '#6a4228' }, KID = { tunic: '#f2c230', stick: true, skin: SK, hair: '#e8b860', pattern: { type: 'stripes', col: '#e8602a', scale: 1.4 } };
 export const actorsAt = (f, T) => {
   const S = shot(f), out = [], u = Math.floor(f / 2);
   const I = (seed) => { const i = idle(u, seed); return { bob: q(i.bob, 3), tilt: q(i.tilt, 1), headTilt: q(i.headTilt, 1) }; };
-  const tintL = { cut: '#ffe6c8', gold: '#ffe0c4', rail: '#ffeedd', room: '#fff0e0' }[S.light] || '#ffffff';
-  const card = (id, O, o, w, seed, extra = {}) => out.push({ key: id + JSON.stringify(o) + JSON.stringify(extra.y || 0), draw: (p) => T.romanFront(p, O, { seed, blink: blinkAt(u, seed), ...I(seed), L: 'hang', R: 'hang', look: 0, ...o }), x: w[0], y: w[1] + (extra.y || 0), z: w[2], s: extra.s ?? 0.9, ground: w[1], tint: tintL });
-  const lilyCast = (ff, dip) => { card('annie', ANNIE, { expr: ff < 40 ? 'shock' : 'laugh', L: 'up', R: 'up', look: 0.2 }, A(PAD[0], PAD[1] + 0.03 + dip, PAD[2]), 51, { s: 0.55 });
-    card('pax', PAXTON, { expr: ff < 50 ? 'grin' : 'smug', L: 'hip', R: 'point', look: 0.6 }, A(...PAX), 53, { s: 0.92 });
-    card('g1', GARD, { expr: ff < 30 ? 'nervous' : 'shock', L: 'cheek', R: 'cheek', look: -0.3 }, A(...GARD1), 55); card('g2', GARDB, { expr: 'shock', L: 'up', R: 'hang', look: -0.5 }, A(...GARD2), 57); };
+  const tintL = { cabin: '#fff1e6', low: '#ffeee0', hold: '#ffeee0', galley: '#ffeee0', cut: '#fff1e6', deck: '#fff4ea', kitchen: '#fffaf4' }[S.light] || '#ffffff';
+  const card = (id, O, o, w, seed, extra = {}) => out.push({ key: id + JSON.stringify(o) + JSON.stringify(extra.y || 0), draw: (p) => T.romanFront(p, O, { seed, blink: blinkAt(u, seed), ...I(seed), L: 'hang', R: 'hang', look: 0, ...o }), x: w[0], y: w[1] + (extra.y || 0), z: w[2], s: extra.s ?? 0.9, ground: w[1], tint: tintL, roll: extra.roll });
+  const cabinCast = (ff, mode) => {   // mode: 'hook' | 'table' | 'door' | 'punch'
+    const eat = mode === 'hook' || mode === 'table';
+    OFF.forEach((p, i) => card('o' + i, OFFI[i], { expr: eat ? ['lick', 'laugh', 'grin'][i] : 'smug', look: q([0.3, 0, -0.3][i], 1), L: 'hang', R: i === 0 && eat ? 'up' : 'hang', talk: eat && i === 1 ? talkAt(ff, 21, 1.1) : -1 }, A(...p), 11 + i));
+    if (mode !== 'hook') card('cook', COOK, { expr: mode === 'punch' ? (ff >= 2050 ? 'wink' : 'sly') : (ff >= 868 && ff < 930 ? 'wink' : 'smug'), L: 'hip', R: mode === 'punch' ? 'up' : 'point', look: -0.5 }, A(...COOKP), 9, { s: 0.95 });
+    const peek = mode === 'hook' ? ff >= 200 : true;
+    if (peek) SAIL.forEach((p, i) => card('s' + i, SAILORS[i], { expr: mode === 'door' ? ['stubborn', 'sideeye', 'unimpressed'][i] : mode === 'punch' ? 'gulp' : ['gulp', 'shock', 'lick'][i], look: 0.8, L: mode === 'door' ? 'cross' : 'hang', R: mode === 'door' ? 'cross' : (i === 1 ? 'cheek' : 'hang') }, A(...p), 21 + i));
+  };
   switch (S.id) {
-    case 'hook': lilyCast(f, dipAt(f)); break;
-    case 'loop': lilyCast(0, 0); break;
-    case 'lily': { const g = f >= 577; card('annie', ANNIE, { expr: 'laugh', L: 'up', R: 'up', look: 0.2 }, A(PAD[0], PAD[1] + 0.03, PAD[2]), 51, { s: 0.55 });
-      card('pax', PAXTON, { expr: g ? 'smug' : 'grin', L: 'hip', R: g ? 'up' : 'point', look: 0.6 }, A(...PAX), 53, { s: 0.92 });
-      card('g1', GARD, { expr: g ? 'eureka' : 'neutral', L: g ? 'up' : 'hang', R: g ? 'up' : 'hang', look: -0.3 }, A(...GARD1), 55); card('g2', GARDB, { expr: g ? 'shock' : 'smile', L: 'hip', R: 'hang', look: -0.5 }, A(...GARD2), 57); break; }
-    case 'tease': case 'reject': { const rej = S.id === 'reject', pos = [[-1.25, 0, -1.65], [-0.45, 0, -1.75], [0.45, 0, -1.75], [1.3, 0, -1.6]];
-      pos.forEach((p, i) => { const shake = rej ? (f > 1395 ? Math.sin(f * 0.5 + i) * 0.7 : 0) : (f > 290 ? Math.sin(f * 0.45 + i) * 0.7 : 0);
-        const ex = rej ? (f > 1395 ? ['angry', 'unimpressed', 'sideeye', 'angry'][i] : 'stern') : (f > 285 ? ['sideeye', 'unimpressed', 'stern', 'smug'][i] : 'stern');
-        card('e' + i, EXP[i], { expr: ex, look: q(shake + (i < 2 ? 0.4 : -0.4), 1), L: i === 1 && rej ? 'up' : 'hip', R: i === 2 ? 'cross' : 'hang', L2: 0 }, B(...p), 61 + i); }); break; }
-    case 'park': card('chair', TOP(EXP[0]), { expr: f < 1060 ? 'nervous' : 'scared', L: 'hip', R: 'cheek', look: q(Math.sin(f * 0.02) * 0.8, 1), sweat: 0.6, sweatT: f / 60 }, C(0.4, 0, 2.2), 71); break;
-    case 'doodle': { const k = f >= 1567; [[-1.1, -1.25], [-0.35, -1.3], [0.35, -1.3]].forEach(([x, z], i) => card('b' + i, EXP[(i + 1) % 4], { expr: 'stern', look: 0.4, talk: f < 1567 ? talkAt(f, 3 + i, 1) : -1, L: 'hip', R: i === 0 ? 'point' : 'hang' }, D(x, 0, z), 81 + i));
-      card('pax', PAXTON, { expr: k ? 'eureka' : 'sleepy', L: 'hang', R: k ? 'grab' : 'cheek', gx: 0.3, gy: 0.4, look: -0.5 }, D(1.15, 0, -1.25), 53, { s: 0.92 }); break; }
-    case 'palace': break;
-    case 'critics': [[-1.0, 0, 3.4], [0, 0, 3.7], [1.0, 0, 3.4]].forEach((p, i) => card('c' + i, TOP(EXP[i + 1]), { expr: ['scared', 'unimpressed', 'angry'][i], L: i === 1 ? 'cross' : 'up', R: i === 1 ? 'cross' : 'point', look: q(-0.6 + i * 0.6, 1), talk: i === 2 ? talkAt(f, 9, 1.2) : -1 }, C(...p), 91 + i)); break;
-    case 'march': { const held = f >= 2038; for (let i = 0; i < 6; i++) { const z = -6 + i * 0.9 + (f - 1946) * 0.012, st = Math.abs(Math.sin(f * 0.21)) * 0.04; card('s' + i, SOLDIER, { expr: 'stern', L: 'hang', R: 'hang', look: 0.8 }, Ev(-4.6, 2.62, z), 101 + i, { y: st }); }
-      if (held) card('paxh', PAXTON, { expr: 'smug', L: 'hip', R: 'up', look: -0.4 }, Ev(-1.4, 0, -1.2), 53, { s: 0.92 }); break; }
-    case 'nave': for (let i = 0; i < 26; i++) { const z = -16 + (i % 13) * 1.7 + rnd(i, 1) * 0.6, x = (i < 13 ? -1 : 1) * (0.6 + rnd(i, 2) * 1.8); card('n' + i, CROWD[i % 5], { expr: ['smile', 'grin', 'shock', 'laugh', 'eureka'][i % 5], L: i % 3 ? 'hang' : 'up', R: i % 4 ? 'point' : 'hang', look: q((rnd(i, 3) - 0.5) * 1.6, 1) }, Ev(x, 0, z), 120 + i, { s: 0.82 + rnd(i, 4) * 0.1 }); } break;
-    case 'roof': break;
+    case 'hook': cabinCast(f, 'hook'); break;
+    case 'loop': cabinCast(0, 'hook'); break;
+    case 'trick': cabinCast(f, 'table'); if (f >= 930) card('stew', STEWARD, { expr: 'smile', L: 'hang', R: 'up', look: 0.4 }, A(-1.55, 0, -0.6), 31); break;
+    case 'door': cabinCast(f, 'door'); break;
+    case 'punch': cabinCast(f, 'punch'); break;
+    case 'scurvy': { card('sick', SAILORS[3], { expr: f < 460 ? 'sick' : 'pained', L: 'belly', R: 'cheek', look: 0.2 }, B(0, 0, 0.2), 41, { s: 0.92 });
+      [[-1.4, -1.6], [1.3, -2.1], [-0.4, -3.4]].forEach(([x, z], i) => card('sk' + i, SAILORS[(i + 4) % 6], { expr: ['sick', 'pained', 'dazed'][i], L: 'belly', R: 'hang', look: q(-0.3 + i * 0.3, 1) }, B(x, 0, z), 43 + i)); break; }
+    case 'hold': card('sniff', SAILORS[1], { expr: f < 765 ? 'neutral' : 'disgust', L: 'hang', R: f < 765 ? 'cheek' : 'hang', look: 0.6 }, C(0.3, 0, 2.3), 51, { s: 0.92 }); break;
+    case 'galley': case 'finest': { const ration = f >= 1285, grum = f >= 1335 && S.id === 'galley';
+      card('stew', STEWARD, { expr: ration ? 'stern' : 'grin', L: 'hang', R: ration ? 'up' : 'grab', gx: 0.2, gy: 0.3, look: 0.5 }, D(0.4, 0, -2.15), 31);
+      if (S.id === 'galley') for (let i = 0; i < 6; i++) card('q' + i, SAILORS[i], { expr: grum ? ['stubborn', 'angry', 'unimpressed', 'sideeye', 'angry', 'stubborn'][i] : (ration ? ['shock', 'cry', 'gulp', 'shock', 'gulp', 'pained'][i] : ['lick', 'grin', 'gulp', 'smile', 'lick', 'grin'][i]), L: grum ? 'cross' : 'hang', R: grum ? 'cross' : (i % 2 ? 'reach' : 'hang'), look: q(-0.6 + (i % 3) * 0.2, 1) }, D(0.25 + (i % 2) * 0.35, 0, -0.55 + i * 0.6), 61 + i);
+      if (S.id === 'finest') card('taste', SAILORS[2], { expr: f >= 1600 && f < 1630 ? 'gulp' : 'eureka', L: 'hang', R: 'cheek', look: 0.3 }, D(0.4, 0, 0.35), 63, { s: 0.92 });
+      break; }
+    case 'voyage': { const cheer = f >= 1915; for (let i = 0; i < 6; i++) card('c' + i, SAILORS[i], { expr: cheer ? ['laugh', 'grin', 'laugh', 'eureka', 'laugh', 'grin'][i] : 'smile', L: cheer ? 'up' : 'hang', R: cheer ? 'up' : (i % 2 ? 'wave' : 'hang'), look: q(-0.5 + i * 0.2, 1) }, Ev(-1.4 + (i % 3) * 1.4, 0, 1.4 + Math.floor(i / 3) * 1.1), 71 + i, { y: cheer ? Math.abs(Math.sin((f + i * 9) * 0.22)) * 0.06 : 0 });
+      card('cook', COOK, { expr: 'smug', L: 'hip', R: 'hang', look: -0.3 }, Ev(0, 0, 4.9), 9, { s: 0.95 }); break; }
+    case 'kids': { const want = f >= 2160; card('mom', MOM, { expr: 'lick', L: 'hang', R: 'up', look: 0.4 }, F(-0.25, 0, -1.25), 81);
+      card('kid', KID, { expr: want ? 'gulp' : 'sideeye', L: 'hang', R: want ? 'reach' : 'cross', look: -0.6 }, F(0.22, 0, 0.1), 83, { s: 0.62 }); break; }
+    case 'scale': break;
   }
   return out;
 };
 // ---------------- fx ----------------
 export const fxAt = (f) => { const S = shot(f), out = [];
-  if (S.id === 'lily' && f >= 580) { out.push(emote('!', f - 580, A(GARD1[0] - 0.25, 1.8, GARD1[2] + 0.1), { s: 0.2 })); if (f >= 586) out.push(emote('!', f - 586, A(GARD2[0] + 0.2, 1.8, GARD2[2] + 0.1), { s: 0.2 })); }
-  if (S.id === 'doodle' && f >= 1570) out.push(emote('bulb', f - 1570, D(1.15, 1.95, -1.2), { s: 0.24 }));
-  if (S.id === 'critics' && f >= 1885) out.push(emote('?', f - 1885, C(0, 1.85, 3.75), { s: 0.24 }));
-  if (S.id === 'park' && f >= 1010) out.push(emote('?', f - 1010, C(0.15, 1.85, 2.25), { s: 0.24 }));
+  if (S.id === 'hook' && f >= 228) out.push(emote('!', f - 228, A(SAIL[0][0] + 0.2, 1.75, SAIL[0][2]), { s: 0.2 }));
+  if (S.id === 'trick' && f >= 875) out.push(emote('bulb', f - 875, A(COOKP[0], 1.95, COOKP[2]), { s: 0.24 }));
+  if (S.id === 'door' && f >= 1058) out.push(emote('?', f - 1058, A(SAIL[1][0] + 0.15, 1.78, SAIL[1][2]), { s: 0.22 }));
+  if (S.id === 'galley' && f >= 1291 && f < 1335) out.push(emote('!?', f - 1291, D(0.6, 1.75, 0.1), { s: 0.22 }));
+  if (S.id === 'galley' && f >= 1380) out.push(emote('vein', f - 1380, D(0.6, 1.7, 0.65), { s: 0.2 }));
+  if (S.id === 'finest' && f >= 1620) out.push(emote('heart', f - 1620, D(0.55, 1.75, 0.4), { s: 0.22 }));
+  if (S.id === 'kids' && f >= 2160) out.push(emote('!', f - 2160, F(0.3, 1.2, 0.15), { s: 0.18 }));
   return out; };
 // ---------------- camera ----------------
 const yawLook = (pos, look, deg) => { const a = deg * Math.PI / 180, dx = look[0] - pos[0], dz = look[2] - pos[2]; return [pos[0] + dx * Math.cos(a) - dz * Math.sin(a), look[1], pos[2] + dx * Math.sin(a) + dz * Math.cos(a)]; };
-const orbit = (c, ang, d, y) => [c[0] + Math.sin(ang * Math.PI / 180) * d, y, c[2] + Math.cos(ang * Math.PI / 180) * d];
-const HOOK0 = { pos: A(0.9, 1.15, 0.95), look: A(0.15, 0.42, -1.75), fov: 46 };
+const HOOK0 = { pos: A(-0.35, 1.38, 0.75), look: A(-0.72, 1.2, -1.25), fov: 42 };
 const camRaw = (f) => { const S = shot(f), v = (f - S.a) / Math.max(1, S.b - S.a), sv = E.smooth(v);
   switch (S.id) {
-    case 'hook': return { pos: lerp3(HOOK0.pos, A(0.7, 1.0, 0.35), sv), look: lerp3(HOOK0.look, A(0.15, 0.5, -1.85), sv), fov: 46 };
-    case 'loop': return { pos: lerp3(A(1.3, 1.4, 1.8), HOOK0.pos, E.smooth(ramp(f, 2541, 2599))), look: lerp3(A(0.25, 0.5, -1.6), HOOK0.look, E.smooth(ramp(f, 2541, 2599))), fov: 46 };
-    case 'tease': return { pos: lerp3(B(-0.2, 1.25, 2.4), B(0.05, 1.32, 1.35), sv), look: B(0, 1.1, -1.2), fov: 46 };
-    case 'lily': { const k = E.smooth(ramp(f, 348, 520)), k2 = E.smooth(ramp(f, 540, 600)); return { pos: lerp3(lerp3(A(-3.4, 5.0, 4.2), A(-1.2, 1.4, 1.6), k), A(0.55, 0.3, -0.6), k2), look: lerp3(lerp3(A(0, 1.0, -1.0), A(0.1, 0.6, -1.9), k), A(0.2, 0.12, -1.6), k2), fov: lerp(52, 40, k) }; }
-    case 'cut': { const p = orbit([0, 0, 0], lerp(-18, 14, sv), lerp(7.4, 6.4, sv), lerp(3.0, 0.7, E.smooth(ramp(f, 608, 700)))); return { pos: F(...p), look: F(0, 1.35, 0), fov: 44 }; }
-    case 'park': return { pos: lerp3(C(-2.6, 1.6, 6.2), C(1.6, 1.3, 5.4), sv), look: lerp3(C(-1.0, 1.4, -4), C(0.4, 1.3, 2.2), E.smooth(ramp(f, 953, 1080))), fov: 48 };
-    case 'reject': { const k = E.smooth(ramp(f, 1168, 1300)); return { pos: lerp3(B(1.7, 2.0, 1.7), B(1.25, 1.85, 0.95), k), look: lerp3(B(0.45, 1.25, -0.6), B(0.55, 1.2, -0.45), k), fov: 44 }; }
-    case 'doodle': { const k = E.smooth(ramp(f, 1590, 1650)); return { pos: lerp3(lerp3(D(-0.3, 1.5, 2.2), D(1.9, 1.35, 0.9), E.smooth(ramp(f, 1441, 1585))), D(0.63, 1.42, -0.14), k), look: lerp3(lerp3(D(0, 1.15, -1.0), D(1.1, 1.2, -1.2), E.smooth(ramp(f, 1441, 1585))), D(0.62, 0.79, -0.22), k), fov: lerp(46, 40, k) }; }
-    case 'palace': return { pos: lerp3(C(1.5, 0.9, 17), C(0.6, 1.7, 11.5), sv), look: lerp3(C(0, 3.5, -8), C(0, 4.2, -8), sv), fov: 52 };
-    case 'critics': return { pos: orbit([XC, 0, 3.55], lerp(-14, 6, sv), lerp(2.6, 2.2, sv), 1.25), look: C(0, 1.4, 3.5), fov: 46 };
-    case 'march': return { pos: lerp3(Ev(-2.0, 3.2, -1.0), Ev(-2.3, 3.1, -2.4), sv), look: lerp3(Ev(-4.6, 3.2, -4.6), Ev(-4.6, 3.2, -3.4), sv), fov: 46 };
-    case 'nave': return { pos: lerp3(Ev(0, 1.4, 6), Ev(0, 4.2, 2), sv), look: lerp3(Ev(0, 1.6, -12), Ev(0, 3.6, -14), sv), fov: 50 };
-    case 'roof': return { pos: lerp3(Ev(0.2, 2.0, 15.5), Ev(0, 1.5, 13.2), sv), look: lerp3(Ev(0, 6.0, 11.5), Ev(0, 7.6, 10.0), sv), fov: 54 };
+    // push in on the officer savouring it, then a pull-back + pan that reveals the sailors in the doorway on "officers"
+    case 'hook': { const k = E.smooth(ramp(f, 0, 190)), k2 = E.smooth(ramp(f, 200, 285)); return { pos: lerp3(lerp3(HOOK0.pos, A(-0.55, 1.32, 0.25), k), A(0.35, 1.4, 0.55), k2), look: lerp3(lerp3(HOOK0.look, A(-0.74, 1.18, -1.25), k), A(-2.25, 1.2, 1.0), k2), fov: lerp(42, 48, k2) }; }
+    case 'loop': { const k = E.smooth(ramp(f, 2198, 2261)); return { pos: lerp3(A(0.2, 1.5, 1.4), HOOK0.pos, k), look: lerp3(A(-0.3, 1.15, -1.2), HOOK0.look, k), fov: 42 }; }
+    case 'scurvy': { const k = E.smooth(ramp(f, 300, 440)), k2 = E.smooth(ramp(f, 445, 539)); return { pos: lerp3(lerp3(B(0.4, 1.45, 2.4), B(0.2, 1.4, 1.75), k), B(0.6, 1.7, 3.0), k2), look: lerp3(B(0, 1.3, 0.2), B(0, 1.05, -1.6), k2), fov: lerp(42, 52, k2) }; }
+    case 'hold': { const k = E.smooth(ramp(f, 540, 735)), k2 = E.smooth(ramp(f, 740, 800)); return { pos: lerp3(lerp3(C(0, 1.25, -3.4), C(0.05, 1.3, 3.9), k), C(0.8, 1.55, 4.4), k2), look: lerp3(lerp3(C(0, 0.85, 0.5), C(-0.1, 0.9, 1.8), k), C(0.1, 1.28, 2.1), k2), fov: lerp(52, 46, k2) }; }
+    // Cook's close-up and wink, then the camera travels down to the officers' table as the steward serves
+    case 'trick': { const k = E.smooth(ramp(f, 822, 915)), k2 = E.smooth(ramp(f, 915, 1000)); return { pos: lerp3(lerp3(A(0.85, 1.6, 0.95), A(1.05, 1.6, 0.45), k), A(0.05, 1.75, 1.55), k2), look: lerp3(A(1.55, 1.5, -0.9), A(0.05, 1.15, -0.95), k2), fov: lerp(42, 48, k2) }; }
+    case 'door': return { pos: lerp3(A(-0.2, 1.4, 1.3), A(-0.5, 1.4, 1.05), sv), look: A(-2.25, 1.2, 1.0), fov: 46 };
+    case 'galley': { const k = E.smooth(ramp(f, 1150, 1300)), k2 = E.smooth(ramp(f, 1320, 1420)); return { pos: lerp3(lerp3(D(1.6, 1.4, 3.2), D(1.4, 1.35, 1.9), k), D(-0.5, 1.4, 2.6), k2), look: lerp3(lerp3(D(0.3, 1.0, -1.0), D(0.4, 1.1, -1.6), k), D(0.5, 1.05, 0.6), k2), fov: 46 }; }
+    case 'scale': { const k = E.smooth(v); return { pos: lerp3(G(0.3, 1.75, 5.0), G(0.1, 1.65, 4.3), k), look: G(0, 1.45, 0), fov: 46 }; }
+    case 'finest': { const k = E.smooth(ramp(f, 1600, 1680)); return { pos: lerp3(D(0.9, 1.55, 2.6), D(0.6, 1.5, 1.85), k), look: lerp3(D(0.4, 1.25, 0.3), D(0.4, 1.38, 0.35), k), fov: lerp(46, 40, k) }; }
+    // the next voyage: crane up from the crew to the full sails in gold light, then back down as they cheer
+    case 'voyage': { const k = E.smooth(ramp(f, 1705, 1860)), k2 = E.smooth(ramp(f, 1870, 1950)); return { pos: lerp3(lerp3(Ev(2.6, 1.4, 6.8), Ev(3.4, 3.2, 8.2), k), Ev(1.2, 1.5, 5.6), k2), look: lerp3(lerp3(Ev(0, 1.2, 1.4), Ev(0, 5.0, -1.4), k), Ev(0, 1.2, 1.6), k2), fov: lerp(48, 54, k) }; }
+    case 'punch': return { pos: lerp3(A(0.55, 1.55, 1.4), A(0.95, 1.6, 0.7), sv), look: lerp3(A(1.1, 1.3, -0.9), A(1.5, 1.5, -0.9), sv), fov: lerp(46, 40, sv) };
+    case 'kids': return { pos: lerp3(F(0.05, 1.3, 1.9), F(0.15, 1.2, 1.3), sv), look: F(0.0, 1.0, -1.15), fov: 46 };
   } };
 const cam = (f) => { const S = shot(f), c = camRaw(f);
   const wi = WHIPS.indexOf(S.b + 1), wo = WHIPS.indexOf(S.a);
@@ -346,34 +257,29 @@ export const camAt = cam;
 const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 export const dofAt = (f) => { const S = shot(f), C0 = cam(f), at = (p, k) => ({ focus: dist(C0.pos, p), cinf: k * 0.85 });
   switch (S.id) {
-    case 'hook': { const k = E.smooth(ramp(f, 10, 55)); return { focus: lerp(1.0, dist(C0.pos, A(PAD[0], 0.5, PAD[2])), k), cinf: lerp(16, 9, k) }; }
-    case 'loop': return at(A(PAD[0], 0.6, PAD[2]), 10);
-    case 'lily': return at(f > 540 ? A(PAD[0], 0.1, PAD[2]) : A(PAD[0], 0.6, PAD[2]), 10);
-    case 'tease': case 'reject': return at(B(0.4, 1.2, -1.2), 10);
-    case 'cut': return at(F(0, 1.5, 0), 6);
-    case 'park': return at(C(0.4, 1.3, 2.2), 8);
-    case 'doodle': return at(f > 1600 ? D(0.62, 0.8, -0.22) : D(1.0, 1.2, -1.2), f > 1600 ? 12 : 9);
-    case 'palace': return at(C(0, 3, -8), 3);
-    case 'critics': return at(C(0, 1.4, 3.5), 9);
-    case 'march': return at(Ev(-4.6, 3.2, -3.4), 9);
-    case 'nave': return at(Ev(0, 2.5, -7), 5);
-    case 'roof': return at(Ev(0, 7.6, 10), 4);
+    case 'hook': return at(f < 200 ? A(-0.74, 1.0, -1.25) : A(-2.2, 1.1, 0.9), f < 200 ? 12 : 8);
+    case 'loop': return at(A(-0.74, 1.0, -1.25), 12);
+    case 'scurvy': return at(f < 445 ? B(0, 1.2, 0.2) : B(0, 1.1, -1.0), f < 445 ? 12 : 6);
+    case 'hold': return at(f < 740 ? C(0, 0.8, 1.0) : C(0.3, 1.2, 2.3), f < 740 ? 5 : 11);
+    case 'trick': return at(f < 915 ? A(...COOKP) : A(0.05, 1.0, -1.0), 10);
+    case 'door': return at(A(-2.25, 1.2, 1.0), 9);
+    case 'galley': return at(f < 1320 ? D(0.4, 1.1, -1.4) : D(0.5, 1.1, 0.6), 8);
+    case 'scale': return at(G(0, 1.6, 0), 5);
+    case 'finest': return at(D(0.4, 1.3, 0.35), 12);
+    case 'voyage': return at(f < 1870 ? Ev(0, 3, 0) : Ev(0, 1.2, 1.8), 4);
+    case 'punch': return at(A(...COOKP), 10);
+    case 'kids': return at(F(0.1, 0.9, -1.1), 9);
   }
   return { focus: 5, cinf: 0 }; };
-export const worldAt = (f) => { const S = shot(f), W = {};
-  if (S.id === 'hook') W.dip = q(dipAt(f), 4);
-  if (S.id === 'tease' || S.id === 'reject') { W.stampY = 1.45; if (S.id === 'reject') { const hits = [1290, 1340, 1401]; let y = 1.45; for (const h of hits) { if (f >= h - 8 && f < h + 14) y = f < h ? lerp(1.45, 1.13, E.easeIn((f - h + 8) / 8)) : lerp(1.13, 1.45, E.easeOut((f - h) / 14)); } W.stampY = q(y, 3); W.mark = f >= 1401; W.fly = f >= 1405 ? q(ramp(f, 1405, 1440), 3) : -1; } }
-  if (S.id === 'palace' || S.id === 'critics') { W.palace = 1; W.palY = S.id === 'palace' ? q(lerp(-7.2, 0, E.easeOut(ramp(f, 1747, 1830))), 3) : 0; }
-  if (S.id === 'march') W.bounce = q(0.012 * Math.sin(f * 0.42), 4);
-  if (S.id === 'roof') W.roofRibs = q(0.85 * E.smooth(ramp(f, 2380, 2460)), 3);
-  if (S.id === 'cut') { const fl = E.smooth(ramp(f, 612, 690)); W.flip = q(lerp(0, Math.PI * 0.82, fl), 3); W.spin = q(f * 0.002, 3); W.topOp = q(lerp(1, 0.2, E.smooth(ramp(f, 650, 700))), 3);
-    W.ribs = q(E.smooth(ramp(f, 700, 740)), 3); W.cross = q(E.smooth(ramp(f, 842, 880)), 3); W.grid = q(E.smooth(ramp(f, 912, 945)), 3); }
-  if (S.id === 'doodle') W.sketch = q(E.smooth(ramp(f, 1600, 1740)), 2);
+export const worldAt = (f) => { const S = shot(f), W = { set: S.light };
+  if (S.id === 'scale') W.tip = q(E.easeOut(ramp(f, 1514, 1560)), 3);
+  if (S.id === 'voyage') W.roll = q(0.02 * Math.sin(f * 0.035), 4);
+  if (S.id === 'finest') W.glow = q(E.smooth(ramp(f, 1600, 1640)), 3);
   return W; };
 // ---------------- handwritten labels ----------------
-export const annotAt = (f) => { const S = shot(f); if (S.id !== 'cut') return [];
-  const fl = Math.PI * 0.82, sp = f * 0.002, pt = (r, a) => { const x = Math.cos(a) * r, z = Math.sin(a) * r; const y1 = -0.06 * Math.cos(fl) - z * Math.sin(fl), z1 = -0.06 * Math.sin(fl) + z * Math.cos(fl);
-    return F(x * Math.cos(sp) + z1 * Math.sin(sp), 1.6 + y1, -x * Math.sin(sp) + z1 * Math.cos(sp)); };
-  return [...(f >= 712 ? [{ type: 'label', text: 'ribs', at: pt(0.95, 0.3), dx: 150, dy: -300, age: f - 712, bend: -0.2 }] : []),
-    ...(f >= 848 ? [{ type: 'label', text: 'cross-ribs', at: pt(0.7, 2.4), dx: -160, dy: 330, age: f - 848, bend: 0.25 }] : [])]; };
+export const annotAt = (f) => { const S = shot(f), out = [];
+  if (S.id === 'scurvy' && f >= 344 && f < 445) out.push({ type: 'label', text: 'scurvy', at: B(0.02, 1.33, 0.25), dx: 200, dy: 240, age: f - 344, bend: -0.2 });
+  if (S.id === 'scale') { if (f >= 1496) out.push({ type: 'label', text: 'something new', at: G(-0.8, 1.5, 0), dx: 160, dy: -360, age: f - 1496, bend: 0.2 });
+    if (f >= 1520) out.push({ type: 'label', text: 'the boss likes it', at: G(0.8, 1.3, 0), dx: -230, dy: 150, age: f - 1520, bend: -0.25 }); }
+  return out; };
 export const overlayInfo = (f) => ({ rain: 0, shot: shot(f).id, cuts: [], callouts: [], pill: null, freeze: 0 });

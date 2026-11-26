@@ -2,6 +2,29 @@
 
 Newest first. Each entry: what went wrong, what changed, what to do next time. Engine decisions are recorded as short ADRs (decision, why, trade-off).
 
+## Captain Cook's cabbage trick (Nov 26-27 2026)
+**What went well**
+- The story came from `idea-refine` and was fact-checked from Cook's own journal. A fresh-context doubt review caught six overstatements before voicing.
+- The voice was generated with Diyar's ElevenLabs (Patrick, Eleven v4). The script had to be trimmed to 656 characters to fit his last credits; `creative_get_generations` gave a signed MP3 URL that curl could download once Diyar allowed it.
+- The look was measured before rendering, v1 → v5:
+  - brightness 26 → 40 (refs 48)
+  - shadow 69 % → 54 % (refs 38 %)
+  - saturation 61 % → 48 % (refs 42 %)
+  - a* 8.5 (refs 8.7)
+  - Warm wood-and-red sets closed the colour gap the Crystal Palace greens couldn't.
+- The face-tint balance in dark interiors: a pure white tint pushed burnt highlights to 4.6 %; a warm `#ffeee0` card tint gives faces at L* 92-100 and burnt 1.7 %.
+
+**What went wrong**
+- A handwritten label ("the boss likes it") landed on the caption line in the scale cutaway. It was only caught by the whole-video watch, and cost an 80-frame re-render plus a second compose (about 25 min).
+- The render ran at about 14 s per frame (about 4.5 h for 2,262 frames). Hiding off-screen sets made no real difference: the cost is per-pixel post, not other sets' lights.
+- The two fixed lanes finished unevenly (the hold and cabin shots are slow); splitting the remaining frames evenly near the end saved about 20 min.
+
+**Next time**
+- Preview gate: check every `annotAt` label's screen position is clear of the caption band (y 1250-1450 on 1920) before the full render.
+- Render with balanced lanes from the start: split the *missing* frames in half every chunk, not fixed ranges.
+- Budget 4-5 h for a 38 s episode with many interiors; start the render as soon as the preview is approved.
+- Keep ElevenLabs scripts ≤ the remaining credits (1 credit per character on Eleven v4) and check `account_get_usage` before writing the final script.
+
 ## Version 6 kit study + measured look upgrade (Nov 26 2026)
 Diyar sent the Version 6 master prompt and animated-shorts-kit and asked to learn from them and apply them to Doc Zap.
 

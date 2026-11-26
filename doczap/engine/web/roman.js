@@ -21,7 +21,7 @@ FACE.unimpressed = { eye: ["lid", "lid"], brow: [1, 1], mouth: "flat" };
 // ---------------- engine kit: hats, beards, outfit patterns, face flush ----------------
 const ringFill = (p, outer, inner, fill, ow) => { const g = p.g, tr = (r) => r.forEach(([x0, y0], i) => { const [x, y] = p.P(x0, y0); i ? g.lineTo(x, y) : g.moveTo(x, y); }) || g.closePath();
   g.beginPath(); tr(outer); tr([...inner].reverse()); g.fillStyle = fill; g.fill("evenodd"); if (ow) { g.lineWidth = ow; g.strokeStyle = INK; g.lineJoin = "round"; g.stroke(); } };
-const HATCOL = { brim17: "#2a2420", crown: "#f2c230", helmet: "#a9b0b8", cowboy: "#9a6434", tophat: "#2a2630", hood: "#5a4a8a", turban: "#f0ece0", soldier: "#3a5a8a", hardhat: "#f2c230" };
+const HATCOL = { tricorn: "#1e1e26", brim17: "#2a2420", crown: "#f2c230", helmet: "#a9b0b8", cowboy: "#9a6434", tophat: "#2a2630", hood: "#5a4a8a", turban: "#f0ece0", soldier: "#3a5a8a", hardhat: "#f2c230" };
 /** parts of a hat drawn BEHIND the head (hood cowl, crown velvet) */
 const hatBack = (p, kind, O, H, cx, hc, u, light, thick, ow) => {
   const col = O.hatCol || HATCOL[kind];
@@ -72,6 +72,16 @@ const hatFront = (p, kind, O, H, cx, hc, u, light, thick, ow) => {
         p.shadedFill(pl, O.plume, mul(O.plume, [0.8, 0.8, 0.85]), light, cw, 0.3); p.inkRing(pl, ow * 0.7, thick); }
       const brim = [...curve((t) => [cx + bw * t, by - 1 * u + 4 * u * (1 - t * t) - 4 * u * Math.pow(Math.abs(t), 4)]), ...curve((t) => [cx + bw * 0.97 * t, by + 6 * u + 5 * u * (1 - t * t) - 4 * u * Math.pow(Math.abs(t), 4)]).reverse()];
       shade(brim, mul(col, [1.08, 1.08, 1.08]), bw);
+      break; }
+    case "tricorn": { // 18th-century naval tricorne: low dome crown, brim cocked up into a wide triangle, point at the front, gold edge lace
+      const cw = 30 * u, ch = 26 * u;
+      const crownP = [[cx - cw, by - 4 * u], [cx + cw, by - 4 * u], ...ellPts(cx, by - 8 * u, cw, ch, 0, -180, 0, 18).slice(1, -1)];
+      shade(crownP, mul(col, [0.85, 0.85, 0.9]), cw);
+      const brim = [[cx - 66 * u, by - 30 * u], [cx - 34 * u, by - 18 * u], [cx, by - 22 * u], [cx + 34 * u, by - 18 * u], [cx + 66 * u, by - 30 * u],
+        [cx + 50 * u, by - 6 * u], [cx + 18 * u, by + 4 * u], [cx, by + 9 * u], [cx - 18 * u, by + 4 * u], [cx - 50 * u, by - 6 * u]];
+      shade(brim, col, 60 * u);
+      if (band) p.stroke([[cx - 50 * u, by - 6 * u], [cx - 18 * u, by + 4 * u], [cx, by + 9 * u], [cx + 18 * u, by + 4 * u], [cx + 50 * u, by - 6 * u]], 3.2 * u, band);
+      if (O.cockade) { p.ell(cx - 26 * u, by - 12 * u, 7 * u, 7 * u, O.cockade, ow * 0.6); }
       break; }
     case "tophat": { const bw = 50 * u, cw = 33 * u, ch = 62 * u;
       const cyl = [[cx - cw, by], [cx + cw, by], [cx + cw * 1.04, by - ch], [cx - cw * 1.04, by - ch]];
