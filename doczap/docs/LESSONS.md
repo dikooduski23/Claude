@@ -2,6 +2,25 @@
 
 Newest first. Each entry: what went wrong, what changed, what to do next time. Engine decisions are recorded as short ADRs (decision, why, trade-off).
 
+## Long-form ep. 1: What If You Were Born as Genghis Khan? (Nov 26 2026)
+New weekly 16:9 format modelled on Born in Lore. Diyar chose the free code-drawn 2D style over AI illustrations.
+**What went wrong**
+- The voice came to 6.5 min, under the 8-10 min target. Fixed with a fact-checked extra section (C, the horsemen) spliced in at "Then you ride." using word timings, plus a 2.6 s chapter-card gap before each chapter. Result: 8:04.
+- ElevenLabs files can't be downloaded until `elevenlabsusercontent.com` is on the allowed domains (Diyar added it).
+- skia `toarray()` defaults to BGRA, which turned skin and fire blue. Always pass `colorType=kRGBA_8888`.
+- Close-ups framed faces too low. Fixed with automatic head tracking for single-character close-ups (`head_center`).
+- The baby was drawn behind the mother: give held props and children `z` above the holder.
+- The 1080p file at CRF 18 with grain was 3.1 GB. Delivery has to stay under 500 MiB to send: CRF 22, maxrate 7M.
+- AAC raised the true peak to -1.1 dB. Limit the mix at 0.78 before muxing.
+**What changed**
+- New engine `doczap/longform/` (kit, chars, sets, fx, overlays, render, align, mix_long). Speed: about 0.18 s per frame, so a full 8-minute episode renders in about 25 min on 2 lanes.
+- Shots are anchored to script phrases, so the timing follows the voice automatically.
+**Next time**
+- Character art is still simpler than the reference: add more poses (kneel, ride-shoot, lie), hands holding props in both arms, and faces with more realistic proportions.
+- Add a proper "Bound" arm pose (it currently reads as raised), a camel walk cycle and crowd variety.
+- Budget voice credits for about 1,300 words (about 8 min) from the start.
+
+
 ## Crystal Palace / Paxton lily leaf (Nov 26 2026)
 **What went wrong**
 - Diyar: the render looked "like 2018". The causes were flat toon bands, black outlines on the whole world, blocky low-poly trees, plain flat backgrounds, and a milky glow from the bloom plus a heavy compose glow.
