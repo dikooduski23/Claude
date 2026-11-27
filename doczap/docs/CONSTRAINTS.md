@@ -24,6 +24,7 @@ This is the written contract for every episode. **Nobody lowers a number here wi
 | Captions | 1-2 words, Poppins Bold, white with dark stroke, sentence case, y≈1342; no caption on screen < 0.2 s | caption script output |
 | Look | `LOOK = 'modern'` (PBR + image light + filmic grade); never grey or milky; compose glow ≤ 0.35 | contact sheet before and after the render |
 | Measured look vs references (Diyar's 9 reels, `doczap/docs/reference_metrics.json`) | saturation **≤ 50 %**; white balance b* **≤ 15**; faces paper-white (top 0.5 % of pixels L* ≥ 95); world outline pixels **≥ 0.8 %**; no metric more than **1.5 reference spreads** away unless the story's setting explains it (e.g. a greenhouse is green) | `python3 doczap/tools/measure.py --refcache doczap/docs/reference_metrics.json --ours <stills or mp4>` |
+| Character movement (Diyar, Nov 27 2026) | in every shot at least one character visibly moves (walk, gesture, reaction bounce or eased head turn); no pose or expression change pops in a single frame | 10-frame contact strip per shot + 3 s preview clip at the preview gate |
 | Whole-video check | contact sheets every 0.5 s looked at before "done"; motion notes (CUT/POP/FREEZE) explained | `python3 doczap/tools/watch.py out.mp4 qc/` |
 
 ## Measured, not yet enforced

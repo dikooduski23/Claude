@@ -19,7 +19,17 @@ Newest first. Each entry: what went wrong, what changed, what to do next time. E
 - The render ran at about 14 s per frame (about 4.5 h for 2,262 frames). Hiding off-screen sets made no real difference: the cost is per-pixel post, not other sets' lights.
 - The two fixed lanes finished unevenly (the hold and cabin shots are slow); splitting the remaining frames evenly near the end saved about 20 min.
 
+**Diyar's feedback (Nov 27 2026): the character movement.** He called the episode the best Rick's Clips replica yet, but the characters barely move. They are cut-out cards that only blink, bob and swap expressions and arm poses, and the swaps pop from one frame to the next. Rick's Clips characters walk, gesture on the words, react with their whole body and turn their heads.
+
 **Next time**
+- **Fix the character movement first** (engine work before the next episode's sets):
+  - Arm poses blend over about 8 frames with a small overshoot, instead of switching (the rig needs numeric arm angles or a blend between two poses).
+  - Every expression change gets a body reaction: a squash-stretch bounce (0.92 → 1.06 → 1) and a small hop on big reactions (shock, cheer), with a lean toward what they react to.
+  - Head turns (`look`) ease over about 10 frames instead of jumping.
+  - Characters walk on and off and between marks with `step` plus position paths (the steward walks in with the plate; sailors shuffle forward in the queue).
+  - Gestures land on the narration word (point on "officers", hands up on "cheered", arms cross on "grumble").
+  - Secondary motion: hats wobble on hops, small idle weight shifts, and occasional mouth movement on reactions.
+  - Check it on a contact strip of 10 consecutive frames per shot (at least one character visibly moving in every strip), plus a 3-second preview clip in the preview gate.
 - Preview gate: check every `annotAt` label's screen position is clear of the caption band (y 1250-1450 on 1920) before the full render.
 - Render with balanced lanes from the start: split the *missing* frames in half every chunk, not fixed ranges.
 - Budget 4-5 h for a 38 s episode with many interiors; start the render as soon as the preview is approved.
