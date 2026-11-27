@@ -5,6 +5,7 @@
 import { M as E, clamp, lerp, lerp3, ramp, idle, blinkAt, talkAt, q } from './motion.js';
 import { LP, tint } from './kit/lights.js';
 import { emote } from './kit/emotes.js';
+import { arms, react, reacts, ease, walk, sway, pick } from './kit/act.js';
 export const FPS = 60, TOTAL = 2262, DECK = 0, LOOK = 'modern';
 const SH = [
   ['hook', 0, 299, 'cabin'], ['scurvy', 300, 539, 'low'], ['hold', 540, 821, 'hold'], ['trick', 822, 1048, 'cabin'], ['door', 1049, 1149, 'cabin'],
@@ -185,41 +186,57 @@ const STEWARD = { tunic: '#7a5a3a', stick: true, skin: SK, hair: '#8a5a2a', apro
 const MOM = { tunic: '#2a8a8a', dress: '#2a8a8a', stick: true, skin: SK, hair: '#6a4228' }, KID = { tunic: '#f2c230', stick: true, skin: SK, hair: '#e8b860', pattern: { type: 'stripes', col: '#e8602a', scale: 1.4 } };
 export const actorsAt = (f, T) => {
   const S = shot(f), out = [], u = Math.floor(f / 2);
-  const I = (seed) => { const i = idle(u, seed); return { bob: q(i.bob, 3), tilt: q(i.tilt, 1), headTilt: q(i.headTilt, 1) }; };
+  const I = (seed) => { const i = idle(u, seed); return { bob: q(i.bob, 3), tilt: q(i.tilt, 1) + sway(f, seed), headTilt: q(i.headTilt, 1) }; };
   const tintL = { cabin: '#fff1e6', low: '#ffeee0', hold: '#ffeee0', galley: '#ffeee0', cut: '#fff1e6', deck: '#fff4ea', kitchen: '#fffaf4' }[S.light] || '#ffffff';
-  const card = (id, O, o, w, seed, extra = {}) => out.push({ key: id + JSON.stringify(o) + JSON.stringify(extra.y || 0), draw: (p) => T.romanFront(p, O, { seed, blink: blinkAt(u, seed), ...I(seed), L: 'hang', R: 'hang', look: 0, ...o }), x: w[0], y: w[1] + (extra.y || 0), z: w[2], s: extra.s ?? 0.9, ground: w[1], tint: tintL, roll: extra.roll });
+  const card = (id, O, o, w, seed, extra = {}) => { const r = extra.r || { sx: 1, sy: 1, y: 0 }; out.push({ key: id + JSON.stringify(o) + JSON.stringify(extra.y || 0), draw: (p) => T.romanFront(p, O, { seed, blink: blinkAt(u, seed), ...I(seed), L: 'hang', R: 'hang', look: 0, ...o }), x: w[0], y: w[1] + (extra.y || 0) + r.y, z: w[2], s: extra.s ?? 0.9, sx: r.sx, sy: r.sy, ground: w[1], tint: tintL, roll: extra.roll }); };
   const cabinCast = (ff, mode) => {   // mode: 'hook' | 'table' | 'door' | 'punch'
     const eat = mode === 'hook' || mode === 'table';
-    OFF.forEach((p, i) => card('o' + i, OFFI[i], { expr: eat ? ['lick', 'laugh', 'grin'][i] : 'smug', look: q([0.3, 0, -0.3][i], 1), L: 'hang', R: i === 0 && eat ? 'up' : 'hang', talk: eat && i === 1 ? talkAt(ff, 21, 1.1) : -1 }, A(...p), 11 + i));
-    if (mode !== 'hook') card('cook', COOK, { expr: mode === 'punch' ? (ff >= 2050 ? 'wink' : 'sly') : (ff >= 868 && ff < 930 ? 'wink' : 'smug'), L: 'hip', R: mode === 'punch' ? 'up' : 'point', look: -0.5 }, A(...COOKP), 9, { s: 0.95 });
-    const peek = mode === 'hook' ? ff >= 200 : true;
-    if (peek) SAIL.forEach((p, i) => card('s' + i, SAILORS[i], { expr: mode === 'door' ? ['stubborn', 'sideeye', 'unimpressed'][i] : mode === 'punch' ? 'gulp' : ['gulp', 'shock', 'lick'][i], look: 0.8, L: mode === 'door' ? 'cross' : 'hang', R: mode === 'door' ? 'cross' : (i === 1 ? 'cheek' : 'hang') }, A(...p), 21 + i));
+    OFF.forEach((p, i) => { const fork = i === 0 && eat ? arms(ff, [[0, 'hang'], [24, 'mouth'], [84, 'hang'], [118, 'mouth'], [176, 'hang'], [210, 'mouth'], [900, 'hang'], [960, 'mouth']], 'R', 10) : { R: 'hang' };
+      card('o' + i, OFFI[i], { expr: eat ? ['lick', 'laugh', 'grin'][i] : 'smug', look: q(ease(ff, [[0, [0.3, 0, -0.3][i]], [200, mode === 'hook' ? [-0.6, -0.7, -0.8][i] : [0.3, 0, -0.3][i]]], 14), 2), L: 'hang', mk: 1, ...fork, talk: eat && i === 1 ? talkAt(ff, 21, 1.1) : -1 }, A(...p), 11 + i, { r: mode === 'table' ? react(ff, 990 + i * 6, 0.7) : react(ff, 24 + i * 40, 0.4) }); });
+    if (mode !== 'hook') { const wink = mode === 'punch' ? 2050 : 868;
+      card('cook', COOK, { expr: mode === 'punch' ? (ff >= 2050 ? 'wink' : 'sly') : (ff >= 868 && ff < 930 ? 'wink' : 'smug'), L: 'hip', ...arms(ff, mode === 'punch' ? [[0, 'hang'], [1985, 'point'], [2045, 'up']] : [[0, 'hang'], [850, 'point'], [930, 'hip']], 'R'), look: q(ease(ff, [[0, -0.5], [915, 0.2], [2040, -0.2]], 12), 2) }, A(...COOKP), 9, { s: 0.95, r: react(ff, wink, 1.1, 0.04) }); }
+    // the sailors slip into the doorway (walk), then jolt at the "!" and lean in
+    const peekT = mode === 'hook' ? 200 : -999;
+    if (mode !== 'hook' || ff >= 196) SAIL.forEach((p, i) => { const wk = walk(ff, [[peekT + i * 5, [p[0] - 0.8, p[1], p[2]]], [peekT + 26 + i * 5, p]]);
+      const door = mode === 'door', pun = mode === 'punch';
+      const armL = door ? arms(ff, [[0, 'hang'], [1052 + i * 4, 'cross']], 'L') : { L: 'hang' }, armR = door ? arms(ff, [[0, 'hang'], [1052 + i * 4, 'cross']], 'R') : arms(ff, [[0, 'hang'], [252 + i * 3, i === 1 ? 'cheek' : i === 2 ? 'reach' : 'up']], 'R');
+      card('s' + i, SAILORS[i], { expr: door ? ['stubborn', 'sideeye', 'unimpressed'][i] : pun ? 'gulp' : (ff < 252 ? 'neutral' : ['gulp', 'shock', 'lick'][i]), look: q(ease(ff, [[0, 0.3], [252, 0.9]], 8), 2), step: wk.step, ...armL, ...armR, lift: 0.3 },
+        A(...wk.p), 21 + i, { y: wk.bob, r: door ? react(ff, 1058, 0.6) : react(ff, 252 + i * 3, 1.2, 0.05) }); });
   };
   switch (S.id) {
     case 'hook': cabinCast(f, 'hook'); break;
     case 'loop': cabinCast(0, 'hook'); break;
-    case 'trick': cabinCast(f, 'table'); if (f >= 930) card('stew', STEWARD, { expr: 'smile', L: 'hang', R: 'up', look: 0.4 }, A(-1.55, 0, -0.6), 31); break;
+    case 'trick': { cabinCast(f, 'table');
+      // the steward walks in from the door carrying the plate, sets it down, steps back
+      if (f >= 915) { const wk = walk(f, [[915, [XA - 2.7, 0, 0.6]], [975, [XA - 1.55, 0, -0.6]], [1010, [XA - 1.55, 0, -0.6]], [1040, [XA - 1.9, 0, -0.2]]]);
+        card('stew', STEWARD, { expr: f < 980 ? 'smile' : 'grin', step: wk.step, ...arms(f, [[915, 'tray'], [978, 'hang']], 'L'), ...arms(f, [[915, 'tray'], [978, 'up'], [1005, 'hang']], 'R'), look: 0.4 }, wk.p, 31, { y: wk.bob, r: react(f, 978, 0.6) }); }
+      break; }
     case 'door': cabinCast(f, 'door'); break;
     case 'punch': cabinCast(f, 'punch'); break;
-    case 'scurvy': { card('sick', SAILORS[3], { expr: f < 460 ? 'sick' : 'pained', L: 'belly', R: 'cheek', look: 0.2 }, B(0, 0, 0.2), 41, { s: 0.92 });
+    case 'scurvy': { card('sick', SAILORS[3], { expr: f < 460 ? 'sick' : 'pained', ...arms(f, [[0, 'belly'], [452, 'hang']], 'L', 14), ...arms(f, [[0, 'cheek'], [452, 'belly']], 'R', 14), look: q(ease(f, [[300, 0.2], [452, -0.3]], 20), 2) }, B(0, 0, 0.2), 41, { s: 0.92, r: react(f, 452, 0.5) });
       [[-1.4, -1.6], [1.3, -2.1], [-0.4, -3.4]].forEach(([x, z], i) => card('sk' + i, SAILORS[(i + 4) % 6], { expr: ['sick', 'pained', 'dazed'][i], L: 'belly', R: 'hang', look: q(-0.3 + i * 0.3, 1) }, B(x, 0, z), 43 + i)); break; }
-    case 'hold': card('sniff', SAILORS[1], { expr: f < 765 ? 'neutral' : 'disgust', L: 'hang', R: f < 765 ? 'cheek' : 'hang', look: 0.6 }, C(0.3, 0, 2.3), 51, { s: 0.92 }); break;
+    case 'hold': { const wk = walk(f, [[600, [XC + 0.9, 0, 2.4]], [700, [XC + 0.3, 0, 2.3]]]);
+      card('sniff', SAILORS[1], { expr: f < 765 ? 'neutral' : 'disgust', step: wk.step, ...arms(f, [[0, 'hang'], [720, 'cheek'], [765, 'hang'], [775, 'mouth']], 'R'), ...arms(f, [[0, 'hang'], [775, 'belly']], 'L'), mk: 1, look: q(ease(f, [[0, 0.6], [740, -0.4], [765, 0.8]], 8), 2) }, wk.p, 51, { s: 0.92, y: wk.bob, r: react(f, 765, 1.3, 0.04) }); break; }
     case 'galley': case 'finest': { const ration = f >= 1285, grum = f >= 1335 && S.id === 'galley';
-      card('stew', STEWARD, { expr: ration ? 'stern' : 'grin', L: 'hang', R: ration ? 'up' : 'grab', gx: 0.2, gy: 0.3, look: 0.5 }, D(0.4, 0, -2.15), 31);
-      if (S.id === 'galley') for (let i = 0; i < 6; i++) card('q' + i, SAILORS[i], { expr: grum ? ['stubborn', 'angry', 'unimpressed', 'sideeye', 'angry', 'stubborn'][i] : (ration ? ['shock', 'cry', 'gulp', 'shock', 'gulp', 'pained'][i] : ['lick', 'grin', 'gulp', 'smile', 'lick', 'grin'][i]), L: grum ? 'cross' : 'hang', R: grum ? 'cross' : (i % 2 ? 'reach' : 'hang'), look: q(-0.6 + (i % 3) * 0.2, 1) }, D(0.25 + (i % 2) * 0.35, 0, -0.55 + i * 0.6), 61 + i);
-      if (S.id === 'finest') card('taste', SAILORS[2], { expr: f >= 1600 && f < 1630 ? 'gulp' : 'eureka', L: 'hang', R: 'cheek', look: 0.3 }, D(0.4, 0, 0.35), 63, { s: 0.92 });
+      card('stew', STEWARD, { expr: ration ? 'stern' : 'grin', ...arms(f, [[0, 'grab'], [1285, 'up'], [1330, 'hip']], 'R'), L: 'hang', gx: 0.2, gy: q(0.3 + 0.12 * Math.sin(f / 7), 2), look: 0.5 }, D(0.4, 0, -2.15), 31, { r: react(f, 1285, 0.8) });
+      if (S.id === 'galley') for (let i = 0; i < 6; i++) { const shuffle = walk(f, [[1175 + i * 6, [XD + 0.25 + (i % 2) * 0.35, 0, -0.55 + i * 0.6 + 0.35]], [1215 + i * 6, [XD + 0.25 + (i % 2) * 0.35, 0, -0.55 + i * 0.6]]]);
+        const ex = grum ? ['stubborn', 'angry', 'unimpressed', 'sideeye', 'angry', 'stubborn'][i] : (ration ? ['shock', 'cry', 'gulp', 'shock', 'gulp', 'pained'][i] : ['lick', 'grin', 'gulp', 'smile', 'lick', 'grin'][i]);
+        card('q' + i, SAILORS[i], { expr: ex, step: shuffle.step, ...arms(f, [[0, 'hang'], [1180 + i * 9, i % 2 ? 'hip' : 'hang'], [1287 + i * 2, i % 3 ? 'cheek' : 'up'], [1338 + i * 4, 'cross']], 'R'), ...arms(f, [[0, 'hang'], [1287 + i * 2, i % 3 ? 'hang' : 'up'], [1338 + i * 4, 'cross']], 'L'), lift: 0, look: q(ease(f, [[0, -0.6 + (i % 3) * 0.2], [1290, 0.6], [1340, -0.5 + (i % 2)]], 10), 2) },
+          shuffle.p, 61 + i, { y: shuffle.bob, r: reacts(f, [1287 + i * 2, 1338 + i * 4], grum ? 0.6 : 1.2, grum ? 0 : 0.05) }); }
+      if (S.id === 'finest') card('taste', SAILORS[2], { expr: f < 1630 ? 'gulp' : 'eureka', ...arms(f, [[1600, 'mouth'], [1628, 'up']], 'R'), ...arms(f, [[1600, 'hang'], [1632, 'up']], 'L'), mk: 1, look: q(ease(f, [[1600, 0.3], [1630, 0]], 8), 2) }, D(0.4, 0, 0.35), 63, { s: 0.92, r: react(f, 1630, 1.4, 0.08) });
       break; }
-    case 'voyage': { const cheer = f >= 1915; for (let i = 0; i < 6; i++) card('c' + i, SAILORS[i], { expr: cheer ? ['laugh', 'grin', 'laugh', 'eureka', 'laugh', 'grin'][i] : 'smile', L: cheer ? 'up' : 'hang', R: cheer ? 'up' : (i % 2 ? 'wave' : 'hang'), look: q(-0.5 + i * 0.2, 1) }, Ev(-1.4 + (i % 3) * 1.4, 0, 1.4 + Math.floor(i / 3) * 1.1), 71 + i, { y: cheer ? Math.abs(Math.sin((f + i * 9) * 0.22)) * 0.06 : 0 });
-      card('cook', COOK, { expr: 'smug', L: 'hip', R: 'hang', look: -0.3 }, Ev(0, 0, 4.9), 9, { s: 0.95 }); break; }
-    case 'kids': { const want = f >= 2160; card('mom', MOM, { expr: 'lick', L: 'hang', R: 'up', look: 0.4 }, F(-0.25, 0, -1.25), 81);
-      card('kid', KID, { expr: want ? 'gulp' : 'sideeye', L: 'hang', R: want ? 'reach' : 'cross', look: -0.6 }, F(0.22, 0, 0.1), 83, { s: 0.62 }); break; }
+    case 'voyage': { const cheer = f >= 1915; for (let i = 0; i < 6; i++) { const t = 1915 + i * 3;
+        card('c' + i, SAILORS[i], { expr: cheer ? ['laugh', 'grin', 'laugh', 'eureka', 'laugh', 'grin'][i] : 'smile', ...arms(f, [[0, 'hang'], [1760 + i * 11, i % 2 ? 'wave' : 'hip'], [t, 'up']], 'R'), ...arms(f, [[0, 'hang'], [t + 2, 'up']], 'L'), wv: f / 5, look: q(ease(f, [[0, -0.5 + i * 0.2], [1880, 0]], 20), 2) }, Ev(-1.4 + (i % 3) * 1.4, 0, 1.4 + Math.floor(i / 3) * 1.1), 71 + i, { r: reacts(f, [t, t + 16, t + 32], 1.0, 0.09) }); }
+      card('cook', COOK, { expr: 'smug', L: 'hip', ...arms(f, [[0, 'hang'], [1920, 'thumb']], 'R'), look: q(ease(f, [[0, -0.3], [1900, 0.4]], 14), 2) }, Ev(0, 0, 4.9), 9, { s: 0.95, r: react(f, 1920, 0.7) }); break; }
+    case 'kids': { const want = f >= 2160; card('mom', MOM, { expr: 'lick', L: 'hang', ...arms(f, [[2110, 'hang'], [2122, 'mouth'], [2165, 'hang']], 'R'), mk: 1, look: 0.4 }, F(-0.25, 0, -1.25), 81, { r: react(f, 2124, 0.5) });
+      card('kid', KID, { expr: want ? 'gulp' : 'sideeye', ...arms(f, [[2110, 'cross'], [2160, 'reach']], 'R'), ...arms(f, [[2110, 'cross'], [2160, 'hang']], 'L'), lift: 0.5, look: q(ease(f, [[2110, -0.6], [2158, -0.9]], 6), 2) }, F(0.22, 0, 0.1), 83, { s: 0.62, r: react(f, 2160, 1.3, 0.05) }); break; }
     case 'scale': break;
   }
   return out;
 };
 // ---------------- fx ----------------
 export const fxAt = (f) => { const S = shot(f), out = [];
-  if (S.id === 'hook' && f >= 228) out.push(emote('!', f - 228, A(SAIL[0][0] + 0.2, 1.75, SAIL[0][2]), { s: 0.2 }));
+  if (S.id === 'hook' && f >= 252) out.push(emote('!', f - 252, A(SAIL[0][0] + 0.2, 1.75, SAIL[0][2]), { s: 0.2 }));
   if (S.id === 'trick' && f >= 875) out.push(emote('bulb', f - 875, A(COOKP[0], 1.95, COOKP[2]), { s: 0.24 }));
   if (S.id === 'door' && f >= 1058) out.push(emote('?', f - 1058, A(SAIL[1][0] + 0.15, 1.78, SAIL[1][2]), { s: 0.22 }));
   if (S.id === 'galley' && f >= 1291 && f < 1335) out.push(emote('!?', f - 1291, D(0.6, 1.75, 0.1), { s: 0.22 }));

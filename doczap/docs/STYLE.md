@@ -75,3 +75,13 @@ Diyar sent the kit's master prompt and skill. It was built by copying the same c
 - **Shapes:** heads are an egg with a jaw, not a perfect circle. Brows are heavy wedges that taper to a point (the angle carries the mood). Mouths are small and slightly off-level. Hats sit askew with pointed brim tips. Posts taper and bases flare. Change a part's silhouette instead of adding parts.
 - **Palette:** the references average about 42 % saturation, a near-neutral white balance (b* about 7) and lean warm-red (a* about +9: wood, brick, red rugs). They are darker than us (L* about 48) with much more shadow (about 38 % of the frame). Prefer warm wood, brick and red sets with real shadowed corners over bright all-green or all-white sets.
 - **Checks with numbers before every render:** no face cut by the frame edge, no camera inside geometry, no subject hidden, nothing floating or sinking. Before saying "done", watch the WHOLE video as contact sheets every 0.5 s (`doczap/tools/watch.py`).
+
+## Character acting (engine kit, Nov 27 2026, after Diyar's "the character movement" feedback)
+Use `web/kit/act.js` in every episode's `actorsAt`. Nobody stands frozen, and nothing pops in one frame:
+- `arms(f, [[frame,'pose'],...], 'R'|'L')`: arm poses blend over about 9 frames with a small overshoot. Key a gesture to the narration word (point on the noun, hands up on the cheer, arms cross on "grumble").
+- `react(f, t, strength, hop)` / `reacts(...)`: a squash-and-stretch bounce on every expression change, plus a hop (0.04-0.09 m) on big reactions. Pass it as `extra.r` to `card()`.
+- `ease(f, keys, dur)`: head turns (`look`), leans (`tilt`) and anything numeric, eased instead of jumping.
+- `walk(f, [[frame,[x,y,z]],...])`: characters walk between marks with a step cycle and bob. Positions are WORLD coordinates (wrap set-local points with the set's offset helper, e.g. `A(...p)`).
+- `sway(f, seed)` is added to the idle tilt automatically, a slow weight shift.
+- Time reactions to when the camera actually shows the character, not before.
+- Frame the walks: a walk that happens off-screen is wasted (the Cook demo's steward walk-in fell outside the table shot).

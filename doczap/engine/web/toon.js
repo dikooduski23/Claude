@@ -2906,7 +2906,10 @@ export const romanFront = (p, key, opts = {}) => {
       default: return { pts: [s, [X(4), s[1] + 0.48 * HH], [X(3), chin + 1.04 * HH]], front: false };
     }
   };
-  const arms = [arm(-1, L), arm(1, R)];
+  // pose blending (kit/act.js, Nov 27 2026): L2/R2 = the pose being moved to, Lk/Rk = 0..1 (values a little over 1 = overshoot)
+  const armB = (side, pose, pose2, k) => { const a = arm(side, pose); if (!pose2 || !k) return a; const b = arm(side, pose2);
+    const pts = a.pts.map((q, i) => [q[0] + (b.pts[i][0] - q[0]) * k, q[1] + (b.pts[i][1] - q[1]) * k]); return { ...(k > 0.5 ? b : a), pts }; };
+  const arms = [armB(-1, L, opts.L2, opts.Lk || 0), armB(1, R, opts.R2, opts.Rk || 0)];
   const drawArm = (a) => {
     p.stroke(curve(a.pts[0], a.pts[1], a.pts[2]), 5.2 * u, armCol);
     const [hx, hy] = a.pts[2];
