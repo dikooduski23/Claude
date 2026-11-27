@@ -2860,6 +2860,14 @@ export const romanFront = (p, key, opts = {}) => {
   const thick = thickAngle(light), ow = 5 * u, cx = 300; const lerpN = (a, b, t) => a + (b - a) * t;
   const legCol = O.stick ? INK : mix(O.tunic, INK, 0.62), armCol = O.stick ? INK : mix(O.tunic, INK, 0.5);
   const helmet = !!O.helmet && !nohelmet, old = O.helmet === "old";
+  // ---- physical rig v3 (Nov 27 2026): pelvis shift px (design px), crouch 0..1 (pelvis drops, knees bend, feet stay planted),
+  // feet offsets fL/fR [dx, lift] (design px) for planted / stepping feet, chest 0..1 (spine curls: shoulders + head drop), shrug 0..1, headDrop (head heights)
+  const PX = opts.px || 0, CR = Math.max(0, opts.crouch || 0), CH_ = opts.chest || 0, SHR = opts.shrug || 0;
+  const LEG0 = Math.hypot(6 * u, sole - 4 * u - (torsoBot - 0.12 * HH)), SITK = opts.sit || 0;
+  // balance: if a foot is placed further than the leg can reach, the pelvis lowers (knees bend) instead of the leg stretching
+  let reachDrop = 0; for (const sd of [-1, 1]) { const fo = (sd < 0 ? opts.fL : opts.fR) || [0, 0], ddx = (cx + sd * 22 * u + (fo[0] || 0)) - (cx + sd * 16 * u + (opts.px || 0)), ddy = sole - 4 * u - (fo[1] || 0) - hipY;
+    const need = Math.sqrt(Math.max(0, (LEG0 * 0.985) ** 2 - ddx * ddx)); reachDrop = Math.max(reachDrop, ddy - need); }
+  const DROP = CR * 0.2 * HH + SITK * 0.45 * LEG0 + Math.max(0, reachDrop), UPY = DROP + CH_ * 0.07 * HH;
   p.rot = null;
   // ---- cape behind everything ----
   if (O.cape) {
@@ -2868,20 +2876,29 @@ export const romanFront = (p, key, opts = {}) => {
   }
   // ---- legs ----
   const dress = !!O.dress;
+  const LEG = Math.hypot(6 * u, sole - 4 * u - hipY);   // rest leg length; thigh = shin = LEG/2 (constant bone lengths)
   for (const side of [-1, 1]) {
-    const up = Math.max(0, Math.sin(Math.PI * 2 * (step + (side > 0 ? 0.5 : 0)))) * 30 * (step ? 1 : 0);
-    const hx = cx + side * 16 * u, fx = cx + side * 22 * u, fy = sole - 4 * u - up;
-    p.stroke(curve([hx, hipY], [(hx + fx) / 2 + side * 2 * u, (hipY + fy) / 2], [fx, fy]), 5.8 * u, legCol);
+    const fo = (side < 0 ? opts.fL : opts.fR) || [0, 0];
+    const up = Math.max(0, Math.sin(Math.PI * 2 * (step + (side > 0 ? 0.5 : 0)))) * 30 * (step ? 1 : 0) + (fo[1] || 0);
+    const hx = cx + side * 16 * u + PX, hy = hipY + DROP, fx = cx + side * 22 * u + (fo[0] || 0), fy = sole - 4 * u - up;
+    // two-bone IK: the knee pushes outward and forward as the hip-to-foot distance shortens (no reversed knees, no stretching)
+    const dx = fx - hx, dy = fy - hy, d = Math.min(Math.hypot(dx, dy), LEG * 0.999), bend = Math.sqrt(Math.max(0, (LEG / 2) ** 2 - (d / 2) ** 2));
+    const nx = -dy / (d || 1), ny = dx / (d || 1);
+    let kx = (hx + fx) / 2 + side * Math.abs(nx) * bend * 0.4 + side * 2 * u, ky = (hy + fy) / 2 - Math.abs(ny) * bend * 0.15;   // knees travel mostly toward camera (foreshortened), a little outward
+    const SIT = SITK; if (SIT > 0) { kx = lerpN(kx, hx + side * 9 * u, SIT); ky = lerpN(ky, hy + 0.06 * HH, SIT); }   // seated: knee comes toward camera (thigh foreshortened), shin down to the planted foot
+    if (opts.rigOut) { (opts.rigOut.legs = opts.rigOut.legs || {})[side] = { hip: [hx, hy], knee: [kx, ky], foot: [fx, fy], LEG }; }
+    p.stroke(bend > 2 * u || SIT > 0 ? [[hx, hy], [kx, ky], [fx, fy]] : curve([hx, hy], [(hx + fx) / 2 + side * 2 * u, (hy + fy) / 2], [fx, fy]), 5.8 * u, legCol);
     const sandal = O.helmet ? LEATHER : "#5a3b2a";
     p.stroke([[fx - side * 3 * u, fy], [fx + side * 13 * u, fy + 0.5 * u]], 7.5 * u + 3, INK);
     p.stroke([[fx - side * 3 * u, fy], [fx + side * 13 * u, fy + 0.5 * u]], 7.5 * u, sandal);
     if (O.helmet) for (let k = 1; k <= 3; k++) p.stroke([[fx - 4 * u, fy - k * 0.07 * HH], [fx + 4 * u, fy - k * 0.07 * HH - 2 * u]], 2 * u, LEATHER);
   }
-  // ---- upper body ----
+  // ---- upper body (moves with the pelvis) ----
+  p.g.save(); p.g.translate(PX, UPY);
   p.rot = tilt ? [rad(tilt), cx, hipY] : null;
   const T = { a: (0.4 * W) / 1.06 * (O.stout ? 1.12 : 1), b: 0.5 * (torsoBot - (chin - 0.25 * HH)), nTop: 2.2, nBot: 2.6, egg: O.stout ? 0.17 : 0.12, asym: 0.04 * facing, rot: 0, noise: 0.006, seed: seed + 7 };
   const tcx = cx + 3 * u * facing, tcy = torsoBot - T.b, tp = blobPts(tcx, tcy, T);
-  const S = (side) => [tcx + side * 0.85 * T.a, chin + 0.12 * HH];
+  const S = (side) => [tcx + side * 0.85 * T.a * (1 - 0.1 * CH_), chin + 0.12 * HH - SHR * 0.09 * HH + CH_ * 0.03 * HH];
   const arm = (side, pose) => {
     const s = S(side), X = (k) => tcx + side * (T.a * 1.1 + k * u);
     switch (pose) {
@@ -2903,13 +2920,33 @@ export const romanFront = (p, key, opts = {}) => {
       case "inj": { const el = [tcx - (T.a * 1.1 + 28 * u), s[1] - 0.02 * HH]; return { pts: [s, [tcx + 0.1 * T.a, s[1] + 0.42 * HH], [el[0] + 40 * u, el[1] + 2 * u]], front: true }; }
       case "tray": return { pts: [s, [X(10), s[1] + 0.45 * HH], [tcx + side * 0.55 * T.a, s[1] + 0.48 * HH]], front: true };
       case "slam": { const k = opts.sk ?? 1; return { pts: [s, [X(18), s[1] + (0.1 + 0.3 * k) * HH], [X(26), s[1] + (-0.1 + 0.62 * k) * HH]], front: true }; }
+      // free arm (Nov 27 2026): opts.Lh / opts.Rh = [out, down] hand target from the shoulder (out in torso half-widths, down in head heights); elbow solved with a natural bend
+      // free arm, true two-bone IK with constant bone lengths (Motion Engine v1). Target either opts.LhD/RhD = [x, y] in card design px
+      // (absolute, e.g. a world contact point converted by the engine), or legacy opts.Lh/Rh = [out, down] relative to the shoulder.
+      case "ik": { const D_ = side < 0 ? opts.LhD : opts.RhD; let hx, hy;
+        if (D_) { const lx = D_[0] - PX, ly = D_[1] - UPY, a_ = -rad(tilt), c_ = Math.cos(a_), s_ = Math.sin(a_); hx = cx + (lx - cx) * c_ - (ly - hipY) * s_; hy = hipY + (lx - cx) * s_ + (ly - hipY) * c_; }
+        else { const t = (side < 0 ? opts.Lh : opts.Rh) || [0.3, 0.9]; hx = tcx + side * T.a * (0.85 + t[0]); hy = s[1] + t[1] * HH; }
+        const ARM = 0.95 * HH, half = ARM / 2; let dx = hx - s[0], dy = hy - s[1], L = Math.hypot(dx, dy) || 1;
+        if (L > ARM * 0.999) { dx *= ARM * 0.999 / L; dy *= ARM * 0.999 / L; L = ARM * 0.999; } if (L < ARM * 0.18) { dx *= ARM * 0.18 / L; dy *= ARM * 0.18 / L; L = ARM * 0.18; }
+        const h = Math.sqrt(Math.max(0, half * half - (L / 2) ** 2)); let px_ = -dy / L, py_ = dx / L; if (px_ * side < 0 || (Math.abs(px_) < 0.2 && py_ < 0)) { px_ = -px_; py_ = -py_; }   // elbow bends outward/down only
+        const ex = s[0] + dx / 2 + px_ * h, ey = s[1] + dy / 2 + py_ * h;
+        const fr = (side < 0 ? opts.LhFront : opts.RhFront) ?? (D_ ? true : (((side < 0 ? opts.Lh : opts.Rh) || [])[2] || 0) > 0);
+        return { pts: [s, [ex, ey], [s[0] + dx, s[1] + dy]], front: !!fr }; }
       default: return { pts: [s, [X(4), s[1] + 0.48 * HH], [X(3), chin + 1.04 * HH]], front: false };
     }
   };
   // pose blending (kit/act.js, Nov 27 2026): L2/R2 = the pose being moved to, Lk/Rk = 0..1 (values a little over 1 = overshoot)
   const armB = (side, pose, pose2, k) => { const a = arm(side, pose); if (!pose2 || !k) return a; const b = arm(side, pose2);
     const pts = a.pts.map((q, i) => [q[0] + (b.pts[i][0] - q[0]) * k, q[1] + (b.pts[i][1] - q[1]) * k]); return { ...(k > 0.5 ? b : a), pts }; };
-  const arms = [armB(-1, L, opts.L2, opts.Lk || 0), armB(1, R, opts.R2, opts.Rk || 0)];
+  // arm drift (Nov 27 2026): opts.Ld / opts.Rd = [dx, dy] in head heights added to ANY pose (hand fully, elbow half) so arms never freeze
+  const drift = (a, d) => { if (!d) return a; const ox = d[0] * HH, oy = d[1] * HH; return { ...a, pts: [a.pts[0], [a.pts[1][0] + ox * 0.5, a.pts[1][1] + oy * 0.5], [a.pts[2][0] + ox, a.pts[2][1] + oy]] }; };
+  const bone = (a, side) => { const ARM = 0.95 * HH, half = ARM / 2, [s0, e0, h0] = a.pts; let dx = h0[0] - s0[0], dy = h0[1] - s0[1], Ld = Math.hypot(dx, dy) || 1;
+    const cl = Math.min(Math.max(Ld, ARM * 0.18), ARM * 0.999); dx *= cl / Ld; dy *= cl / Ld; const hgt = Math.sqrt(Math.max(0, half * half - (cl / 2) ** 2));
+    let pxn = -dy / cl, pyn = dx / cl; const mx = s0[0] + dx / 2, my = s0[1] + dy / 2; if ((e0[0] - mx) * pxn + (e0[1] - my) * pyn < 0) { pxn = -pxn; pyn = -pyn; }   // keep the preset's elbow side
+    return { ...a, pts: [s0, [mx + pxn * hgt, my + pyn * hgt], [s0[0] + dx, s0[1] + dy]] }; };
+  const arms = [bone(drift(armB(-1, L, opts.L2, opts.Lk || 0), opts.Ld && [-opts.Ld[0], opts.Ld[1]]), -1), bone(drift(armB(1, R, opts.R2, opts.Rk || 0), opts.Rd), 1)];
+  if (opts.rigOut) { const a_ = rad(tilt), c_ = Math.cos(a_), s_ = Math.sin(a_), ab = ([x, y]) => [cx + (x - cx) * c_ - (y - hipY) * s_ + PX, hipY + (x - cx) * s_ + (y - hipY) * c_ + UPY];
+    opts.rigOut.arms = arms.map((a) => a.pts.map(ab)); opts.rigOut.ARM = 0.95 * HH; opts.rigOut.HH = HH; opts.rigOut.u = u; }
   const drawArm = (a) => {
     p.stroke(curve(a.pts[0], a.pts[1], a.pts[2]), 5.2 * u, armCol);
     const [hx, hy] = a.pts[2];
@@ -2995,6 +3032,10 @@ export const romanFront = (p, key, opts = {}) => {
     if (opts.tool === 'woodtube') { g.translate(hx, hy); g.rotate(opts.toolRot ?? -0.3); g.fillStyle = '#c08a4a'; g.strokeStyle = INK; g.lineWidth = 2.6 * u; g.beginPath(); g.moveTo(-7 * u, -44 * u); g.lineTo(7 * u, -44 * u); g.lineTo(9 * u, 30 * u); g.lineTo(16 * u, 40 * u); g.lineTo(-16 * u, 40 * u); g.lineTo(-9 * u, 30 * u); g.closePath(); g.fill(); g.stroke(); g.fillStyle = 'rgba(255,255,255,.35)'; g.fillRect(-4 * u, -40 * u, 3 * u, 66 * u); }
     if (opts.tool === 'hammer') { g.translate(hx, hy); g.rotate(opts.toolRot ?? -0.4); g.fillStyle = '#8a5a30'; g.strokeStyle = INK; g.lineWidth = 2.6 * u; g.beginPath(); g.roundRect(-4 * u, -50 * u, 8 * u, 62 * u, 3 * u); g.fill(); g.stroke();
       g.fillStyle = '#5a6068'; g.beginPath(); g.roundRect(-20 * u, -64 * u, 40 * u, 18 * u, 3 * u); g.fill(); g.stroke(); g.fillStyle = 'rgba(255,255,255,.5)'; g.fillRect(-16 * u, -61 * u, 30 * u, 3 * u); }
+    if (opts.tool === 'trowel') { g.translate(hx, hy); g.rotate(opts.toolRot ?? -0.6); g.strokeStyle = INK; g.lineWidth = 2.6 * u; g.fillStyle = '#8a5a30'; g.beginPath(); g.roundRect(-5 * u, -6 * u, 10 * u, 26 * u, 4 * u); g.fill(); g.stroke();
+      g.strokeStyle = INK; g.lineWidth = 3 * u; g.beginPath(); g.moveTo(0, -6 * u); g.lineTo(0, -16 * u); g.stroke();
+      g.fillStyle = '#b8bec6'; g.beginPath(); g.moveTo(0, -14 * u); g.lineTo(-17 * u, -24 * u); g.lineTo(0, -66 * u); g.lineTo(17 * u, -24 * u); g.closePath(); g.fill(); g.lineWidth = 2.4 * u; g.stroke(); g.fillStyle = 'rgba(255,255,255,.55)'; g.beginPath(); g.moveTo(-2 * u, -22 * u); g.lineTo(-10 * u, -26 * u); g.lineTo(-2 * u, -54 * u); g.closePath(); g.fill(); }
+    if (opts.tool === 'quill') { g.translate(hx, hy); g.rotate(opts.toolRot ?? -0.5); g.strokeStyle = INK; g.lineWidth = 2 * u; g.fillStyle = '#f4f0e6'; g.beginPath(); g.moveTo(0, 10 * u); g.quadraticCurveTo(-12 * u, -30 * u, 2 * u, -70 * u); g.quadraticCurveTo(12 * u, -30 * u, 0, 10 * u); g.fill(); g.stroke(); g.beginPath(); g.moveTo(0, 12 * u); g.lineTo(1 * u, -64 * u); g.stroke(); }
     if (opts.tool === 'shovel') { g.translate(hx, hy); g.rotate(opts.toolRot ?? 0.5); g.strokeStyle = INK; g.lineWidth = 2.6 * u; g.fillStyle = '#9a6a40'; g.beginPath(); g.roundRect(-3.5 * u, -70 * u, 7 * u, 90 * u, 3 * u); g.fill(); g.stroke();
       g.fillStyle = '#5a6068'; g.beginPath(); g.moveTo(-16 * u, 20 * u); g.lineTo(16 * u, 20 * u); g.lineTo(13 * u, 48 * u); g.quadraticCurveTo(0, 56 * u, -13 * u, 48 * u); g.closePath(); g.fill(); g.stroke();
       if (opts.coal) { g.fillStyle = '#1a1a1e'; for (const [x, y] of [[-6, 30], [3, 28], [8, 34], [-2, 36]]) { g.beginPath(); g.arc(x * u, y * u, 4.5 * u, 0, 7); g.fill(); } } }
@@ -3052,6 +3093,7 @@ export const romanFront = (p, key, opts = {}) => {
   if (opts.belt > 0) { const b = Math.min(1, opts.belt), x0 = cx + 0.45 * W, y0 = chin + 0.15 * HH, x1 = cx - 0.42 * W, y1 = torsoBot - 0.1 * HH, xe = x0 + (x1 - x0) * b, ye = y0 + (y1 - y0) * b; p.poly([[x0, y0 - 5 * u], [x0 + 4 * u, y0 + 6 * u], [xe + 4 * u, ye + 6 * u], [xe, ye - 5 * u]], '#2a2a30', 2 * u); if (b >= 1) p.poly([[x1 - 9 * u, y1 - 6 * u], [x1 + 7 * u, y1 - 6 * u], [x1 + 7 * u, y1 + 8 * u], [x1 - 9 * u, y1 + 8 * u]], '#c8ccd2', 2 * u); }
   if (O.target) { const ty = chin + 0.45 * HH; p.ell(cx, ty, 14 * u, 14 * u, '#ffffff', 2.4 * u); p.poly([[cx, ty], [cx + 14 * u, ty], [cx + 13.5 * u, ty + 4 * u], [cx + 10 * u, ty + 10 * u], [cx + 4 * u, ty + 13.5 * u], [cx, ty + 14 * u]], '#14141a', 0); p.poly([[cx, ty], [cx - 14 * u, ty], [cx - 13.5 * u, ty - 4 * u], [cx - 10 * u, ty - 10 * u], [cx - 4 * u, ty - 13.5 * u], [cx, ty - 14 * u]], '#14141a', 0); }
   // ---- head ----
+  p.g.translate(0, ((opts.headDrop || 0) + CH_ * 0.06 + SHR * 0.05) * HH);
   const [cpx, cpy] = rotAbout([cx, chin], rad(tilt), [cx, hipY]);
   const Ah = tilt + headTilt;
   p.rot = Ah ? [rad(Ah), cx, chin, cpx - cx, cpy - chin] : null;
@@ -3131,6 +3173,15 @@ export const romanFront = (p, key, opts = {}) => {
     const a = arms.find((x) => x.swirl), [hx, hy] = a.pts[2], ph = opts.swirl || 0, pts = [];
     for (let i = 0; i < 40; i++) { const t = i / 40 * Math.PI * 4 + ph, r = (4 + i * 0.7) * u; pts.push([hx + Math.cos(t) * r, hy - 40 * u + Math.sin(t) * r]); }
     p.stroke(pts, 3 * u, "#ffffff"); p.stroke(pts, 1.4 * u, INK);
+  }
+  p.g.restore();
+  // props held or placed by the Motion Engine (absolute design coords): { kind: 'box', x, y, w, h, col } drawn last, hands redrawn on top when gripping
+  for (const pr of opts.props || []) {
+    if (pr.kind === 'box') { const bx = [[pr.x - pr.w / 2, pr.y - pr.h], [pr.x + pr.w / 2, pr.y - pr.h], [pr.x + pr.w / 2, pr.y], [pr.x - pr.w / 2, pr.y]];
+      p.gradFill(bx, pr.col || '#b07a44', mul(pr.col || '#b07a44', SH_CLOTH), light); p.inkRing(bx, ow, thick);
+      p.stroke([[pr.x - pr.w / 2 + 6 * u, pr.y - pr.h * 0.5], [pr.x + pr.w / 2 - 6 * u, pr.y - pr.h * 0.5]], 2.4 * u, '#7a4a24');
+      p.stroke([[pr.x, pr.y - pr.h + 4 * u], [pr.x, pr.y - 4 * u]], 2.4 * u, '#d8b070');
+      if (pr.grip) for (const hp of pr.grip) p.dot(hp[0], hp[1], 5.5 * u); }
   }
 };
 

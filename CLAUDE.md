@@ -31,6 +31,17 @@ See `doczap/docs/STYLE.md` for the full rules. In short:
 - **Mechanism:** an in-world cutaway (glass object, cross-section, balance scale) with **handwritten labels and arrows** (Caveat font).
 - **Captions:** 1-2 words, Poppins Bold, white with a dark stroke, sentence case, y≈1342.
 
+## DocZap Motion Engine (mandatory, from Nov 28 2026)
+Read `doczap/docs/ENGINE.md` before building any episode.
+1. Every Doc Zap episode uses the DocZap Motion Engine (rig in `web/roman.js`, library in `web/kit/act.js`, QC in `tools/motion_qc.mjs`).
+2. Never recreate movement functions inside an episode. Import the library and the rig.
+3. New movements go into the central library (`web/kit/act.js`) and are documented in ENGINE.md, so every future episode benefits.
+4. Never change the established character designs without Diyar's permission.
+5. Physical realism comes before decorative movement. Never move or stretch the whole character card to act: use the rig channels (pelvis, knees, spine, shoulders, feet, hands).
+6. Every episode must pass `node tools/motion_qc.mjs web/story.js` before the final render.
+7. Keep backward compatibility (old presets still work and are re-solved with constant bone lengths).
+8. Update ENGINE.md whenever new engine functionality is added.
+
 ## Agent skills (installed Nov 26 2026)
 `.claude/skills/` holds Addy Osmani's agent-skills (MIT, github.com/addyosmani/agent-skills): idea-refine, spec-driven-development, incremental-implementation, doubt-driven-development, constraint-driven-development, debugging-and-error-recovery, shipping-and-launch, documentation-and-adrs and more. The Doc Zap skill calls them at each stage. The quality bar is `doczap/docs/CONSTRAINTS.md`; lessons and engine decisions go in `doczap/docs/LESSONS.md`.
 Also `content-principles` (Remy Gaskell, github.com/aiwithremy/content-principles, added Nov 27 2026): the viewer psychology used to write and edit every script (line 1 sells line 2, curiosity loops, specificity, value per second). Apply it silently, never as a template.

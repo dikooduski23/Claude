@@ -85,3 +85,11 @@ Use `web/kit/act.js` in every episode's `actorsAt`. Nobody stands frozen, and no
 - `sway(f, seed)` is added to the idle tilt automatically, a slow weight shift.
 - Time reactions to when the camera actually shows the character, not before.
 - Frame the walks: a walk that happens off-screen is wasted (the Cook demo's steward walk-in fell outside the table shot).
+
+### Version 2: "make the movement real" (Nov 27 2026, Rumford episode)
+Diyar found v1 still stiff. Characters held a pose, then swapped to the next one. The fix is that **every part moves on every frame**, and actions follow the classic principles:
+- **Life layer, always on:** `alive(f, seed, energy)` handles breathing (the card stretches about 1.4 %), weight shift (sideways drift of about 1 cm), body and head sway, and slowly drifting hands (`Ld`/`Rd` offsets work on any arm pose). `card()` applies it to everyone automatically. No more stepping on twos (`u = f/2` is gone).
+- **Free arms:** the `ik` arm pose takes a hand target `Lh`/`Rh = [out, down]` and solves the elbow. Hands can rub together, warm at a fire, point and pull back, or reach, all as continuous paths.
+- **Anticipation → action → follow-through:** with `strike(f, t0, period, n)`, a tool blow winds up slowly while the body leans back, strikes fast while the body lunges forward, then rebounds. Each hit frame drives a squash (`reacts`).
+- **Physical states:** `shiver()` is a fast small sideways shake plus tilt jitter (cold). `cough()` makes the body double forward with three barks and the hand flying to the mouth. `shake()`/`nod()` are head no/yes.
+- **Story beats are acted, not posed:** the doubters cross their arms and shake their heads; the warm lord rubs his hands; Jane's quill travels along the line while her head follows; the kid bounces; Rumford points, winks and nods.
