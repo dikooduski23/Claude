@@ -33,6 +33,7 @@ See `doczap/docs/STYLE.md` for the full rules. In short:
 
 ## Agent skills (installed Nov 26 2026)
 `.claude/skills/` holds Addy Osmani's agent-skills (MIT, github.com/addyosmani/agent-skills): idea-refine, spec-driven-development, incremental-implementation, doubt-driven-development, constraint-driven-development, debugging-and-error-recovery, shipping-and-launch, documentation-and-adrs and more. The Doc Zap skill calls them at each stage. The quality bar is `doczap/docs/CONSTRAINTS.md`; lessons and engine decisions go in `doczap/docs/LESSONS.md`.
+Also `content-principles` (Remy Gaskell, github.com/aiwithremy/content-principles, added Nov 27 2026): the viewer psychology used to write and edit every script (line 1 sells line 2, curiosity loops, specificity, value per second). Apply it silently, never as a template.
 
 ## Repo layout
 - `doczap/engine/`: the production template (latest = the Lottery Man rebuild).

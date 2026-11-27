@@ -19,6 +19,7 @@ The work follows the agent-skills lifecycle (addyosmani/agent-skills, installed 
    - a "You see," setup, But/So beats and a rehook halfway;
    - the last line flows back into line 1;
    - no comment CTA in the video.
+   - Write and edit it with the `content-principles` skill (Remy Gaskell), applied silently: line 1 must sell line 2, each line sells the next; keep a curiosity loop open at all times and open a fresh one at 60–70 %; a shocking concrete fact inside 10 s; numbers, names and dates instead of summaries; sentences under ~9 words; the 10-year-old test on every line; cut anything interesting but not relevant.
 5. **Virality check** with the `virality-predictor` skill for TikTok and Instagram. It must score **80+ on both**, honestly; rework until it does.
 6. **Send Diyar** a .md with the script, score table, fact check and sources. Ask only for the MP3.
 
