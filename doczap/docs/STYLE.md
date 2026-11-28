@@ -93,3 +93,11 @@ Diyar found v1 still stiff. Characters held a pose, then swapped to the next one
 - **Anticipation → action → follow-through:** with `strike(f, t0, period, n)`, a tool blow winds up slowly while the body leans back, strikes fast while the body lunges forward, then rebounds. Each hit frame drives a squash (`reacts`).
 - **Physical states:** `shiver()` is a fast small sideways shake plus tilt jitter (cold). `cough()` makes the body double forward with three barks and the hand flying to the mouth. `shake()`/`nod()` are head no/yes.
 - **Story beats are acted, not posed:** the doubters cross their arms and shake their heads; the warm lord rubs his hands; Jane's quill travels along the line while her head follows; the kid bounces; Rumford points, winks and nods.
+
+## Reference study: "the dopamine addiction loop" (Nov 28 2026, sent by Diyar)
+A 108 s storytelling-psychology reel. Neon motion graphics: a kinetic two-line title at the top, word-by-word captions with the **active word highlighted in a box**, and an infinity-loop diagram that builds step by step. Its lesson for Doc Zap scripts is a four-step loop, the same psychology casinos use:
+1. **Stakes:** a character to root for + something at risk + urgency. The stakes don't have to be life or death, only personally relevant to the viewer. In a Doc Zap script the risk must be clear inside the first 5 s ("your friends think you're never coming back").
+2. **The big question:** give just enough context that a question pops up in the viewer's head (will he come back? why would that work?).
+3. **The head fake:** set the viewer up to expect A, then snap to B. Contrast is what makes a story hard to stop watching. Our "looked stupid → pays off" formula is a head fake; aim for **two per video** (the payoff, then a twist on the payoff).
+4. **The re-hook:** open the next loop as soon as one closes ("But here's the catch…"). Good stories have one loop; great ones have **cascading loops**.
+Apply it to every script along with content-principles. Visual idea to test later: a highlighted active word inside our 1–2-word captions (not adopted yet; the captions stay white with a dark stroke).
